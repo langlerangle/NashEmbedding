@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-audit:
+    name: Build (NashEmbedding + Challenge + Solution + Test) and audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Lean toolchain and build
+        uses: leanprover/lean-action@v1
+        with:
+          # Builds `defaultTargets` from lakefile.toml:
+          # NashEmbedding, Challenge, Solution, Test.
+          build-args: ""
+
+      - name: Trust audit
+        # Runs the forbidden-token, sorry-count, and axiom-footprint checks.
+        # See scripts/audit.sh for what is enforced.
+        run: bash scripts/audit.sh
+
+  comparator:
+    name: Palomar Comparator verification
+    runs-on: ubuntu-latest
+    needs: build-and-audit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Lean toolchain
+        uses: leanprover/lean-action@v1
+        with:
+          # Just install elan + the pinned toolchain; no build here.
+          # scripts/verify.sh does its own `lake exe cache get` and builds.
+          build: false
+
+      - name: Cache comparator + lean4export builds
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/nash-comparator
+          key: nash-comparator-${{ hashFiles('lean-toolchain') }}
+
+      - name: Run comparator on Challenge vs Solution
+        run: ./scripts/verify.sh

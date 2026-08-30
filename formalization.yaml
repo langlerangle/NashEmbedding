@@ -1,0 +1,232 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Nash's isometric embedding theorem for closed manifolds (Günther's proof)"
+  description: >-
+    A Lean 4 / Mathlib formalization of Nash's C-infinity isometric embedding
+    theorem for closed manifolds: every compact smooth manifold without boundary,
+    equipped with a smooth Riemannian metric, admits a smooth injective map into
+    some Euclidean space R^q whose differential pulls the Euclidean inner product
+    back to the given metric. The proof formalized is Günther's (1989), which
+    replaces the Nash-Moser iteration by an elliptic fixed-point argument,
+    following the presentation in A. J. Wassermann's Cambridge Part III lecture
+    notes as the primary source. The development has two layers. The first proves
+    the theorem for the flat torus: a self-contained Sobolev toolkit on T^n
+    (weighted-l^2 Sobolev spaces on Z^n, Rellich compactness, the Sobolev sup bound,
+    three multiplication theorems, mollifiers, periodization, Fourier inversion and
+    Parseval), the approximation of smooth metrics by realizable ones, Günther's
+    perturbation theorem proved by a contraction in H^s, and their assembly into
+    the statement that every smooth 2-pi-periodic positive-definite matrix field on
+    R^n is the pullback metric of a smooth periodic immersion that is injective
+    modulo 2-pi-Z^n. The second layer reduces the closed-manifold case to the torus:
+    a Whitney embedding from Mathlib is extended to the ambient space, the metric is
+    extended by a pseudo-inverse construction, cut off, symmetrized and periodized,
+    and the torus theorem is applied. No bound on the embedding dimension is
+    claimed. Concrete instances (round spheres of every dimension, products of
+    spheres, the flat torus S^1 x S^1) are derived, and the flat-torus instance is
+    shown to reproduce the torus theorem's conclusion, tying the two layers
+    together. Nothing here is claimed to be new. Essentially all Lean text was
+    produced by AI systems: the statements, architecture and assembly by Claude
+    (Anthropic) sessions, the large majority of proofs by Aristotle (Harmonic);
+    the human author proposed the project, chose the source and made early design
+    decisions. There is no sorry outside the deliberate hole in Challenge.lean, no
+    project-defined axiom, and no native_decide.
+  authors:
+    - "David Wiygul"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "David Wiygul"
+
+repository:
+  role: substantive-development
+
+classification:
+  arxiv: [math.DG, math.AP]
+  msc2020: ["53C42", "53C21", "58J05", "46E35"]
+
+status:
+  scope: >-
+    Complete for closed manifolds: every Hausdorff compact smooth manifold without
+    boundary (Mathlib's [IsManifold I ∞ M] with a boundaryless model with corners,
+    [T2Space M], [CompactSpace M]) and every smooth Riemannian metric in Mathlib's
+    sense (ContMDiffRiemannianMetric I ∞ E (TangentSpace I)). Manifolds with
+    boundary and non-compact manifolds are not treated. The embedding dimension q
+    is existentially quantified and no bound on it is stated; the construction's
+    dimension depends on the chosen bump covering and is far from optimal. The
+    conclusion is a smooth injective immersion pulling the Euclidean inner product
+    back to g; since M is compact this is a closed embedding, which is also proved
+    as a corollary but is not part of the compared statement. Smoothness throughout
+    is C-infinity (Mathlib's ∞, not ⊤).
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+  main_results:
+    - declaration: "NashEmbeddingTheorem.nash_isometric_embedding"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+
+fidelity:
+  divergences: >-
+    The compared statement is Nash's theorem for closed manifolds in its standard
+    form, with no restriction beyond compactness and absence of boundary. The
+    proof follows Günther's method as presented in Wassermann's notes; the notes
+    are unpublished lecture notes, so no line-by-line correspondence is claimed,
+    and several estimates were re-derived with different constants or stronger
+    regularity indices where the formalization required it. The flat-torus layer
+    is stated on R^n with 2-pi-Z^n-periodic data rather than on a quotient
+    manifold, which is what the reduction step consumes. The reduction from closed
+    manifolds to the torus uses Mathlib's bump-covering embedding into a Euclidean
+    space rather than a tubular-neighbourhood argument. Lemma names differ from
+    the informal text throughout; the README records the correspondence of the
+    main steps.
+
+sources:
+  - title: "The imbedding problem for Riemannian manifolds"
+    authors: ["John Nash"]
+    type: "paper"
+    location: "Annals of Mathematics 63 (1956), 20-63"
+    relationship: background
+    note: >-
+      The theorem. Nash's own proof (the Nash-Moser iteration) is not the one
+      formalized.
+  - title: "On the perturbation problem associated to isometric embeddings of Riemannian manifolds"
+    authors: ["Matthias Günther"]
+    type: "paper"
+    location: "Annals of Global Analysis and Geometry 7 (1989), 69-77"
+    relationship: adapts
+    note: >-
+      The proof strategy formalized: an elliptic reformulation of the perturbation
+      problem that makes it a fixed-point problem in Sobolev spaces, avoiding the
+      Nash-Moser scheme. Reached through Wassermann's presentation rather than
+      transcribed from this paper.
+  - title: "The Atiyah-Singer Index Theorem, Part III lecture notes (Cambridge, Lent 2010): Sobolev spaces on the torus, Nash's embedding theorem for the N-torus, the reduction of the compact case"
+    authors: ["A. J. Wassermann"]
+    type: "other"
+    relationship: formalizes
+    note: >-
+      The primary source: unpublished lecture notes, which the author of this
+      submission selected and which the formalization follows in its overall
+      route (a self-contained Sobolev theory on the torus, Günther's perturbation
+      theorem for the flat torus, and the reduction of the closed-manifold case).
+      Because the notes are not published, the correspondence is recorded at the
+      level of the main steps only; see fidelity.divergences.
+  - title: "Günther's proof of Nash's isometric embedding theorem"
+    authors: ["Deane Yang"]
+    type: "other"
+    id: "arXiv:math/9807169"
+    relationship: background
+    note: >-
+      A freely available exposition of Günther's argument, cited for readers;
+      not used in producing the formalization.
+
+related_formalizations: []
+
+automation:
+  methods:
+    - method: agent
+      models: ["Claude Opus 4.7 (Anthropic)"]
+      framework: "Claude Code"
+      tool_setup: >-
+        April-May 2026: initial planning with the human author, the informal
+        blueprint of the torus layer (Sobolev toolkit and Theorem A), the Lean
+        statements of its first eight stages, and the prompting of Aristotle on
+        those stages.
+    - method: agent
+      models: ["Claude Fable 5 (Anthropic)", "Claude Opus 4.7 (Anthropic)"]
+      framework: "Claude Code"
+      tool_setup: >-
+        August 2026: two persistent sessions, named "Tor" (Claude Fable 5) and
+        "Slate" (Claude Opus 4.7) by the model instances themselves, working
+        with the author but largely with each other. They designed the perturbation
+        theorem and the closed-manifold reduction, wrote every Lean statement and
+        the file architecture, wrote several files by hand (dual frames, the
+        abstract fixed point, the bump construction, the assemblies), prompted
+        Aristotle file by file, and independently double-checked every Aristotle
+        return before merging (statements byte-identical, only the target file
+        touched, no sorry/admit/exact?/native_decide, full build, standard axioms).
+    - method: agent
+      framework: "Aristotle (Harmonic), CLI 2.1.0, pinned to Lean v4.28.0 and Mathlib v4.28.0"
+      models: []
+      tool_setup: >-
+        Prover. Given files with complete statements and sorry placeholders,
+        Aristotle returned proofs: 16 project submissions in April-May 2026 (the
+        torus Sobolev toolkit and Theorem A, in eight stages with retakes) and 21
+        in August 2026 (the perturbation theorem, the assembly leaves, the
+        closed-manifold reduction, the metric constructions and the examples),
+        of which one was a duplicate submission whose result was not used; every
+        August job that was used returned clean on first submission. Project
+        identifiers are listed in the README so that the record can be checked
+        against Harmonic's logs.
+      cost:
+        tokens: "not exposed by the service"
+  notes: >-
+    The human author proposed the project, selected Wassermann's notes as the
+    source, and took part in the early design decisions; the Lean development was
+    produced by the AI systems above, with the author reviewing design decisions
+    and statements rather than proofs. No Lean proof in this repository has been
+    read in full by a human.
+
+review:
+  status: self-assessed
+  reviewers:
+    - "David Wiygul"
+  notes: >-
+    No independent human review of the mathematics or of the Lean source. Every
+    theorem is checked by Lean; scripts/audit.sh checks the trust conditions (no
+    forbidden tokens, exactly one deliberate sorry in Challenge.lean, standard
+    axioms for every top-level result); and each Aristotle return was
+    independently verified by two separate AI sessions before being merged. The
+    compared statement in Challenge.lean was reviewed at the statement level by
+    both sessions against the informal theorem. None of this is a check that the
+    informal argument is correct or that the statement is the right formalization
+    of Nash's theorem beyond what the Challenge docstring explains.
+
+alignment:
+  namespace: "NashEmbedding"
+  statements:
+    - source: "Nash's isometric embedding theorem for closed C-infinity manifolds"
+      lean: "NashEmbeddingTheorem.nash_isometric_embedding"
+      module: "Challenge (statement), Solution (proof)"
+      status: proved
+      note: >-
+        The statement of record, compared by Comparator; Solution.lean discharges
+        it from NashEmbedding.nashCompact by unfolding one definition.
+    - source: "Nash's theorem for the flat torus (Wassermann, Nash's embedding theorem for the N-torus)"
+      lean: "NashEmbedding.nashTorus"
+      module: "NashEmbedding.Torus.Main"
+      status: proved
+      note: >-
+        Every smooth 2-pi-periodic positive-definite matrix field on R^n is the
+        pullback metric of a smooth periodic immersion, injective modulo 2-pi-Z^n.
+        Not a compared declaration; the closed-manifold theorem reduces to it.
+    - source: "Approximation of smooth metrics by realizable ones (Wassermann, Theorem A)"
+      lean: "NashEmbedding.realizable_approx_all_s"
+      module: "NashEmbedding.Torus.Approximation.RealizeMetric"
+      status: proved
+    - source: "Günther's perturbation theorem (Wassermann, Theorem B)"
+      lean: "NashEmbedding.gunther_perturbation"
+      module: "NashEmbedding.Torus.Perturbation.Main"
+      status: proved
+    - source: "Reduction of the closed-manifold case to the torus (Wassermann, the reduction of the compact case)"
+      lean: "NashEmbedding.nashCompact"
+      module: "NashEmbedding.Compact.Main"
+      status: proved
+      note: >-
+        By a Whitney embedding from Mathlib, an extension of the metric to the
+        ambient Euclidean space, cutoff and periodization, and nashTorus.
+    - source: "Consistency check: the flat torus S^1 x S^1"
+      lean: "NashEmbedding.torus2_matches_nashTorus"
+      module: "NashEmbedding.Examples.FlatTorus"
+      status: proved
+      note: >-
+        The closed-manifold theorem applied to S^1 x S^1 with the flat metric,
+        composed with the universal cover, yields exactly the conclusion of
+        nashTorus for the identity metric on R^2.
+
+acknowledgements: >-
+  Mathlib and the Lean community; Harmonic's Aristotle; A. J. Wassermann, whose
+  lecture notes were the source.
