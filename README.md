@@ -127,15 +127,25 @@ does not say.
 
 ## Ingredients absent from Mathlib
 
-* The Sobolev scale on the torus with Rellich compactness, the sup bound and the
-  multiplication theorems (§1 above), stated on $\mathbb{Z}^n$ and transported to
-  position space.
-* Parseval's identity for continuous periodic functions on $\mathbb{T}^n$
-  (`parseval_stdFourierCoeff`).
+Checked against Mathlib `v4.28.0` (the pin, February 2026) and against Mathlib master as of
+2026-04-27; "absent" below means absent from both.
+
+* The Sobolev scale on the torus — weighted $\ell^2$ spaces on $\mathbb{Z}^n$ with Rellich
+  compactness, the sup bound and the three multiplication theorems (§1 above), transported
+  to position space. Mathlib master has since gained Sobolev (Bessel-potential) spaces on
+  $\mathbb{R}^n$ via tempered distributions (`TemperedDistribution.memSobolev`, April 2026,
+  after the pin); that is a different setting, and the compactness and algebra results used
+  here are not among its statements.
 * Extension of smooth functions along Mathlib's bump-covering embedding
   (`SmoothBumpCovering.exists_extension`); smoothness of the Moore–Penrose pseudo-inverse
   of an injective linear map (`contDiffAt_pinv`).
 * Induced, pullback and product Riemannian metrics as `ContMDiffRiemannianMetric`s.
+
+Not absent, and used: Mathlib's $L^2$ Fourier theory on the $d$-torus
+(`UnitAddTorus.hasSum_sq_mFourierCoeff`), which `parseval_stdFourierCoeff` transports to
+continuous $2\pi$-periodic functions on $\mathbb{R}^n$ in this development's conventions;
+the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the definition
+`ContMDiffRiemannianMetric` itself.
 
 ## Trust
 
@@ -185,7 +195,7 @@ not a claim that none exists.
 
 This project is an **AI–AI collaboration, requested by a human**.
 
-**David Wiygul** proposed the project, selected Wassermann's notes as the source, and
+David Wiygul proposed the project, selected Wassermann's notes as the source, and
 took part in the early design decisions (April–May 2026, working with Claude Opus 4.7).
 He did not write Lean, and reviewed design decisions and statements rather than proofs.
 
@@ -262,6 +272,6 @@ retakes), in submission order: `c9c0c69f`, `18d0b04c`, `2d9e0e3e`, `5c12ab8a`, `
 in the working repository from which this one was assembled. One further project on the
 account, `f3ca88c8`, was a second submission of `GuntherIdentity` whose result was not used.
 
-## Licence
+## License
 
 Apache-2.0; see [`LICENSE`](LICENSE).
