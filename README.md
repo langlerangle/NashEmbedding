@@ -22,9 +22,14 @@ theorem NashEmbeddingTheorem.nash_isometric_embedding
 
 Every compact smooth manifold without boundary, with any smooth Riemannian metric g,
 admits a smooth injective map w into some ℝ<sup>q</sup> whose differential pulls the
-Euclidean inner product back to g. Since M is compact, w is a closed embedding
-(`NashEmbedding.nashCompact_isClosedEmbedding`) and an immersion
-(`NashEmbedding.PullsBackEuclidean.injective_mfderiv`): a smooth isometric embedding.
+Euclidean inner product back to g. Two consequences, proved separately and not part of the
+compared statement: since M is compact, w is a closed embedding
+(`NashEmbedding.nashCompact_isClosedEmbedding`), and since g is positive definite, the
+pullback identity makes dw injective at every point, so w is an immersion
+(`NashEmbedding.PullsBackEuclidean.injective_mfderiv`) — together, a smooth isometric
+embedding. "Without boundary" is Mathlib's `I.Boundaryless` (the model with corners has full
+range), the usual formal expression of the notion; see `Challenge.lean` for the precise
+reading.
 
 The theorem is **Nash's** (1956). The proof formalized is **Günther's** (1989), which
 replaces Nash's iteration by an elliptic fixed-point argument. The presentation followed

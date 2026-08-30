@@ -32,14 +32,24 @@ Euclidean space.
 ## How the hypotheses are phrased
 
 * `M` is a manifold in Mathlib's sense: `[ChartedSpace H M] [IsManifold I ∞ M]` for a model
-  with corners `I : ModelWithCorners ℝ E H`, with `[I.Boundaryless]` so that `M` has no
-  boundary.  `[T2Space M]` and `[CompactSpace M]` make `M` a closed manifold.  No assumption is
+  with corners `I : ModelWithCorners ℝ E H`.  "Without boundary" is expressed as
+  `[I.Boundaryless]`: the model `I` has full range (`Set.range I = Set.univ`), so every chart
+  image is open in `E`.  This is the usual formal way to say that `M` has no boundary, and it
+  is the form the proof needs (its extension step pushes functions forward through charts
+  and extends by zero, which requires open chart images).  It is stronger than Mathlib's
+  pointwise notion `BoundarylessManifold I M` (every point of `M` is an interior point of
+  some chart), which is not assumed here; a manifold satisfying only the pointwise notion
+  would first have to be re-charted on a boundaryless model.  `[T2Space M]` and
+  `[CompactSpace M]` make `M` a closed manifold.  No assumption is
   made on the dimension of `M`, on connectedness, or on `E` beyond finite-dimensionality; the
   empty manifold is allowed and the theorem is trivially true for it.
 * The metric `g` is a `ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _)`: a
-  smooth section of the bundle of bilinear forms on `TM` that is symmetric and positive
-  definite at every point (this is Mathlib's definition; `∞` denotes `C^∞`, as opposed to `⊤`,
-  which in Mathlib means analytic).
+  smooth section of the bundle of bilinear forms on `TM` (`contMDiff`) that is symmetric
+  (`symm`) and positive definite (`pos`) at every point, and whose fibrewise norms are
+  compatible with the topology of the fibres (`isVonNBounded`; automatic in finite dimension).
+  Smoothness is Mathlib's `∞`, the inner top of `WithTop ℕ∞` (differentiable to every finite
+  order, i.e. `C^∞`); the outer top `ω` means analytic, and a bare `⊤` written in a
+  `WithTop ℕ∞` position would elaborate to `ω`, so `∞` is used throughout.
 * `dw_x` is `mfderiv I 𝓘(ℝ, EuclideanSpace ℝ (Fin q)) w x`, the manifold derivative.  The
   tangent space to `EuclideanSpace ℝ (Fin q)` at any point is definitionally
   `EuclideanSpace ℝ (Fin q)`; the inner product is taken there, which is what the explicit type

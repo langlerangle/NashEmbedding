@@ -55,10 +55,15 @@ status:
     boundary and non-compact manifolds are not treated. The embedding dimension q
     is existentially quantified and no bound on it is stated; the construction's
     dimension depends on the chosen bump covering and is far from optimal. The
-    conclusion is a smooth injective immersion pulling the Euclidean inner product
-    back to g; since M is compact this is a closed embedding, which is also proved
-    as a corollary but is not part of the compared statement. Smoothness throughout
-    is C^∞ (Mathlib's ∞, not ⊤).
+    conclusion is a smooth injective map pulling the Euclidean inner product back
+    to g. Two consequences are proved as separate corollaries and are not part of
+    the compared statement: injectivity of the differential (from positive
+    definiteness of g and the pullback identity), and closed embeddedness (from
+    compactness). "Without boundary" is Mathlib's model-level I.Boundaryless (the
+    model with corners has full range), which is stronger than the pointwise
+    BoundarylessManifold I M; the latter is not assumed. Smoothness throughout is
+    C^∞, Mathlib's ∞ (the inner top of WithTop ℕ∞); the outer top ω, analytic, is
+    never used.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: []
@@ -73,7 +78,8 @@ status:
 fidelity:
   divergences: >-
     The compared statement is Nash's theorem for closed manifolds in its standard
-    form, with no restriction beyond compactness and absence of boundary. The
+    form for manifolds modelled on a boundaryless model with corners (I.Boundaryless),
+    Hausdorff and compact, with no further restriction. The
     proof follows Günther's method as presented in Wassermann's notes; the notes
     are unpublished lecture notes, so no line-by-line correspondence is claimed,
     and several estimates were re-derived with different constants or stronger
@@ -195,7 +201,9 @@ alignment:
       status: proved
       note: >-
         The statement of record, compared by Comparator; Solution.lean discharges
-        it from NashEmbedding.nashCompact by unfolding one definition.
+        it from NashEmbedding.nashCompact by unfolding the predicate
+        PullsBackEuclidean and the identity wrapper toEuclid, both defined in
+        NashEmbedding/Compact/Main.lean.
     - source: "Nash's theorem for the flat torus (Wassermann, Nash's embedding theorem for the N-torus)"
       lean: "NashEmbedding.nashTorus"
       module: "NashEmbedding.Torus.Main"
