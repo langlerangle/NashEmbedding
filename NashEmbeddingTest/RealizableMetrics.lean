@@ -1,8 +1,8 @@
 /-
   # NashEmbedding witness tests: realizable metrics + Theorem A
 
-  Concrete witness checks for `NashEmbedding/RealizableMetrics.lean` and
-  `NashEmbedding/SmoothMetricApprox.lean`:
+  Concrete witness checks for `NashEmbedding/Torus/RealizableMetrics.lean` and
+  `NashEmbedding/Torus/Approximation/SmoothMetricApprox.lean`:
   - **TN1** — closure under addition (`realizable_sum`).
   - **TN2** — closure under non-negative scaling (`realizable_nonneg_smul`).
   - **TN3** — `injRealizable_posDef`: injectively realizable ⟹ pos-def smooth.

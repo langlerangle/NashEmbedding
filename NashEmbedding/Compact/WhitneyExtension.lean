@@ -7,7 +7,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 import Mathlib
 
 /-!
-# Whitney extension along the bump-covering embedding (S2, work in progress)
+# Whitney extension along the bump-covering embedding (S2)
 
 Let `f : SmoothBumpCovering ι I M` be a finite smooth bump covering of a compact
 manifold `M` (no boundary), and `Φ = f.embeddingPiTangent : M → (ι → E × ℝ)`,
@@ -37,8 +37,8 @@ would need a Seeley-type extension across the boundary — not attempted.)
 No compact support is claimed for `F`: the reduction to `nashTorus` cuts off
 against the flat metric with a bump equal to `1` on `Φ '' univ` anyway (S4).
 
-Leaves L1–L5 are self-contained and intended for Aristotle; L6 is the
-assembly.  All six were proved by Aristotle (project 564db993, 2026-08-30).
+Leaves L1–L5 are self-contained; L6 is the assembly.  All six were proved by
+Aristotle (project 564db993, 2026-08-30).
 -/
 
 open scoped Manifold ContDiff Topology

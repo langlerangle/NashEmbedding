@@ -18,7 +18,7 @@ Let `u₀ : ℝⁿ → ℝᴺ` be smooth, `2πℤⁿ`-periodic and *free*: at ev
 
   `∂ᵢ(u₀ + v) · ∂ⱼ(u₀ + v) = ∂ᵢu₀ · ∂ⱼu₀ + hᵢⱼ`.
 
-Proof shape (see `notes/theoremB_derivation.md`):
+Proof shape:
 1. the dual frame `D` of `{∂ᵢu₀} ∪ {∂ₚ∂_q u₀}` (`DualFrame.lean`);
 2. the Günther operator `T v = c + B v v` on coefficient sequences, built from the
    coefficients of `D` and `h` (`GuntherOperator.lean`), satisfies `IterHyp`;

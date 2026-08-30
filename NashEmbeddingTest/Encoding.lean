@@ -3,14 +3,15 @@
 
   Diagnostic tests for the `SmoothPeriodic.smooth` field encoding.
 
-  Background. `SmoothPeriodic.smooth` is currently typed `ContDiff ℝ ⊤ f`,
-  which in Mathlib v4.28's `WithTop ℕ∞` encoding means analytic (`ω`), not
-  C^∞ (`∞`). The patch changes the field to `ContDiff ℝ ∞ f`.
+  Background. In Mathlib v4.28's `WithTop ℕ∞` encoding a bare `⊤` means
+  analytic (`ω`), not C^∞ (`∞`). `SmoothPeriodic.smooth` was once typed
+  `ContDiff ℝ ⊤ f` by mistake and is now `ContDiff ℝ ∞ f`; these tests
+  guard against the encoding regressing.
 
   Test X is the discriminating test:
-   - Pre-patch (smooth = `ContDiff ℝ ⊤` = analytic): X fails to elaborate
-     because the witness `expNegInvGlue ∘ sin` is not analytic.
-   - Post-patch (smooth = `ContDiff ℝ ∞` = C^∞): X elaborates.
+   - With `smooth = ContDiff ℝ ⊤` (analytic), X fails to elaborate because
+     the witness `expNegInvGlue ∘ sin` is not analytic.
+   - With `smooth = ContDiff ℝ ∞` (C^∞, the current state), X elaborates.
 
   Tests A1, W, Y, Z elaborate in either state — they exercise concrete
   witnesses (zero, `flatTorusEmb`, `flatMetric`) all of which happen to

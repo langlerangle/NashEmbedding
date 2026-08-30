@@ -7,7 +7,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 import Mathlib
 
 /-!
-# The ambient metric along an immersion (S3, work in progress)
+# The ambient metric along an immersion (S3)
 
 Let `u : M → E'` be a smooth immersion of a manifold `M` (modelled on `E`) into a
 finite-dimensional real inner-product space `E'`, and `g` a smooth Riemannian

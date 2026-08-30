@@ -8,7 +8,7 @@ import NashEmbedding.Torus.Basic
 import NashEmbedding.Sobolev.Periodization
 
 /-!
-# Leaves for the compact Nash assembly (S4, work in progress)
+# Leaves for the compact Nash assembly (S4)
 
 Self-contained facts used by the proof of `nashCompact` (reduction to `nashTorus`,
 Wassermann §13):

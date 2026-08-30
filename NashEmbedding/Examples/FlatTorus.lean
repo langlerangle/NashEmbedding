@@ -29,8 +29,9 @@ The geometric heart is L3 (`torus2Wrap_pullback`): `Circle.exp` is a local isome
 standard basis vectors to unit tangent vectors on the two Circle factors, and the flat
 product metric on `Circle × Circle` pulls back to the identity matrix on `ℝ²`.
 
-Nine sorried leaves for Aristotle; assembly `torus2_matches_nashTorus` by hand.
-L7 is a general reusable fact (`Realizes u g` + pointwise `PosDef g` ⇒ `HasFullRankDeriv u`).
+The nine leaves were proved by Aristotle (project 1c05ddd8, 2026-08-30); the
+assembly `torus2_matches_nashTorus` is by hand.  L7 is a general reusable fact
+(`Realizes u g` + pointwise `PosDef g` ⇒ `HasFullRankDeriv u`).
 -/
 
 open scoped Manifold ContDiff Topology

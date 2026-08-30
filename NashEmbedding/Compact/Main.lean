@@ -13,9 +13,8 @@ import NashEmbedding.Compact.Periodization
 /-!
 # Nash embedding for compact manifolds
 
-Statement-first scaffold for the general Nash isometric embedding theorem,
-to be reduced to `nashTorus` via Whitney embedding
-(Wassermann §13; see `notes/prerequisites_inventory.md`, "Phase 2 revisited").
+Nash's isometric embedding theorem for closed manifolds, proved by reduction to
+`nashTorus` via Whitney embedding (Wassermann §13).
 
 Design (recorded 2026-08-30):
  - The Riemannian metric is Mathlib's `ContMDiffRiemannianMetric` on the
@@ -23,7 +22,7 @@ Design (recorded 2026-08-30):
    only as an *input* type.
  - The conclusion uses `mfderiv` and the Euclidean inner product only:
    no `IsImmersion` / `IsSmoothEmbedding` (their `comp`/`contMDiff` API is
-   still `proof_wanted` in Mathlib).
+   `proof_wanted` at the pinned Mathlib version).
  - The periodic-ℝᴺ torus of `nashTorus` never appears in the statement.
 
 The assembly `nashCompact` is proved by hand from four lemmas S5-1 – S5-4 below,
@@ -614,10 +613,11 @@ end Statement
 
 /-! ## Witnesses against the statement alone
 
-  TODO (after S3, which builds pullback metrics): `Circle` with the metric
-  induced from `ℂ` — the genuinely informative witness.  Until then, the
-  degenerate but type-checking witness below confirms that the hypothesis
-  type is inhabited and that the conclusion is attainable in the trivial case. -/
+  The informative witnesses live in `Examples/`: the round spheres and their
+  products (`Examples/Sphere.lean`) and the `Circle × Circle` cross-check
+  against `nashTorus` (`Examples/FlatTorus.lean`).  The degenerate witness
+  below confirms only that the hypothesis type is inhabited and that the
+  conclusion is attainable in the trivial case. -/
 
 section Witnesses
 
