@@ -193,12 +193,15 @@ review:
     repository was made public, the author asked GPT-5.6 Sol (OpenAI) for an
     adversarial statement-level audit (fidelity of Challenge.lean and
     Solution.lean to the prose; honesty and checkability of the provenance;
-    explicitly not a proof review). It reported five findings, all in the prose
-    and none in the theorem: the model-level meaning of I.Boundaryless, the
-    omitted isVonNBounded field in the description of the metric, immersion and
-    closed embeddedness being corollaries rather than part of the statement, the
-    number of definitions unfolded by Solution.lean, and the ⊤/∞/ω explanation.
-    All five were verified and corrected in the following commit. None of this is a check that the
+    explicitly not a proof review), repeated on the corrected repository. Over
+    three passes it reported seven findings, all in the prose and none in the
+    theorem statement: the model-level meaning of I.Boundaryless, the omitted
+    isVonNBounded field in the description of the metric, immersion and closed
+    embeddedness being corollaries rather than part of the statement, the number
+    of definitions unfolded by Solution.lean, the ⊤/∞/ω explanation, a README
+    sentence attributing the standard axiom set to the Challenge copy as well as
+    the Solution, and an inconsistency between "no external review" and the
+    recorded audit. Each was verified and corrected in the following commit. None of this is a check that the
     informal argument is correct or that the statement is the right formalization
     of Nash's theorem beyond what the Challenge docstring explains.
 

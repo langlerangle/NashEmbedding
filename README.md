@@ -177,8 +177,10 @@ the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the def
 No human has read the Lean proofs in this repository (see *How this was produced*). After the
 repository was made public, GPT-5.6 Sol (OpenAI) was asked for an adversarial statement-level
 audit — the fidelity of `Challenge.lean` and `Solution.lean` to this README and to
-`formalization.yaml`, and the honesty of the provenance; not a proof review. Its five findings,
-all in the prose, were verified and corrected; the yaml's `review` section records them.
+`formalization.yaml`, and the honesty of the provenance; not a proof review. Over three passes
+(the later ones re-auditing the corrections) it reported seven findings, all in the prose and
+none in the theorem statement; each was verified and corrected. The yaml's `review` section
+records them.
 
 ## Building
 
