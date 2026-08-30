@@ -40,8 +40,10 @@ details. Nothing here is claimed to be new.
 declares no definitions, and states the theorem above with a `sorry`;
 [`Solution.lean`](Solution.lean) proves it from the library's
 [`NashEmbedding.nashCompact`](NashEmbedding/Compact/Main.lean). A reader who wants to know
-*what* is proved need read only `Challenge.lean`. Both depend on `propext`,
-`Classical.choice` and `Quot.sound` only.
+*what* is proved need read only `Challenge.lean`. The proved declaration in `Solution.lean`
+depends on `propext`, `Classical.choice` and `Quot.sound` only (the copy in `Challenge.lean`
+is the deliberate `sorry`, so it depends on `sorryAx` by design; Comparator checks that the
+two statements are identical and that the Solution's proof uses only the permitted axioms).
 
 ## Roadmap
 
@@ -229,8 +231,8 @@ The Lean development was produced by AI systems, in three roles:
   standard axioms. In the August campaign every submission whose result was used returned
   clean the first time (21 submissions, one an unused duplicate).
 
-No external or independent review has been performed, and no human has read the Lean
-source in full.
+No independent human review has been performed, and no human has read the Lean source in
+full; the only external review is the AI statement-level audit described under *Trust*.
 
 ### Provenance record
 
