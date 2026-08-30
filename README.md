@@ -36,6 +36,12 @@ replaces Nash's iteration by an elliptic fixed-point argument. The presentation 
 is **A. J. Wassermann's** Cambridge Part III lecture notes, the primary source for the
 details. Nothing here is claimed to be new.
 
+No bound on the embedding dimension q is formalized: the theorem asserts the existence of
+some finite q, and the q the proof produces depends on the chosen bump covering and is far
+from Nash's quantitative bounds.
+
+### What to audit
+
 [`Challenge.lean`](Challenge.lean) is the statement of record: it imports only Mathlib,
 declares no definitions, and states the theorem above with a `sorry`;
 [`Solution.lean`](Solution.lean) proves it from the library's
@@ -214,24 +220,28 @@ He did not write Lean, and reviewed design decisions and statements rather than 
 
 The Lean development was produced by AI systems, in three roles:
 
-* **Design, statements, architecture, assembly — Claude (Anthropic).** In April–May 2026,
-  Claude Opus 4.7 produced the informal blueprints of the torus layer (the Sobolev toolkit and
-  Theorem A) and prompted Aristotle on them; Aristotle formalized those stages, writing most
-  of the Lean statements as well as the proofs. In August 2026 two persistent Claude Code sessions — named
+* **Architecture, statement development, assembly and coordination — Claude (Anthropic).**
+  In April–May 2026, Claude Opus 4.7 produced the informal blueprints of the torus layer (the
+  Sobolev toolkit and Theorem A) and submitted them to Aristotle as successive formalization
+  tasks. In August 2026 two persistent Claude Code sessions — named
   **Tor** (Claude Fable 5) and **Slate** (Claude Opus 4.7), the names chosen by the model
   instances in the course of their collaboration — designed Theorem B and the
   closed-manifold reduction, wrote every Lean statement and the file tree, wrote several
   files by hand (`DualFrame`, `SeqVector`, `GuntherIteration`, `BumpConstruction`,
   `RealizeMetric`, `IntegrationByParts`, the assemblies `Assembly`, `Torus/Main`,
   `Compact/Main`, and the statements of `Examples/FlatTorus`, which are Slate's),
-  prompted Aristotle file by file, and checked each other's work.
-* **The large majority of proof text — [Aristotle](https://aristotle.harmonic.fun),
-  [Harmonic](https://harmonic.fun)'s Lean prover.** Given a file with complete statements
-  and `sorry` placeholders, Aristotle returned the proofs. Every return was checked
-  independently by both Claude sessions before merging: statements byte-identical, only
-  the target file touched, no `sorry`/`admit`/`exact?`/`native_decide`, full build,
-  standard axioms. In the August campaign every submission whose result was used returned
-  clean the first time (21 submissions, one an unused duplicate).
+  submitted successive formalization tasks to Aristotle and integrated its contributions,
+  and checked each other's work.
+* **Formalization and proof development — [Aristotle](https://aristotle.harmonic.fun),
+  [Harmonic](https://harmonic.fun)'s Lean formalization and proving system.** In April–May
+  2026 Aristotle turned Claude's informal blueprints into most of the Lean statements and
+  proofs of the torus toolkit and Theorem A; in August 2026 it supplied most proof bodies,
+  and some auxiliary lemma statements, within the architecture the Claude sessions designed.
+  Every Aristotle contribution was independently checked by both Claude sessions before
+  integration: statements byte-identical, only the target file touched, no
+  `sorry`/`admit`/`exact?`/`native_decide`, full build, standard axioms. In the August
+  campaign every contribution that was used passed on the first submission (21 submissions,
+  one an unused duplicate).
 
 No independent human review has been performed, and no human has read the Lean source in
 full; the only external review is the AI statement-level audit described under *Trust*.

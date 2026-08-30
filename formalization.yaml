@@ -159,13 +159,15 @@ automation:
       framework: "Aristotle (Harmonic), CLI 2.1.0, pinned to Lean v4.28.0 and Mathlib v4.28.0"
       models: []
       tool_setup: >-
-        Prover. Given files with complete statements and sorry placeholders,
-        Aristotle returned proofs: 16 project submissions in April-May 2026 (the
-        torus Sobolev toolkit and Theorem A, in eight stages with retakes) and 21
-        in August 2026 (the perturbation theorem, the assembly leaves, the
-        closed-manifold reduction, the metric constructions and the examples),
-        of which one was a duplicate submission whose result was not used; every
-        August job that was used returned clean on first submission. Project
+        Lean formalization and proving system. In April-May 2026 it produced most
+        of the Lean statements and proofs of the torus toolkit and Theorem A from
+        Claude's informal blueprints (16 project submissions, in eight stages with
+        retakes); in August 2026 it supplied most proof bodies, and some auxiliary
+        lemma statements, within the architecture designed by the Claude sessions
+        (21 submissions: the perturbation theorem, the assembly leaves, the
+        closed-manifold reduction, the metric constructions and the examples), of
+        which one was a duplicate submission whose result was not used; every
+        August contribution that was used passed on first submission. Project
         identifiers are listed in the README so that the record can be checked
         against Harmonic's logs.
       cost:
