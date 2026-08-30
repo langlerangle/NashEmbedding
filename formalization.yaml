@@ -151,8 +151,8 @@ automation:
         with the author but largely with each other. They designed the perturbation
         theorem and the closed-manifold reduction, wrote every Lean statement and
         the file architecture, wrote several files by hand (dual frames, the
-        abstract fixed point, the bump construction, the assemblies), prompted
-        Aristotle file by file, and independently double-checked every Aristotle
+        abstract fixed point, the bump construction, the assemblies), submitted
+        successive formalization tasks to Aristotle, integrated its contributions, and independently double-checked every Aristotle
         return before merging (statements byte-identical, only the target file
         touched, no sorry/admit/exact?/native_decide, full build, standard axioms).
     - method: agent
