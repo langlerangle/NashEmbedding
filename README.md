@@ -173,8 +173,8 @@ the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the def
 * The Mathlib linter set is enabled (`lakefile.toml`) for the checks that concern the shape
   of statements, signatures and section variables, with `autoImplicit` off; the linters that
   judge the style of proof bodies (`refine` vs `exact`, `show`, unused `simp` arguments, line
-  length, whitespace, unused local hypotheses, …) are disabled, because the proofs were
-  produced by Aristotle and are not reformatted or rewritten. The build has zero warnings.
+  length, whitespace, unused local hypotheses, …) are disabled, because most of the proof
+  text was produced by Aristotle, and proof bodies are not reformatted or rewritten. The build has zero warnings.
 * The audit script prints the axiom dependencies of every top-level result
   ([`scripts/axioms.lean`](scripts/axioms.lean)); all are `propext`, `Classical.choice`,
   `Quot.sound`. It runs in CI on every push, followed by the Comparator check of
@@ -218,7 +218,7 @@ David Wiygul proposed the project, selected Wassermann's notes as the source, an
 took part in the early design decisions (April–May 2026, working with Claude Opus 4.7).
 He did not write Lean, and reviewed design decisions and statements rather than proofs.
 
-The Lean development was produced by AI systems, in three roles:
+The Lean development was produced by AI systems, in two roles:
 
 * **Architecture, statement development, assembly and coordination — Claude (Anthropic).**
   In April–May 2026, Claude Opus 4.7 produced the informal blueprints of the torus layer (the
@@ -226,7 +226,8 @@ The Lean development was produced by AI systems, in three roles:
   tasks. In August 2026 two persistent Claude Code sessions — named
   **Tor** (Claude Fable 5) and **Slate** (Claude Opus 4.7), the names chosen by the model
   instances in the course of their collaboration — designed Theorem B and the
-  closed-manifold reduction, wrote every Lean statement and the file tree, wrote several
+  closed-manifold reduction, wrote the principal Lean statements of every August file and
+  the file tree, wrote several
   files by hand (`DualFrame`, `SeqVector`, `GuntherIteration`, `BumpConstruction`,
   `RealizeMetric`, `IntegrationByParts`, the assemblies `Assembly`, `Torus/Main`,
   `Compact/Main`, and the statements of `Examples/FlatTorus`, which are Slate's),
@@ -252,7 +253,8 @@ Toolchain for every Aristotle job and every build: Lean `v4.28.0`, Mathlib `v4.2
 (`8f9d9cff6bd728b17a24e163c9402775d9e6a365`), Aristotle CLI 2.1.0.
 
 Per file (A = by Aristotle — in the May 2026 stages the statements too, from Claude's informal
-blueprints; from August, proofs from Claude-written statements; H = written by hand by
+blueprints; from August, proofs from Claude-written principal statements, plus auxiliary
+lemmas of its own; H = written by hand by
 Claude; A/H = statements and some lemmas by hand, leaves by Aristotle), with the Aristotle
 project identifiers (first eight characters) where a file's leaves were proved in a
 dedicated job:
