@@ -172,7 +172,11 @@ the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the def
   `Quot.sound`. It runs in CI on every push, followed by the Comparator check of
   `Challenge.lean` against `Solution.lean`.
 
-No human has read the Lean proofs in this repository (see *How this was produced*).
+No human has read the Lean proofs in this repository (see *How this was produced*). After the
+repository was made public, GPT-5.6 Sol (OpenAI) was asked for an adversarial statement-level
+audit — the fidelity of `Challenge.lean` and `Solution.lean` to this README and to
+`formalization.yaml`, and the honesty of the provenance; not a proof review. Its five findings,
+all in the prose, were verified and corrected; the yaml's `review` section records them.
 
 ## Building
 

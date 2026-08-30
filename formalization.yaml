@@ -181,6 +181,7 @@ review:
   status: self-assessed
   reviewers:
     - "David Wiygul"
+    - "GPT-5.6 Sol (OpenAI), statement-level audit"
   notes: >-
     No independent human review of the mathematics or of the Lean source. Every
     theorem is checked by Lean; scripts/audit.sh checks the trust conditions (no
@@ -188,7 +189,16 @@ review:
     axioms for every top-level result); and each Aristotle return was
     independently verified by two separate AI sessions before being merged. The
     compared statement in Challenge.lean was reviewed at the statement level by
-    both sessions against the informal theorem. None of this is a check that the
+    both sessions against the informal theorem. In addition, after the
+    repository was made public, the author asked GPT-5.6 Sol (OpenAI) for an
+    adversarial statement-level audit (fidelity of Challenge.lean and
+    Solution.lean to the prose; honesty and checkability of the provenance;
+    explicitly not a proof review). It reported five findings, all in the prose
+    and none in the theorem: the model-level meaning of I.Boundaryless, the
+    omitted isVonNBounded field in the description of the metric, immersion and
+    closed embeddedness being corollaries rather than part of the statement, the
+    number of definitions unfolded by Solution.lean, and the ⊤/∞/ω explanation.
+    All five were verified and corrected in the following commit. None of this is a check that the
     informal argument is correct or that the statement is the right formalization
     of Nash's theorem beyond what the Challenge docstring explains.
 
