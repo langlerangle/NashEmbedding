@@ -1,6 +1,6 @@
 # Nash's isometric embedding theorem in Lean
 
-A formalization of **Nash's $C^\infty$ isometric embedding theorem for closed manifolds**,
+A formalization of **Nash's C^∞ isometric embedding theorem for closed manifolds**,
 by Günther's method, in Lean 4 / Mathlib.
 
 ```lean
@@ -20,9 +20,9 @@ theorem NashEmbeddingTheorem.nash_isometric_embedding
             (mfderiv I 𝓘(ℝ, EuclideanSpace ℝ (Fin q)) w x v')
 ```
 
-Every compact smooth manifold without boundary, with any smooth Riemannian metric $g$,
-admits a smooth injective map $w$ into some $\mathbb{R}^q$ whose differential pulls the
-Euclidean inner product back to $g$. Since $M$ is compact, $w$ is a closed embedding
+Every compact smooth manifold without boundary, with any smooth Riemannian metric g,
+admits a smooth injective map w into some ℝᵠ whose differential pulls the
+Euclidean inner product back to g. Since M is compact, w is a closed embedding
 (`NashEmbedding.nashCompact_isClosedEmbedding`) and an immersion
 (`NashEmbedding.PullsBackEuclidean.injective_mfderiv`): a smooth isometric embedding.
 
@@ -43,48 +43,48 @@ declares no definitions, and states the theorem above with a `sorry`;
 The development has two layers: Nash's theorem for the flat torus, and the reduction of a
 closed manifold to the torus.
 
-### 1. The Sobolev toolkit on $\mathbb{T}^n$ — [`NashEmbedding/Sobolev/`](NashEmbedding/Sobolev)
+### 1. The Sobolev toolkit on 𝕋ⁿ — [`NashEmbedding/Sobolev/`](NashEmbedding/Sobolev)
 
-Everything is done on $\mathbb{R}^n$ with $2\pi\mathbb{Z}^n$-periodic data, in two
-parallel pictures: **momentum space** (sequences on $\mathbb{Z}^n$, the weighted
-$\ell^2$ spaces $H^s$) and **position space** (distributions on trigonometric
+Everything is done on ℝⁿ with 2πℤⁿ-periodic data, in two
+parallel pictures: **momentum space** (sequences on ℤⁿ, the weighted
+ℓ² spaces Hˢ) and **position space** (distributions on trigonometric
 polynomials; names carry the suffix `Distrib`).
 
 | what | where |
 |---|---|
-| the scale $H^s(\mathbb{Z}^n)$, Rellich compactness, the Sobolev sup bound | [`Basic`](NashEmbedding/Sobolev/Basic.lean), [`CompactInclusion`](NashEmbedding/Sobolev/CompactInclusion.lean), [`Inequalities`](NashEmbedding/Sobolev/Inequalities.lean) |
-| three multiplication theorems ($H^s$ is an algebra for $s > n/2$; the sharp and bootstrapped forms) | [`Multiplication`](NashEmbedding/Sobolev/Multiplication.lean), [`MultiplicationSharp`](NashEmbedding/Sobolev/MultiplicationSharp.lean), [`MultiplicationBootstrap`](NashEmbedding/Sobolev/MultiplicationBootstrap.lean) |
+| the scale Hˢ(ℤⁿ), Rellich compactness, the Sobolev sup bound | [`Basic`](NashEmbedding/Sobolev/Basic.lean), [`CompactInclusion`](NashEmbedding/Sobolev/CompactInclusion.lean), [`Inequalities`](NashEmbedding/Sobolev/Inequalities.lean) |
+| three multiplication theorems (Hˢ is an algebra for s > n/2; the sharp and bootstrapped forms) | [`Multiplication`](NashEmbedding/Sobolev/Multiplication.lean), [`MultiplicationSharp`](NashEmbedding/Sobolev/MultiplicationSharp.lean), [`MultiplicationBootstrap`](NashEmbedding/Sobolev/MultiplicationBootstrap.lean) |
 | convolution, Riemann sums, mollifiers, periodization | [`Convolution`](NashEmbedding/Sobolev/Convolution.lean), [`RiemannSum`](NashEmbedding/Sobolev/RiemannSum.lean), [`Mollifier`](NashEmbedding/Sobolev/Mollifier.lean), [`Periodization`](NashEmbedding/Sobolev/Periodization.lean) |
 | Fourier inversion for smooth periodic functions, integration by parts, Parseval | [`FourierSynthesis`](NashEmbedding/Sobolev/FourierSynthesis.lean), [`SynthesisRegularity`](NashEmbedding/Sobolev/SynthesisRegularity.lean), [`IntegrationByParts`](NashEmbedding/Sobolev/IntegrationByParts.lean), [`Parseval`](NashEmbedding/Sobolev/Parseval.lean) |
-| the resolvent $(1+\Delta)^{-1}$, limits in $H^s$, the convolution algebra, the coefficient dictionary | [`Resolvent`](NashEmbedding/Sobolev/Resolvent.lean), [`Limits`](NashEmbedding/Sobolev/Limits.lean), [`ConvolutionAlgebra`](NashEmbedding/Sobolev/ConvolutionAlgebra.lean), [`CoeffTransport`](NashEmbedding/Sobolev/CoeffTransport.lean) |
+| the resolvent (1+Δ)⁻¹, limits in Hˢ, the convolution algebra, the coefficient dictionary | [`Resolvent`](NashEmbedding/Sobolev/Resolvent.lean), [`Limits`](NashEmbedding/Sobolev/Limits.lean), [`ConvolutionAlgebra`](NashEmbedding/Sobolev/ConvolutionAlgebra.lean), [`CoeffTransport`](NashEmbedding/Sobolev/CoeffTransport.lean) |
 
 ### 2. Nash for the flat torus — [`NashEmbedding/Torus/`](NashEmbedding/Torus)
 
-A metric is a smooth periodic positive-definite matrix field $g$ on $\mathbb{R}^n$; a map
-$u : \mathbb{R}^n \to \mathbb{R}^N$ *realizes* $g$ if $\partial_i u \cdot \partial_j u = g_{ij}$
+A metric is a smooth periodic positive-definite matrix field g on ℝⁿ; a map
+u : ℝⁿ → ℝᴺ *realizes* g if ∂ᵢu · ∂ⱼu = gᵢⱼ
 ([`Torus/Basic`](NashEmbedding/Torus/Basic.lean)).
 
 * **Realizable metrics form a cone** closed under sums and positive scalings, and every
   realizable metric can be promoted to an injectively realizable one by adjoining a
   scaled copy of the standard embedding of the torus —
   [`RealizableMetrics`](NashEmbedding/Torus/RealizableMetrics.lean).
-* **Theorem A** (approximation): every smooth metric is an $H^s$-limit of realizable
-  metrics, for every $s$ — [`realizable_approx_all_s`](NashEmbedding/Torus/Approximation/RealizeMetric.lean),
+* **Theorem A** (approximation): every smooth metric is an Hˢ-limit of realizable
+  metrics, for every s — [`realizable_approx_all_s`](NashEmbedding/Torus/Approximation/RealizeMetric.lean),
   built from bumps with prescribed Gram matrix
   ([`BumpConstruction`](NashEmbedding/Torus/Approximation/BumpConstruction.lean),
   [`SmoothMetricApprox`](NashEmbedding/Torus/Approximation/SmoothMetricApprox.lean)).
-* **Theorem B** (Günther's perturbation theorem): a *free* embedding $u_0$ (first and
+* **Theorem B** (Günther's perturbation theorem): a *free* embedding u₀ (first and
   second partials linearly independent) can be perturbed to realize
-  $\partial u_0 \cdot \partial u_0 + h$ for every sufficiently small smooth symmetric $h$ —
+  ∂u₀ · ∂u₀ + h for every sufficiently small smooth symmetric h —
   [`gunther_perturbation`](NashEmbedding/Torus/Perturbation/Main.lean). The perturbation
-  is found as the fixed point of a contraction on coefficient sequences in $H^r$
+  is found as the fixed point of a contraction on coefficient sequences in Hʳ
   ([`GuntherIteration`](NashEmbedding/Torus/Perturbation/GuntherIteration.lean),
   [`GuntherOperator`](NashEmbedding/Torus/Perturbation/GuntherOperator.lean)), using the
-  dual frame of $\{\partial_i u_0, \partial_p\partial_q u_0\}$
+  dual frame of {∂ᵢu₀, ∂ₚ∂_q u₀}
   ([`DualFrame`](NashEmbedding/Torus/Perturbation/DualFrame.lean)) and Günther's identity
   ([`GuntherIdentity`](NashEmbedding/Torus/Perturbation/GuntherIdentity.lean),
   [`GuntherIdentitySeq`](NashEmbedding/Torus/Perturbation/GuntherIdentitySeq.lean)).
-* **A free embedding** of $\mathbb{T}^n$ in $\mathbb{R}^{n^2+n}$ —
+* **A free embedding** of 𝕋ⁿ in ℝ^(n²+n) —
   [`FreeEmbedding`](NashEmbedding/Torus/FreeEmbedding.lean).
 * **Assembly**: split off a small multiple of the flat metric, approximate the rest by a
   realizable metric, perturb the free embedding to absorb the difference, and adjoin the
@@ -96,17 +96,17 @@ $u : \mathbb{R}^n \to \mathbb{R}^N$ *realizes* $g$ if $\partial_i u \cdot \parti
 ### 3. From a closed manifold to the torus — [`NashEmbedding/Compact/`](NashEmbedding/Compact)
 
 * **Whitney, and an extension along it.** Mathlib's bump-covering embedding
-  $\Phi : M \to \mathbb{R}^N$ is a smooth injective immersion; any smooth function on $M$
-  extends to a smooth function on $\mathbb{R}^N$ along it, chart by chart —
+  Φ : M → ℝᴺ is a smooth injective immersion; any smooth function on M
+  extends to a smooth function on ℝᴺ along it, chart by chart —
   [`WhitneyExtension`](NashEmbedding/Compact/WhitneyExtension.lean).
-* **An ambient metric.** Using the pseudo-inverse of $d\Phi$, the metric $g$ extends to a
-  smooth positive-definite bilinear form on a neighbourhood of $\Phi(M)$ in
-  $\mathbb{R}^N$ — [`AmbientMetric`](NashEmbedding/Compact/AmbientMetric.lean).
-* **Cutoff and periodization.** After scaling $\Phi(M)$ into the open cube $(-\pi,\pi)^N$,
+* **An ambient metric.** Using the pseudo-inverse of dΦ, the metric g extends to a
+  smooth positive-definite bilinear form on a neighbourhood of Φ(M) in
+  ℝᴺ — [`AmbientMetric`](NashEmbedding/Compact/AmbientMetric.lean).
+* **Cutoff and periodization.** After scaling Φ(M) into the open cube (−π, π)ᴺ,
   the ambient form is cut off, symmetrized, made positive definite by adding a multiple
-  of the identity, and periodized to a metric on $\mathbb{R}^N$ —
+  of the identity, and periodized to a metric on ℝᴺ —
   [`Periodization`](NashEmbedding/Compact/Periodization.lean).
-* **Conclusion.** `nashTorus` embeds the torus; composing with $\Phi$ gives $w$ —
+* **Conclusion.** `nashTorus` embeds the torus; composing with Φ gives w —
   [`nashCompact`](NashEmbedding/Compact/Main.lean), with its corollaries
   `nashCompact_isClosedEmbedding` and `PullsBackEuclidean.injective_mfderiv`.
 
@@ -115,12 +115,12 @@ $u : \mathbb{R}^n \to \mathbb{R}^N$ *realizes* $g$ if $\partial_i u \cdot \parti
 `ContMDiffRiemannianMetric`s from old ones: the metric induced by an immersion into an
 inner-product space ([`Induced`](NashEmbedding/Riemannian/Induced.lean)), pullbacks and
 products ([`Pullback`](NashEmbedding/Riemannian/Pullback.lean)). Hence the round spheres
-$S^n$ for every $n$ and the products $S^n \times S^m$
+Sⁿ for every n and the products Sⁿ × Sᵐ
 ([`Examples/Sphere`](NashEmbedding/Examples/Sphere.lean)), the flat torus
-$S^1 \times S^1$, and a consistency check between the two layers: the closed-manifold
-embedding of $S^1 \times S^1$, composed with the universal cover $\mathbb{R}^2 \to S^1 \times S^1$,
+S¹ × S¹, and a consistency check between the two layers: the closed-manifold
+embedding of S¹ × S¹, composed with the universal cover ℝ² → S¹ × S¹,
 is exactly a witness of the kind `nashTorus` produces for the identity metric on
-$\mathbb{R}^2$ —
+ℝ² —
 [`torus2_matches_nashTorus`](NashEmbedding/Examples/FlatTorus.lean). A negative example
 ([`Examples/Negative`](NashEmbedding/Examples/Negative.lean)) records what the theorem
 does not say.
@@ -130,10 +130,10 @@ does not say.
 Checked against Mathlib `v4.28.0` (the pin, February 2026) and against Mathlib master as of
 2026-04-27; "absent" below means absent from both.
 
-* The Sobolev scale on the torus — weighted $\ell^2$ spaces on $\mathbb{Z}^n$ with Rellich
+* The Sobolev scale on the torus — weighted ℓ² spaces on ℤⁿ with Rellich
   compactness, the sup bound and the three multiplication theorems (§1 above), transported
   to position space. Mathlib master has since gained Sobolev (Bessel-potential) spaces on
-  $\mathbb{R}^n$ via tempered distributions (`TemperedDistribution.memSobolev`, April 2026,
+  ℝⁿ via tempered distributions (`TemperedDistribution.memSobolev`, April 2026,
   after the pin); that is a different setting, and the compactness and algebra results used
   here are not among its statements.
 * Extension of smooth functions along Mathlib's bump-covering embedding
@@ -141,9 +141,9 @@ Checked against Mathlib `v4.28.0` (the pin, February 2026) and against Mathlib m
   of an injective linear map (`contDiffAt_pinv`).
 * Induced, pullback and product Riemannian metrics as `ContMDiffRiemannianMetric`s.
 
-Not absent, and used: Mathlib's $L^2$ Fourier theory on the $d$-torus
+Not absent, and used: Mathlib's L² Fourier theory on the d-torus
 (`UnitAddTorus.hasSum_sq_mFourierCoeff`), which `parseval_stdFourierCoeff` transports to
-continuous $2\pi$-periodic functions on $\mathbb{R}^n$ in this development's conventions;
+continuous 2π-periodic functions on ℝⁿ in this development's conventions;
 the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the definition
 `ContMDiffRiemannianMetric` itself.
 
