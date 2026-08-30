@@ -9,7 +9,7 @@ import NashEmbedding.Sobolev.Basic
 import NashEmbedding.Torus.Basic
 
 /-!
-# Bump construction for Theorem A (stage 2)
+# Bump construction for Theorem A
 
 A fixed one-dimensional bump `η`, its dilations `η(β·)` with closed-form
 mass identities, and the product bump `∏ₖ η(βₖ yₖ)` on `ℝⁿ` with its Gram
