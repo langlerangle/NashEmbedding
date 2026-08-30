@@ -8,7 +8,7 @@ import Mathlib
 import NashEmbedding.Sobolev.Distribution
 
 /-!
-# Convolution by a compactly supported smooth function (Stage 6)
+# Convolution by a compactly supported smooth function
 
 This file defines the convolution of a function `φ` with a periodic
 distribution `u ∈ X_n^*`, the rescaled function `φ_ε`, and proves the

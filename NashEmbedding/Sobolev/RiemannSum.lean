@@ -8,7 +8,7 @@ import Mathlib
 import NashEmbedding.Sobolev.Convolution
 
 /-!
-# Riemann-Sum Approximation of Convolution (Stage 7)
+# Riemann-Sum Approximation of Convolution
 
 This file defines the Riemann-sum operator `R^φ_M u ∈ X_n^*` and proves
 its convergence to the convolution `φ * u` in `H^s_{2πℤⁿ}(ℝⁿ)` as `M → ∞`.

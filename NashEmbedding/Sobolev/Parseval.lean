@@ -18,8 +18,6 @@ its Mathlib Fourier coefficients are `stdFourierCoeff n f` (`mFourierCoeff_toUni
 Mathlib's `hasSum_sq_mFourierCoeff` on `L²` (via `mFourierCoeff_toLp`) gives the identity
 with the torus integral of `|f|²`, which `integral_periodCube_eq_torus` converts to the
 cube integral.
-
-Requested by the ksindex project (Xi), 2026-08-30.
 -/
 
 open scoped BigOperators

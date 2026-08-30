@@ -11,7 +11,7 @@ import NashEmbedding.Sobolev.Distribution
 import NashEmbedding.Sobolev.Multiplication
 
 /-!
-# Second Sobolev Multiplication Theorem (Stage 4)
+# Second Sobolev Multiplication Theorem
 
 This file proves that H^s_{2πℤⁿ}(ℝⁿ) is closed under pointwise
 multiplication when 2s > n, with the norm bound

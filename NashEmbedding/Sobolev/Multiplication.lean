@@ -9,7 +9,7 @@ import NashEmbedding.Sobolev.Basic
 import NashEmbedding.Sobolev.Distribution
 
 /-!
-# Sobolev Multiplication on the Torus — Stage 3
+# Sobolev Multiplication on the Torus
 
 This file proves Peetre's inequality and the first Sobolev multiplication
 theorem: H^s_{2πℤⁿ}(ℝⁿ) is invariant under multiplication by smooth

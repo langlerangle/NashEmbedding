@@ -12,7 +12,7 @@ import NashEmbedding.Sobolev.Multiplication
 import NashEmbedding.Sobolev.MultiplicationSharp
 
 /-!
-# Third Sobolev Multiplication Theorem (Stage 5)
+# Third Sobolev Multiplication Theorem
 
 This file proves the third Sobolev multiplication theorem, the technical
 bootstrap inequality used in Nash's isometric embedding theorem.

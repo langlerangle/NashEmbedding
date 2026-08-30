@@ -12,7 +12,7 @@ import NashEmbedding.Sobolev.Differentiation
 import NashEmbedding.Sobolev.FourierSynthesis
 
 /-!
-# Distribution-Side Sobolev Spaces on the Torus (Stage 2)
+# Distribution-Side Sobolev Spaces on the Torus
 
 This file introduces the function/distribution-side formulation of the Sobolev
 space scale on the n-torus and recasts the Rellich compactness lemma and the
