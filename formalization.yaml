@@ -153,7 +153,7 @@ automation:
         the file architecture, wrote several files by hand (dual frames, the
         abstract fixed point, the bump construction, the assemblies), submitted
         successive formalization tasks to Aristotle, integrated its contributions, and independently double-checked every Aristotle
-        return before merging (statements byte-identical, only the target file
+        contribution before integrating it (statements byte-identical, only the target file
         touched, no sorry/admit/exact?/native_decide, full build, standard axioms).
     - method: agent
       framework: "Aristotle (Harmonic), CLI 2.1.0, pinned to Lean v4.28.0 and Mathlib v4.28.0"
