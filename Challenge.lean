@@ -19,7 +19,7 @@ finite-dimensional real normed space `E` through a boundaryless model with corne
 let `g` be a smooth Riemannian metric on `M` (`ContMDiffRiemannianMetric I ∞ E (TangentSpace I)`).
 
 **Nash's theorem** (`NashEmbeddingTheorem.nash_isometric_embedding`): there are `q : ℕ` and a
-smooth map `w : M → ℝᵠ` (`EuclideanSpace ℝ (Fin q)`) which is injective and pulls the
+smooth map `w : M → ℝ^q` (`EuclideanSpace ℝ (Fin q)`) which is injective and pulls the
 Euclidean inner product back to `g`: for every `x : M` and tangent vectors `v v'` at `x`,
 
   `g_x(v, v') = ⟪dw_x v, dw_x v'⟫`.
@@ -64,7 +64,7 @@ open Bundle
 namespace NashEmbeddingTheorem
 
 /-- **Nash's isometric embedding theorem.**  Every closed smooth manifold with a smooth
-Riemannian metric `g` admits a smooth injective map `w` into some Euclidean space `ℝᵠ` whose
+Riemannian metric `g` admits a smooth injective map `w` into some Euclidean space `ℝ^q` whose
 differential pulls the Euclidean inner product back to `g`. -/
 theorem nash_isometric_embedding
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]

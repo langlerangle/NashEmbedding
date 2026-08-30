@@ -24,11 +24,12 @@ project:
     extended by a pseudo-inverse construction, cut off, symmetrized and periodized,
     and the torus theorem is applied. No bound on the embedding dimension is
     claimed. Concrete instances (round spheres of every dimension, products of
-    spheres, the flat torus S¹ × S¹) are derived, and the flat-torus instance is
+    spheres, the flat torus 𝕊¹ × 𝕊¹) are derived, and the flat-torus instance is
     shown to reproduce the torus theorem's conclusion, tying the two layers
     together. Nothing here is claimed to be new. Essentially all Lean text was
-    produced by AI systems: the statements, architecture and assembly by Claude
-    (Anthropic) sessions, the large majority of proofs by Aristotle (Harmonic);
+    produced by AI systems: the architecture, the assembly and (from August 2026) the
+    statements by Claude (Anthropic) sessions; the proofs, and in the first stages
+    most of the statements as well, by Aristotle (Harmonic);
     the human author proposed the project, chose the source and made early design
     decisions. There is no sorry outside the deliberate hole in Challenge.lean, no
     project-defined axiom, and no native_decide.
@@ -132,9 +133,9 @@ automation:
       framework: "Claude Code"
       tool_setup: >-
         April-May 2026: initial planning with the human author, the informal
-        blueprint of the torus layer (Sobolev toolkit and Theorem A), the Lean
-        statements of its first eight stages, and the prompting of Aristotle on
-        those stages.
+        blueprints of the torus layer (Sobolev toolkit and Theorem A), and the
+        prompting of Aristotle on those stages; Aristotle wrote most of the Lean
+        statements of those stages as well as the proofs.
     - method: agent
       models: ["Claude Fable 5 (Anthropic)", "Claude Opus 4.7 (Anthropic)"]
       framework: "Claude Code"
@@ -218,12 +219,12 @@ alignment:
       note: >-
         By a Whitney embedding from Mathlib, an extension of the metric to the
         ambient Euclidean space, cutoff and periodization, and nashTorus.
-    - source: "Consistency check: the flat torus S¹ × S¹"
+    - source: "Consistency check: the flat torus 𝕊¹ × 𝕊¹"
       lean: "NashEmbedding.torus2_matches_nashTorus"
       module: "NashEmbedding.Examples.FlatTorus"
       status: proved
       note: >-
-        The closed-manifold theorem applied to S¹ × S¹ with the flat metric,
+        The closed-manifold theorem applied to 𝕊¹ × 𝕊¹ with the flat metric,
         composed with the universal cover, yields exactly the conclusion of
         nashTorus for the identity metric on ℝ².
 

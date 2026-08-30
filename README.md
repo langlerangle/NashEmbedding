@@ -1,6 +1,6 @@
 # Nash's isometric embedding theorem in Lean
 
-A formalization of **Nash's C^∞ isometric embedding theorem for closed manifolds**,
+A formalization of **Nash's C<sup>∞</sup> isometric embedding theorem for closed manifolds**,
 by Günther's method, in Lean 4 / Mathlib.
 
 ```lean
@@ -21,7 +21,7 @@ theorem NashEmbeddingTheorem.nash_isometric_embedding
 ```
 
 Every compact smooth manifold without boundary, with any smooth Riemannian metric g,
-admits a smooth injective map w into some ℝᵠ whose differential pulls the
+admits a smooth injective map w into some ℝ<sup>q</sup> whose differential pulls the
 Euclidean inner product back to g. Since M is compact, w is a closed embedding
 (`NashEmbedding.nashCompact_isClosedEmbedding`) and an immersion
 (`NashEmbedding.PullsBackEuclidean.injective_mfderiv`): a smooth isometric embedding.
@@ -61,7 +61,7 @@ polynomials; names carry the suffix `Distrib`).
 ### 2. Nash for the flat torus — [`NashEmbedding/Torus/`](NashEmbedding/Torus)
 
 A metric is a smooth periodic positive-definite matrix field g on ℝⁿ; a map
-u : ℝⁿ → ℝᴺ *realizes* g if ∂ᵢu · ∂ⱼu = gᵢⱼ
+u : ℝⁿ → ℝ<sup>N</sup> *realizes* g if ∂ᵢu · ∂ⱼu = gᵢⱼ
 ([`Torus/Basic`](NashEmbedding/Torus/Basic.lean)).
 
 * **Realizable metrics form a cone** closed under sums and positive scalings, and every
@@ -96,15 +96,15 @@ u : ℝⁿ → ℝᴺ *realizes* g if ∂ᵢu · ∂ⱼu = gᵢⱼ
 ### 3. From a closed manifold to the torus — [`NashEmbedding/Compact/`](NashEmbedding/Compact)
 
 * **Whitney, and an extension along it.** Mathlib's bump-covering embedding
-  Φ : M → ℝᴺ is a smooth injective immersion; any smooth function on M
-  extends to a smooth function on ℝᴺ along it, chart by chart —
+  Φ : M → ℝ<sup>N</sup> is a smooth injective immersion; any smooth function on M
+  extends to a smooth function on ℝ<sup>N</sup> along it, chart by chart —
   [`WhitneyExtension`](NashEmbedding/Compact/WhitneyExtension.lean).
 * **An ambient metric.** Using the pseudo-inverse of dΦ, the metric g extends to a
   smooth positive-definite bilinear form on a neighbourhood of Φ(M) in
-  ℝᴺ — [`AmbientMetric`](NashEmbedding/Compact/AmbientMetric.lean).
+  ℝ<sup>N</sup> — [`AmbientMetric`](NashEmbedding/Compact/AmbientMetric.lean).
 * **Cutoff and periodization.** After scaling Φ(M) into the open cube (−π, π)ᴺ,
   the ambient form is cut off, symmetrized, made positive definite by adding a multiple
-  of the identity, and periodized to a metric on ℝᴺ —
+  of the identity, and periodized to a metric on ℝ<sup>N</sup> —
   [`Periodization`](NashEmbedding/Compact/Periodization.lean).
 * **Conclusion.** `nashTorus` embeds the torus; composing with Φ gives w —
   [`nashCompact`](NashEmbedding/Compact/Main.lean), with its corollaries
@@ -115,10 +115,10 @@ u : ℝⁿ → ℝᴺ *realizes* g if ∂ᵢu · ∂ⱼu = gᵢⱼ
 `ContMDiffRiemannianMetric`s from old ones: the metric induced by an immersion into an
 inner-product space ([`Induced`](NashEmbedding/Riemannian/Induced.lean)), pullbacks and
 products ([`Pullback`](NashEmbedding/Riemannian/Pullback.lean)). Hence the round spheres
-Sⁿ for every n and the products Sⁿ × Sᵐ
+𝕊ⁿ for every n and the products 𝕊ⁿ × 𝕊ᵐ
 ([`Examples/Sphere`](NashEmbedding/Examples/Sphere.lean)), the flat torus
-S¹ × S¹, and a consistency check between the two layers: the closed-manifold
-embedding of S¹ × S¹, composed with the universal cover ℝ² → S¹ × S¹,
+𝕊¹ × 𝕊¹, and a consistency check between the two layers: the closed-manifold
+embedding of 𝕊¹ × 𝕊¹, composed with the universal cover ℝ² → 𝕊¹ × 𝕊¹,
 is exactly a witness of the kind `nashTorus` produces for the identity metric on
 ℝ² —
 [`torus2_matches_nashTorus`](NashEmbedding/Examples/FlatTorus.lean). A negative example
@@ -202,8 +202,9 @@ He did not write Lean, and reviewed design decisions and statements rather than 
 The Lean development was produced by AI systems, in three roles:
 
 * **Design, statements, architecture, assembly — Claude (Anthropic).** In April–May 2026,
-  Claude Opus 4.7 produced the informal blueprint of the torus layer and the statements
-  of its first eight stages. In August 2026 two persistent Claude Code sessions — named
+  Claude Opus 4.7 produced the informal blueprints of the torus layer (the Sobolev toolkit and
+  Theorem A) and prompted Aristotle on them; Aristotle formalized those stages, writing most
+  of the Lean statements as well as the proofs. In August 2026 two persistent Claude Code sessions — named
   **Tor** (Claude Fable 5) and **Slate** (Claude Opus 4.7), the names chosen by the model
   instances in the course of their collaboration — designed Theorem B and the
   closed-manifold reduction, wrote every Lean statement and the file tree, wrote several
@@ -227,7 +228,8 @@ source in full.
 Toolchain for every Aristotle job and every build: Lean `v4.28.0`, Mathlib `v4.28.0`
 (`8f9d9cff6bd728b17a24e163c9402775d9e6a365`), Aristotle CLI 2.1.0.
 
-Per file (A = proofs by Aristotle from Claude-written statements; H = written by hand by
+Per file (A = by Aristotle — in the May 2026 stages the statements too, from Claude's informal
+blueprints; from August, proofs from Claude-written statements; H = written by hand by
 Claude; A/H = statements and some lemmas by hand, leaves by Aristotle), with the Aristotle
 project identifiers (first eight characters) where a file's leaves were proved in a
 dedicated job:
