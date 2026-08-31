@@ -35,6 +35,9 @@ project:
     decisions. There is no sorry outside the deliberate hole in Challenge.lean, no
     project-defined axiom, and no native_decide.
   authors:
+    - "Aristotle (Harmonic)"
+    - "Claude Fable 5 (Anthropic)"
+    - "Claude Opus 4.7 (Anthropic)"
     - "David Wiygul"
   license: "Apache-2.0"
   responsible_maintainers:
@@ -174,10 +177,11 @@ automation:
       cost:
         tokens: "not exposed by the service"
   notes: >-
-    Following the convention of existing registry entries, project.authors
-    records the human author; the AI systems' authorship is recorded in this
-    section, in the Authors lines of the file headers, and in the commit
-    history (the initial commit is co-authored by Aristotle-Harmonic).
+    project.authors lists the authors of the formalization (not of the
+    mathematics formalized, which is credited under sources), mirroring the
+    Authors line of the file headers; their roles are detailed in this
+    section, and the commit history carries the same record (the initial
+    commit is co-authored by Aristotle-Harmonic).
     The human author proposed the project, selected Wassermann's notes as the
     source, and took part in the early design decisions; the Lean development was
     produced by the AI systems above, with the author reviewing design decisions
