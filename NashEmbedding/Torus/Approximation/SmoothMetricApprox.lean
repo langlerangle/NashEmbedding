@@ -27,9 +27,10 @@ $\sum_k f_k \cdot B_k$ approximates $g$ to within $\eta^2$ in the
 entrywise sum of $H^s$ semi-norms.
 
 Proof assembles the position-space analytic toolkit
-(`NashEmbedding.Sobolev.Periodicization`, `Mollifier`, `RiemannPositionSpace`,
-`SobolevInequalities`) together with stage-6/7 convergence
-(`Convolution.mollifier_convergence`, `RiemannSum.riemannSum_convergence`).
+(`NashEmbedding.Sobolev.Periodization`, `Mollifier`, `PositionSpace`,
+`Inequalities`) together with the two convergence theorems
+`NashEmbedding.Sobolev.Convolution.mollifier_convergence` and
+`NashEmbedding.Sobolev.RiemannSum.riemannSum_convergence`.
 
 The local helper `perEntry_residual_bound` packages the quasi-triangle
 bound applied per entry (combining Bridge Lemma 2, Fourier inversion,

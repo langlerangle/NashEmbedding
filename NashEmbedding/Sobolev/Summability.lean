@@ -33,7 +33,10 @@ The series `∑_{m ∈ ℤⁿ} (1 + |m|²)^{-s}` converges when `2s > n`.
 -/
 theorem summable_weight_neg {s : ℝ} (hn : 0 < n) (hs : (n : ℝ) < 2 * s) :
     Summable (fun m : Fin n → ℤ => weight n (-s) m) := by
-  -- We'll use the comparison test. Since \(1 + |m|^2 \geq 1\) for all \(m\), we have \((1 + |m|^2)^{-s} \leq (1 + |m|^2)^{-s}\).
+  -- AM–GM bounds the n-dimensional weight `(1 + |m|²)^{-s}` above by a product
+  -- of one-dimensional factors `∏ᵢ (1 + mᵢ²)^{-s/n}`, reducing multivariate
+  -- summability to the one-dimensional series `∑_{k ∈ ℤ} (1 + k²)^{-s/n}`,
+  -- which converges since `2s > n`, i.e. `s/n > 1/2`.
   have h_comparison : ∀ m : Fin n → ℤ, 0 < s → (1 + (∑ i : Fin n, ((m i) : ℝ) ^ 2)) ^ (-s) ≤ (∏ i : Fin n, (1 + (m i : ℝ) ^ 2) ^ (-s / n)) := by
     intro m hs_pos
     have h_prod : (∏ i : Fin n, (1 + (m i : ℝ) ^ 2)) ^ (1 / n : ℝ) ≤ 1 + (∑ i : Fin n, ((m i) : ℝ) ^ 2) := by

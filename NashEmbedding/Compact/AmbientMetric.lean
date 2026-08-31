@@ -7,7 +7,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 import Mathlib
 
 /-!
-# The ambient metric along an immersion (S3)
+# The ambient metric along an immersion
 
 Let `u : M → E'` be a smooth immersion of a manifold `M` (modelled on `E`) into a
 finite-dimensional real inner-product space `E'`, and `g` a smooth Riemannian
@@ -20,7 +20,7 @@ Then `G x` is a positive-definite symmetric bilinear form on `E'` with
 `G x (L v) (L w) = g_x v w`, and `x ↦ G x` is smooth `M → (E' →L E' →L ℝ)`.
 
 **Theorem** (`exists_ambient_metric`): such a `G` exists.  It is the input to the
-Whitney-extension step (S2, `WhitneyExtension.lean`), which extends `G ∘ u⁻¹`
+Whitney-extension step (`WhitneyExtension.lean`), which extends `G ∘ u⁻¹`
 from `u '' M` to a smooth matrix field on `E'`.
 
 Smoothness.  `T_xM` is definitionally `E`, but `x ↦ mfderiv u x` is not

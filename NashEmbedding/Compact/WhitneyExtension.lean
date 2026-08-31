@@ -7,7 +7,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 import Mathlib
 
 /-!
-# Whitney extension along the bump-covering embedding (S2)
+# Whitney extension along the bump-covering embedding
 
 Let `f : SmoothBumpCovering ι I M` be a finite smooth bump covering of a compact
 manifold `M` (no boundary), and `Φ = f.embeddingPiTangent : M → (ι → E × ℝ)`,
@@ -29,13 +29,17 @@ vanishes either because `θ (f i x) = 0` (when `f i x ≤ 1/2`) or because
 `G i (φ_i x) = ψ i x • h x = 0` (when `f i x > 1/2`, where the argument is
 `φ_i x`).  Summing, `F (Φ x) = ∑ i, ψ i x • h x = h x`.
 
-Why `[I.Boundaryless]`: the push-forward `G i` is `ψ i • h ∘ (extChartAt).symm`
-on the chart target and `0` elsewhere; this is smooth only if the target is
-open in `E`, which holds exactly when `I` has no boundary.  (With boundary one
-would need a Seeley-type extension across the boundary — not attempted.)
+Why `[I.Boundaryless]`: `I.Boundaryless` supplies open chart targets in `E`,
+which is what this extension-by-zero uses (the push-forward `G i` is
+`ψ i • h ∘ (extChartAt).symm` on the chart target and `0` elsewhere;
+smoothness on `E` follows because the chart target is open).  A model that
+satisfies only the pointwise notion `BoundarylessManifold I M`, or a genuine
+boundary, would need extra argument (e.g. a Seeley-type extension) — not
+attempted here.
 
 No compact support is claimed for `F`: the reduction to `nashTorus` cuts off
-against the flat metric with a bump equal to `1` on `Φ '' univ` anyway (S4).
+against the flat metric with a bump equal to `1` on `Φ '' univ` anyway
+(the periodization step, `Compact/Periodization.lean`).
 
 Leaves L1–L5 are self-contained; L6 is the assembly.  All six were proved by
 Aristotle (project 564db993, 2026-08-30).

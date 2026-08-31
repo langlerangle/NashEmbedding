@@ -530,10 +530,13 @@ theorem injOn_openCube_of_isInjectiveMod2Pi {N q : ℕ} {v : (Fin N → ℝ) →
   a closed topological embedding; injectivity of `dw` follows from positivity of
   `g`.  Both are corollaries, not part of the statement.)
 
-  `[I.Boundaryless]` is required by the Whitney-extension step (S2,
-  `NashEmbedding/Compact/WhitneyExtension.lean`): pushing a chart-supported function forward to
-  `E` and extending by zero is smooth only when chart targets are open in `E`.
-  Nothing else in the reduction needs it. -/
+  `[I.Boundaryless]` is required by the Whitney-extension step
+  (`NashEmbedding/Compact/WhitneyExtension.lean`): `I.Boundaryless` supplies
+  open chart targets in `E`, which is what pushing a chart-supported function
+  forward and extending by zero uses.  A model that satisfies only the
+  pointwise `BoundarylessManifold I M`, or one with genuine boundary, would
+  need extra argument here; nothing else in the reduction depends on
+  `[I.Boundaryless]`. -/
 theorem nashCompact [T2Space M] [CompactSpace M] [I.Boundaryless]
     (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : M → Type _)) :
     ∃ (q : ℕ) (w : M → EuclideanSpace ℝ (Fin q)),

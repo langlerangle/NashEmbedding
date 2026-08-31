@@ -8,7 +8,7 @@ import NashEmbedding.Torus.Basic
 import NashEmbedding.Sobolev.Periodization
 
 /-!
-# Leaves for the compact Nash assembly (S4)
+# Leaves for the compact Nash assembly
 
 Self-contained facts used by the proof of `nashCompact` (reduction to `nashTorus`,
 Wassermann §13):
@@ -19,7 +19,7 @@ Wassermann §13):
       (`PosDef` itself includes symmetry, hence is NOT open); on symmetric
       matrices it is equivalent to `PosDef`; symmetrization.
  - C: real-valued and matrix-valued periodization on `ℝᴺ` (from the complex
-      `periodicExtension` of `NashEmbedding.Sobolev/Periodicization.lean`), with
+      `periodicExtension` of `NashEmbedding/Sobolev/Periodization.lean`), with
       smoothness, periodicity, agreement on the cube `[-π,π]ᴺ`, and
       preservation of positive-definiteness.
  - D: the matrix of a bilinear form on `EuclideanSpace ℝ (Fin N)`, with
