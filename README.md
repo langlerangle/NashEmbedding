@@ -183,10 +183,11 @@ the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the def
 No human has read the Lean proofs in this repository (see *How this was produced*). After the
 repository was made public, GPT-5.6 Sol (OpenAI) was asked for an adversarial statement-level
 audit — the fidelity of `Challenge.lean` and `Solution.lean` to this README and to
-`formalization.yaml`, and the honesty of the provenance; not a proof review. Over three passes
-(the later ones re-auditing the corrections) it reported seven findings, all in the prose and
-none in the theorem statement; each was verified and corrected. The yaml's `review` section
-records them.
+`formalization.yaml`, the honesty of the provenance and authorship metadata, and the
+presentation; not a proof review — repeated over several passes on the corrected repository.
+Every finding was in the prose or metadata, none in the theorem statement; each was verified
+and corrected in the commit following its report. The yaml's `review` section and the commit
+history record them.
 
 ## Building
 
@@ -252,10 +253,11 @@ full; the only external review is the AI statement-level audit described under *
 Toolchain for every Aristotle job and every build: Lean `v4.28.0`, Mathlib `v4.28.0`
 (`8f9d9cff6bd728b17a24e163c9402775d9e6a365`), Aristotle CLI 2.1.0.
 
-Per file (A = by Aristotle — in the May 2026 stages the statements too, from Claude's informal
-blueprints; from August, proofs from Claude-written principal statements, plus auxiliary
-lemmas of its own; H = written by hand by
-Claude; A/H = statements and some lemmas by hand, leaves by Aristotle), with the Aristotle
+Per file (A = authored by Aristotle — in the May 2026 stages the statements too, from Claude's
+informal blueprints; from August, proofs from Claude-written principal statements, plus
+auxiliary lemmas of Aristotle's own; H = directly authored by Claude; A/H = mixed: Claude
+supplied the principal statements and some declarations and proofs, Aristotle the remaining
+proof bodies and, where applicable, auxiliary lemma statements), with the Aristotle
 project identifiers (first eight characters) where a file's leaves were proved in a
 dedicated job:
 

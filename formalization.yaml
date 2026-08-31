@@ -177,11 +177,12 @@ automation:
       cost:
         tokens: "not exposed by the service"
   notes: >-
-    project.authors lists the authors of the formalization (not of the
-    mathematics formalized, which is credited under sources), mirroring the
-    Authors line of the file headers; their roles are detailed in this
-    section, and the commit history carries the same record (the initial
-    commit is co-authored by Aristotle-Harmonic).
+    project.authors lists the four contributors credited with authorship of
+    the formalization (not of the mathematics formalized, which is credited
+    under sources). The Lean file headers separately list the three systems
+    that wrote Lean and identify David Wiygul as the requester and human
+    design contributor; the initial commit message records the division of
+    labor and is co-authored by Aristotle-Harmonic.
     The human author proposed the project, selected Wassermann's notes as the
     source, and took part in the early design decisions; the Lean development was
     produced by the AI systems above, with the author reviewing design decisions
@@ -192,7 +193,7 @@ review:
   status: self-assessed
   reviewers:
     - "David Wiygul"
-    - "GPT-5.6 Sol (OpenAI), statement-level audit"
+    - "GPT-5.6 Sol (OpenAI), statement, provenance and editorial audit"
   notes: >-
     No independent human review of the mathematics or of the Lean source. Every
     theorem is checked by Lean; scripts/audit.sh checks the trust conditions (no
@@ -202,17 +203,13 @@ review:
     compared statement in Challenge.lean was reviewed at the statement level by
     both sessions against the informal theorem. In addition, after the
     repository was made public, the author asked GPT-5.6 Sol (OpenAI) for an
-    adversarial statement-level audit (fidelity of Challenge.lean and
-    Solution.lean to the prose; honesty and checkability of the provenance;
-    explicitly not a proof review), repeated on the corrected repository. Over
-    three passes it reported seven findings, all in the prose and none in the
-    theorem statement: the model-level meaning of I.Boundaryless, the omitted
-    isVonNBounded field in the description of the metric, immersion and closed
-    embeddedness being corollaries rather than part of the statement, the number
-    of definitions unfolded by Solution.lean, the ⊤/∞/ω explanation, a README
-    sentence attributing the standard axiom set to the Challenge copy as well as
-    the Solution, and an inconsistency between "no external review" and the
-    recorded audit. Each was verified and corrected in the following commit. None of this is a check that the
+    adversarial audit — statement fidelity of Challenge.lean and Solution.lean
+    to the prose, honesty and checkability of the provenance and authorship
+    metadata, Palomar suitability and presentation, and source-comment hygiene;
+    explicitly not a proof review — repeated on the corrected repository over
+    several passes. Every finding was in the prose or metadata, none in the
+    theorem statement, and each was verified and corrected in the commit
+    following its report; the commit history is the detailed record. None of this is a check that the
     informal argument is correct or that the statement is the right formalization
     of Nash's theorem beyond what the Challenge docstring explains.
 
