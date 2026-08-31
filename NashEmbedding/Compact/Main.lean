@@ -25,7 +25,10 @@ Design (recorded 2026-08-30):
    `proof_wanted` at the pinned Mathlib version).
  - The periodic-ℝᴺ torus of `nashTorus` never appears in the statement.
 
-The assembly `nashCompact` is proved by hand from four lemmas S5-1 – S5-4 below,
+The labels S2–S5 used in this file name the steps of the reduction — Whitney extension
+(S2), ambient metric (S3), periodization (S4), assembly (S5) — for cross-reference among
+its proofs.  The assembly `nashCompact` was directly authored by Claude from four lemmas
+S5-1 – S5-4 below,
 which (with the leaves in `WhitneyExtension`, `AmbientMetric`, `Periodization`) were
 proved by Aristotle (projects 564db993, 6f927eaf, bf61e09c, 7856eea9; 2026-08-30).
 

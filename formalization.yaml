@@ -198,7 +198,8 @@ review:
     No independent human review of the mathematics or of the Lean source. Every
     theorem is checked by Lean; scripts/audit.sh checks the trust conditions (no
     forbidden tokens, exactly one deliberate sorry in Challenge.lean, standard
-    axioms for every top-level result); and each Aristotle contribution was
+    axioms for each principal result listed in scripts/axioms.lean); and each
+    Aristotle contribution was
     independently verified by two separate AI sessions before being merged. The
     compared statement in Challenge.lean was reviewed at the statement level by
     both sessions against the informal theorem. In addition, after the
@@ -209,9 +210,10 @@ review:
     explicitly not a proof review — repeated on the corrected repository over
     several passes. Every finding was in the prose or metadata, none in the
     theorem statement, and each was verified and corrected in the commit
-    following its report; the commit history is the detailed record. None of this is a check that the
-    informal argument is correct or that the statement is the right formalization
-    of Nash's theorem beyond what the Challenge docstring explains.
+    following its report; the commit history is the detailed record. None of this is a proof review or an independent validation of the informal
+    argument; the statement-level portion of the external audit did assess the
+    Challenge against the standard qualitative Nash theorem and the relevant
+    Mathlib meanings.
 
 alignment:
   namespace: "NashEmbedding"

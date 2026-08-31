@@ -111,6 +111,6 @@
    "configFile": "lakefile.toml"
   }
  ],
- "name": "RequestProject",
+ "name": "NashEmbedding",
  "lakeDir": ".lake"
 }

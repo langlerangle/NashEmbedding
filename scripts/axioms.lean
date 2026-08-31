@@ -1,5 +1,5 @@
 /-
-  Axiom footprint check for every top-level result in NashEmbedding, plus the
+  Axiom footprint check for the principal results of NashEmbedding listed below, plus the
   Challenge/Solution bridge.  Each result must depend on exactly
 
     [propext, Classical.choice, Quot.sound]

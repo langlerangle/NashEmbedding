@@ -175,14 +175,13 @@ the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the def
   judge the style of proof bodies (`refine` vs `exact`, `show`, unused `simp` arguments, line
   length, whitespace, unused local hypotheses, …) are disabled, because most of the proof
   text was produced by Aristotle, and proof bodies are not reformatted or rewritten. The build has zero warnings.
-* The audit script prints the axiom dependencies of every top-level result
+* The audit script prints the axiom dependencies of the principal results enumerated in
   ([`scripts/axioms.lean`](scripts/axioms.lean)); all are `propext`, `Classical.choice`,
   `Quot.sound`. It runs in CI on every push, followed by the Comparator check of
   `Challenge.lean` against `Solution.lean`.
 
 No human has read the Lean proofs in this repository (see *How this was produced*). After the
-repository was made public, GPT-5.6 Sol (OpenAI) was asked for an adversarial statement-level
-audit — the fidelity of `Challenge.lean` and `Solution.lean` to this README and to
+repository was made public, GPT-5.6 Sol (OpenAI) was asked for an adversarial statement, provenance and editorial audit — the fidelity of `Challenge.lean` and `Solution.lean` to this README and to
 `formalization.yaml`, the honesty of the provenance and authorship metadata, and the
 presentation; not a proof review — repeated over several passes on the corrected repository.
 Every finding was in the prose or metadata, none in the theorem statement; each was verified
@@ -246,7 +245,7 @@ The Lean development was produced by AI systems, in two roles:
   one an unused duplicate).
 
 No independent human review has been performed, and no human has read the Lean source in
-full; the only external review is the AI statement-level audit described under *Trust*.
+full; the only external review is the AI audit described under *Trust*.
 
 ### Provenance record
 

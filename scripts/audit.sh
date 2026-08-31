@@ -8,7 +8,7 @@
 #   2. exactly one `sorry` in Challenge.lean (the statement of record uses
 #      `sorry` in place of a proof, by design — Solution.lean proves it)
 #   3. every `set_option max*` in the repository is disclosed
-#   4. the axiom footprint of every top-level result is exactly
+#   4. the axiom footprint of each principal result listed in scripts/axioms.lean is exactly
 #      [propext, Classical.choice, Quot.sound] — no `sorryAx` (would mean
 #      an unclosed proof), no `Lean.ofReduceBool` (would mean `native_decide`)
 #
@@ -55,7 +55,7 @@ else
 fi
 
 echo ""
-echo "=== 4. Axiom footprint of every top-level result ==="
+echo "=== 4. Axiom footprint of the principal results (scripts/axioms.lean) ==="
 AXIOM_LOG=$(mktemp)
 if ! lake env lean scripts/axioms.lean > "$AXIOM_LOG" 2>&1 ; then
   fail "lake env lean scripts/axioms.lean returned non-zero:"
