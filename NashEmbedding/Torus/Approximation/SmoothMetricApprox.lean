@@ -217,7 +217,7 @@ theorem convex_combination_approx (hn : 0 < n)
           (integrationEmbed n
             (fun x => (((∑ k : Fin n → Fin M, f k x * B k i j) - g x i j : ℝ) : ℂ)))
         < η ^ 2 := by
-  -- ──── Step 1: extract a mollifier ψ : ℝⁿ → ℝ (Stage 8 lemma). ────
+  -- ──── Step 1: extract a mollifier ψ : ℝⁿ → ℝ via `mollifier_exists`. ────
   obtain ⟨ψ, hψ_smooth, hψ_supp, hψ_int, hψ_nn, hψ_cube, hψ_unit⟩ :=
     mollifier_exists hn
   let ψc : (Fin n → ℝ) → ℂ := fun x => (ψ x : ℂ)
@@ -234,7 +234,7 @@ theorem convex_combination_approx (hn : 0 < n)
     show ∫ y, ((ψ y : ℝ) : ℂ) = 1
     rw [integral_complex_ofReal, hψ_unit]
     simp
-  -- ──── Step 2: complexified entries of g lie in H^s_* (Stage 8). ────
+  -- ──── Step 2: complexified entries of g lie in H^s_* via `smooth_periodic_memSobolevDistrib`. ────
   let gC : Fin n → Fin n → (Fin n → ℝ) → ℂ :=
     fun i j x => ((g x i j : ℝ) : ℂ)
   have hgC_smooth : ∀ i j, ContDiff ℝ ∞ (gC i j) := by
@@ -256,7 +256,7 @@ theorem convex_combination_approx (hn : 0 < n)
   let ηSq : ℝ := η ^ 2 / (4 * nR ^ 2)
   have hηSq_pos : 0 < ηSq :=
     div_pos (pow_pos hη 2) (by positivity)
-  -- ──── Step 4: choose ε > 0 via Stage 6 + finite intersection. ────
+  -- ──── Step 4: choose ε > 0 via `mollifier_convergence` + finite intersection. ────
   have h_ε : ∃ ε : ℝ, 0 < ε ∧ ε ≤ 1 ∧
       ∀ i j : Fin n,
         sobolevNormSqDistrib n s
@@ -291,7 +291,7 @@ theorem convex_combination_approx (hn : 0 < n)
       exact hδ ⟨lt_min (by linarith) (by norm_num),
                 lt_of_le_of_lt (min_le_left _ _) (by linarith)⟩ ⟨i, j⟩
   obtain ⟨ε, hε_pos, hε_le_one, hε_bound⟩ := h_ε
-  -- ──── Step 5: properties of ψc_ε := rescale n ψc ε (Stage 8). ────
+  -- ──── Step 5: properties of ψc_ε := rescale n ψc ε (via `rescale_contDiff`, `rescale_hasCompactSupport`, `rescale_support_in_cube`). ────
   let ψc_ε : (Fin n → ℝ) → ℂ := rescale n ψc ε
   have hψc_ε_smooth : ContDiff ℝ ∞ ψc_ε :=
     rescale_contDiff hψc_smooth ε
@@ -313,7 +313,7 @@ theorem convex_combination_approx (hn : 0 < n)
     rw [h_ψc_ε_eq z, Complex.ofReal_im]
   have hψc_ε_rd : FTRapidDecay n ψc_ε :=
     cinfty_rapidDecay hn hψc_ε_smooth hψc_ε_supp
-  -- ──── Step 6: choose M via Stage 7 + finite intersection. ────
+  -- ──── Step 6: choose M via `riemannSum_convergence` + finite intersection. ────
   have h_M : ∃ M : ℕ, 0 < M ∧
       ∀ i j : Fin n,
         sobolevNormSqDistrib n s
