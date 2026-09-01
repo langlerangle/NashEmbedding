@@ -164,7 +164,8 @@ theorem young_conv_sq_bound
     · simp +decide only [← tsum_mul_left];
     · have h_fubini : Summable (fun p : (Fin n → ℤ) × (Fin n → ℤ) => f p.1 * g p.2 ^ 2) := by
         exact .of_norm <| by simpa using Summable.mul_norm ( hf.norm ) ( hg_sq.norm ) ;
-      convert h_fubini.comp_injective ( show Function.Injective ( fun p : ( Fin n → ℤ ) × ( Fin n → ℤ ) => ( p.1, p.2 - p.1 ) ) from fun p q h => by aesop ) using 1;
+      convert h_fubini.comp_injective ( show Function.Injective ( fun p : ( Fin n → ℤ ) × ( Fin n → ℤ ) => ( p.1, p.2 - p.1 ) ) from fun p q h => by aesop ) using 1
+      funext p; simp [Function.uncurry, Function.comp]
   have h_translation_invariance : ∀ i, ∑' m, g (m - i) ^ 2 = ∑' m, g m ^ 2 := by
     exact fun i => Equiv.tsum_eq ( Equiv.subRight i ) fun m => g m ^ 2;
   simp_all +decide [ tsum_mul_right, tsum_mul_left ];
@@ -241,7 +242,8 @@ theorem sobolev_mul_seq {s : ℝ}
           rw [ show ( 2 : ℝ ) ^ |s| = ( 2 ^ ( |s| / 2 ) ) ^ 2 by rw [ ← Real.rpow_natCast, ← Real.rpow_mul ( by positivity ) ] ; ring, show weight n |s| i = ( weight n ( |s| / 2 ) i ) ^ 2 by
                                                                                                                                         unfold weight; rw [ ← Real.rpow_natCast, ← Real.rpow_mul ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ] ; ring; ] ; ring;
           rw [ Real.sqrt_mul <| by positivity, Real.sqrt_mul <| by positivity, Real.sqrt_sq <| by positivity, Real.sqrt_sq <| by exact weight_nonneg _ _ ];
-        convert mul_le_mul_of_nonneg_right h_peetre_step ( norm_nonneg ( b i * a ( m - i ) ) ) using 1 ; norm_num ; ring;
+        convert mul_le_mul_of_nonneg_right h_peetre_step ( norm_nonneg ( b i * a ( m - i ) ) ) using 1
+        all_goals (first | rfl | (norm_num; ring; done) | (ring; done))
       by_cases h : Summable ( fun i => b i * a ( m - i ) ) <;> simp_all +decide [ tsum_eq_zero_of_not_summable, mul_assoc ];
       · refine' le_trans ( mul_le_mul_of_nonneg_left ( norm_tsum_le_tsum_norm _ ) ( Real.sqrt_nonneg _ ) ) _;
         · exact h.norm;
@@ -262,8 +264,11 @@ theorem sobolev_mul_seq {s : ℝ}
               exact Summable.of_nonneg_of_le ( fun i => mul_nonneg ( mul_nonneg ( mul_nonneg ( norm_nonneg _ ) ( weight_nonneg _ _ ) ) ( Real.sqrt_nonneg _ ) ) ( norm_nonneg _ ) ) ( fun i => by nlinarith [ h_sqrt i, show 0 ≤ ‖b i‖ * weight n ( |s| / 2 ) i by exact mul_nonneg ( norm_nonneg _ ) ( weight_nonneg _ _ ) ] ) h_summable;
             simpa only [ mul_assoc ] using h_summable;
       · exact mul_nonneg ( Real.rpow_nonneg zero_le_two _ ) ( tsum_nonneg fun _ => mul_nonneg ( norm_nonneg _ ) ( mul_nonneg ( weight_nonneg _ _ ) ( mul_nonneg ( Real.sqrt_nonneg _ ) ( norm_nonneg _ ) ) ) );
-    convert pow_le_pow_left₀ ( by positivity ) h_peetre_step 2 using 1 ; rw [ mul_pow, Real.sq_sqrt <| weight_nonneg _ _ ];
-    ring;
+    convert pow_le_pow_left₀ ( by positivity ) h_peetre_step 2 using 1
+    all_goals (first
+      | rfl
+      | (rw [ mul_pow, Real.sq_sqrt <| weight_nonneg _ _ ]; done)
+      | (ring; done))
   have h_young : Summable (fun m => (∑' i, ‖b i‖ * (weight n (|s| / 2) i) * Real.sqrt (weight n s (m - i)) * ‖a (m - i)‖) ^ 2) ∧
     ∑' m, (∑' i, ‖b i‖ * (weight n (|s| / 2) i) * Real.sqrt (weight n s (m - i)) * ‖a (m - i)‖) ^ 2 ≤
     (∑' i, ‖b i‖ * (weight n (|s| / 2) i)) ^ 2 * ∑' m, (weight n s m) * ‖a m‖ ^ 2 := by
@@ -281,9 +286,9 @@ theorem sobolev_mul_seq {s : ℝ}
     refine' le_trans ( Summable.tsum_le_tsum h_peetre h_summable _ ) _;
     · exact Summable.mul_left _ h_young.1;
     · rw [ tsum_mul_left ] ; nlinarith [ show 0 ≤ ( 2 ^ ( |s| / 2 ) : ℝ ) ^ 2 by positivity ] ;
-  convert And.intro h_summable h_sqrt using 1;
-  unfold sobolevNormSq; norm_num [ mul_assoc, mul_comm, mul_left_comm, Real.sqrt_mul, Real.sqrt_sq, Real.rpow_nonneg ] ;
-  rw [ Real.sqrt_mul ( tsum_nonneg fun _ => mul_nonneg ( sq_nonneg _ ) ( weight_nonneg _ _ ) ), Real.sqrt_sq ( tsum_nonneg fun _ => mul_nonneg ( norm_nonneg _ ) ( weight_nonneg _ _ ) ) ]
+  refine ⟨h_summable, h_sqrt.trans_eq ?_⟩
+  unfold sobolevNormSq
+  rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity), Real.sqrt_sq (by positivity), Real.sqrt_sq (tsum_nonneg fun _ => mul_nonneg (norm_nonneg _) (weight_nonneg _ _))]
 
 /-! ## Distribution-side multiplication -/
 

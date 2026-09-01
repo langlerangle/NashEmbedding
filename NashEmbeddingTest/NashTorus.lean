@@ -1,29 +1,36 @@
 /-
-  # NashTorus witness tests
-
-  Statement-level sanity checks for the final theorem
-
-    `nashTorus : 0 < n → IsPosDefSmoothMetric g → IsInjRealizable g`.
-
-  The proof is machine-checked; what these tests guard against is
-  *definitional drift* — the hypothesis or conclusion silently meaning
-  something weaker than intended.  Each test is either a positive
-  witness (the hypothesis class is non-empty and non-trivial, the
-  conclusion is attainable by the expected map) or a negative witness
-  (the conclusion is not satisfiable by a degenerate map).
-
-  Tests are grouped by what they discriminate:
-   - N1–N2: `nashTorus` applies to the flat metric and to a genuinely
-     $x$-dependent metric `(2 + sin x₀) · I`.
-   - N3: `Realizes` is not vacuous — a constant map does not realize
-     the flat metric.
-   - N4: `IsInjectiveEmbedding` is not vacuous — the zero map fails it.
-   - N5: `IsInjectiveMod2Pi` uses the lattice `2πℤⁿ`, not a finer one —
-     the doubled circle map `x ↦ (cos 2x, sin 2x)` fails it.
-   - N6: the flat metric is realized by the expected explicit map.
+Copyright (c) 2026 David Wiygul. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
+  — at the request of David Wiygul
 -/
 import NashEmbedding.Torus.Main
 import NashEmbedding.Torus.RealizableMetrics
+
+/-!
+# NashTorus witness tests
+
+Statement-level sanity checks for the final theorem
+
+  `nashTorus : 0 < n → IsPosDefSmoothMetric g → IsInjRealizable g`.
+
+The proof is machine-checked; what these tests guard against is
+*definitional drift* — the hypothesis or conclusion silently meaning
+something weaker than intended.  Each test is either a positive
+witness (the hypothesis class is non-empty and non-trivial, the
+conclusion is attainable by the expected map) or a negative witness
+(the conclusion is not satisfiable by a degenerate map).
+
+Tests are grouped by what they discriminate:
+ - N1–N2: `nashTorus` applies to the flat metric and to a genuinely
+   $x$-dependent metric `(2 + sin x₀) · I`.
+ - N3: `Realizes` is not vacuous — a constant map does not realize
+   the flat metric.
+ - N4: `IsInjectiveEmbedding` is not vacuous — the zero map fails it.
+ - N5: `IsInjectiveMod2Pi` uses the lattice `2πℤⁿ`, not a finer one —
+   the doubled circle map `x ↦ (cos 2x, sin 2x)` fails it.
+ - N6: the flat metric is realized by the expected explicit map.
+-/
 
 open scoped BigOperators ContDiff
 open NashEmbedding NashEmbedding.Sobolev Matrix

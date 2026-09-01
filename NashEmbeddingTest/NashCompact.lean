@@ -1,14 +1,8 @@
 /-
-  # NashCompact witness compile-checks
-
-  Compile-time type checks that the general `nashCompact` / `sphere_nashCompact`
-  / `sphereProd_nashCompact` / `torus2_matches_nashTorus` theorems specialize
-  cleanly to concrete instances (S¹, S², S³, S² × S³, Circle × Circle).
-  Guards against typeclass-resolution regressions that would only surface at
-  concrete manifolds.
-
-  Axiom guards for the top-level results live in `scripts/axioms.lean`; this
-  file has no `#print axioms` blocks.
+Copyright (c) 2026 David Wiygul. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
+  — at the request of David Wiygul
 -/
 import NashEmbedding.Compact.Main
 import NashEmbedding.Riemannian.Induced
@@ -16,6 +10,19 @@ import NashEmbedding.Riemannian.Pullback
 import NashEmbedding.Examples.FlatTorus
 import NashEmbedding.Examples.Sphere
 import NashEmbedding.Examples.Negative
+
+/-!
+# NashCompact witness compile-checks
+
+Compile-time type checks that the general `nashCompact` / `sphere_nashCompact`
+/ `sphereProd_nashCompact` / `torus2_matches_nashTorus` theorems specialize
+cleanly to concrete instances (S¹, S², S³, S² × S³, Circle × Circle).
+Guards against typeclass-resolution regressions that would only surface at
+concrete manifolds.
+
+Axiom guards for the top-level results live in `scripts/axioms.lean`; this
+file has no `#print axioms` blocks.
+-/
 
 open scoped Manifold ContDiff
 
@@ -47,7 +54,7 @@ example : ∃ (q : ℕ) (w : sphere (0 : EuclideanSpace ℝ (Fin 4)) 1 → Eucli
 example (c : EuclideanSpace ℝ (Fin 5)) :
     ¬ PullsBackEuclidean (sphereMetric 2) (fun _ : sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 => c) :=
   haveI : Nonempty (sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) :=
-    ⟨⟨EuclideanSpace.single 0 1, by simp [EuclideanSpace.norm_single]⟩⟩
+    ⟨⟨EuclideanSpace.single 0 1, by simp [PiLp.norm_single]⟩⟩
   not_pullsBackEuclidean_const (sphereMetric 2) c
 
 set_option synthInstance.maxHeartbeats 200000 in

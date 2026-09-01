@@ -150,7 +150,7 @@ lemma pderiv_dotProduct {N : ℕ} {u v : (Fin n → ℝ) → (Fin N → ℝ)}
   show fderiv ℝ (fun y => u y k * v y k) x _ = _
   rw [fderiv_fun_mul ((hcomp hu k).differentiable (by simp) x)
     ((hcomp hv k).differentiable (by simp) x)]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul,
+  simp only [_root_.add_apply, _root_.smul_apply, smul_eq_mul,
     hcoord hu' k, hcoord hv' k, pderiv]
   ring
 

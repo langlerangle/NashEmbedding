@@ -20,6 +20,14 @@ noncomputable section
 
 namespace NashEmbedding
 
+/-- Bridge lemma for Mathlib v4.31+ where `Matrix` is a `def` (no longer `abbrev`).
+`rw`'s syntactic matching no longer sees through Matrix, but `apply`/`exact`/`refine`
+unify up to defeq — so a term-mode bridge closes the gap. Mirrors `continuous_matrix`. -/
+@[fun_prop]
+theorem contDiff_matrix {n : ℕ} {g : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ}
+    (h : ∀ i j, ContDiff ℝ ∞ fun x => g x i j) : ContDiff ℝ ∞ g :=
+  contDiff_pi.mpr fun i => contDiff_pi.mpr fun j => h i j
+
 /-! ## Closure properties of realizable metrics (Lemma 1.4) -/
 
 /-
@@ -40,6 +48,8 @@ theorem realizable_sum {n : ℕ}
           · exact fun i => hsp₂.smooth.comp ( contDiff_id ) |> ContDiff.comp ( contDiff_pi.1 contDiff_id i );
         · intro x k; have := hsp₁.periodic x k; have := hsp₂.periodic x k; aesop;
       · intro x i j;
+        show _ = (g₁ x + g₂ x) i j
+        rw [Matrix.add_apply]
         convert congr_arg₂ ( · + · ) ( hreal₁ x i j ) ( hreal₂ x i j ) using 1;
         unfold partialDeriv;
         rw [ fderiv_pi ];
@@ -91,6 +101,7 @@ theorem realizable_translate {n : ℕ}
         · intro x k; have := hu.2 ( x - y ) k; simp_all +decide [ sub_eq_add_neg, add_assoc ] ;
           simpa only [ add_comm, add_left_comm, add_assoc ] using this;
       · intro x i j;
+        change _ = g (x - y) i j
         convert h ( x - y ) i j using 1;
         unfold partialDeriv;
         erw [ fderiv_comp ] <;> norm_num [ hu.smooth.contDiffAt.differentiableAt ];
@@ -132,8 +143,12 @@ theorem injRealizable_posDef {n : ℕ}
                 fun_prop;
               exact ⟨ h_smooth.clm_apply ( contDiff_const ), h_smooth.clm_apply ( contDiff_const ) ⟩;
             exact ContDiff.sum fun _ _ => ContDiff.mul ( h_smooth.1.comp ( contDiff_id ) |> ContDiff.comp ( contDiff_pi.1 contDiff_id _ ) ) ( h_smooth.2.comp ( contDiff_id ) |> ContDiff.comp ( contDiff_pi.1 contDiff_id _ ) );
-          rw [ contDiff_pi ];
-          exact fun i => by rw [ show g = fun x => Matrix.of ( fun i j => dotProduct ( partialDeriv i u x ) ( partialDeriv j u x ) ) from funext fun x => by ext i j; exact hu' x i j ▸ rfl ] ; exact contDiff_pi.2 fun j => h_smooth i j;
+          apply contDiff_matrix
+          intro i j
+          have eq : (fun x => g x i j) = fun x => dotProduct (partialDeriv i u x) (partialDeriv j u x) :=
+            funext fun x => (hu' x i j).symm
+          rw [eq]
+          exact h_smooth i j
         · intro x k; ext i j; have := hu.smoothPeriodic.periodic x k; simp_all +decide [ Realizes ] ;
           rw [ ← hu' ( x + periodicShift n k ) i j, ← hu' x i j ];
           have h_periodic_deriv : ∀ i, fderiv ℝ u (x + periodicShift n k) (Pi.single i 1) = fderiv ℝ u x (Pi.single i 1) := by
@@ -237,6 +252,8 @@ theorem injRealizable_promotion {n : ℕ}
         convert linearIndependent_of_append_proj ( hfr₁ x ) using 1;
         exact funext fun i => partialDeriv_concat hsp₁.smooth hsp₂.smooth i x;
       · intro x i j;
+        show _ = (g₁ x + g₂ x) i j
+        rw [Matrix.add_apply]
         convert congr_arg₂ ( · + · ) ( hreal₁ x i j ) ( hreal₂ x i j ) using 1;
         rw [ partialDeriv_concat, partialDeriv_concat ];
         · simp +decide [ Fin.sum_univ_add, dotProduct ];
@@ -370,9 +387,16 @@ theorem posDefSmoothMetric_add {n : ℕ}
     IsPosDefSmoothMetric (g + g') := by
       constructor;
       · constructor;
-        · rw [ contDiff_pi ] at *;
-          have := hg.smoothPeriodic.smooth; have := hg'.smoothPeriodic.smooth; simp_all +decide [ contDiff_pi ] ;
-          exact fun i j => ContDiff.add ( contDiff_pi.1 ( contDiff_pi.1 ‹ContDiff ℝ ∞ g› i ) j ) ( contDiff_pi.1 ( contDiff_pi.1 ‹ContDiff ℝ ∞ g'› i ) j );
+        · apply contDiff_matrix
+          intro i j
+          have h1 : ContDiff ℝ ∞ fun x => g x i j :=
+            contDiff_pi.1 (contDiff_pi.1 hg.smoothPeriodic.smooth i) j
+          have h2 : ContDiff ℝ ∞ fun x => g' x i j :=
+            contDiff_pi.1 (contDiff_pi.1 hg'.smoothPeriodic.smooth i) j
+          have eq : (fun x => (g + g') x i j) = fun x => g x i j + g' x i j := by
+            funext x; simp [Matrix.add_apply]
+          rw [eq]
+          exact h1.add h2
         · exact fun x k => by simp +decide [ hg.smoothPeriodic.periodic x k, hg'.smoothPeriodic.periodic x k ] ;
       · exact fun x => Matrix.PosDef.add ( hg.posDef x ) ( hg'.posDef x )
 
@@ -387,10 +411,18 @@ theorem posDefSmoothMetric_pos_smul {n : ℕ}
       · obtain ⟨ hg₁, hg₂ ⟩ := hg;
         constructor;
         · obtain ⟨ hg₁, hg₂ ⟩ := hg₁;
-          fun_prop;
+          apply contDiff_matrix
+          intro i j
+          have hg_ij : ContDiff ℝ ∞ fun x => g x i j :=
+            contDiff_pi.1 (contDiff_pi.1 hg₁ i) j
+          have eq : (fun x => (t • g) x i j) = fun x => t * g x i j := by
+            funext x; simp [Pi.smul_apply, Matrix.smul_apply, smul_eq_mul]
+          rw [eq]
+          exact contDiff_const.mul hg_ij
         · exact fun x k => by simp +decide [ hg₁.periodic x k ] ;
       · intro x;
-        convert Matrix.PosDef.smul ( hg.posDef x ) ht using 1
+        show (t • g x).PosDef
+        exact Matrix.PosDef.smul ( hg.posDef x ) ht
 
 /-! ## Stability of positive-definite metrics (Lemma 1.12) -/
 
@@ -416,8 +448,10 @@ theorem posDefSmoothMetric_stability {n : ℕ}
             have h_pos_def : ∀ x ∈ Set.Icc (0 : Fin n → ℝ) (fun _ => 2 * Real.pi), ∀ v : Fin n → ℝ, v ≠ 0 → 0 < dotProduct v (Matrix.mulVec (g x) v) := by
               have := hg.posDef;
               intro x hx v hv; specialize this x; have := this.2; simp_all +decide [ Matrix.IsHermitian, Matrix.mulVec ] ;
-              convert this ( show ( Finsupp.equivFunOnFinite.symm v ) ≠ 0 from by simpa [ Finsupp.ext_iff, funext_iff ] using hv ) using 1 ; simp +decide [ Finsupp.sum_fintype, dotProduct, Matrix.mulVec ];
-              simp +decide only [Finset.mul_sum _ _ _, mul_assoc];
+              convert this ( show ( Finsupp.equivFunOnFinite.symm v ) ≠ 0 from by simpa [ Finsupp.ext_iff, funext_iff ] using hv ) using 1
+              · rfl
+              · simp +decide [ dotProduct, Matrix.mulVec, Finsupp.sum_fintype, Finset.mul_sum, Finset.sum_mul, mul_assoc, mul_comm ]
+                exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
             -- By definition of $IsPosDefSmoothMetric$, $g(x)$ is positive definite for all $x$, so we can apply the continuity of the quadratic form.
             have h_cont : ContinuousOn (fun (p : (Fin n → ℝ) × (Fin n → ℝ)) => dotProduct p.2 (Matrix.mulVec (g p.1) p.2) / ‖p.2‖ ^ 2) (Set.Icc (0 : Fin n → ℝ) (fun _ => 2 * Real.pi) ×ˢ {v : Fin n → ℝ | ‖v‖ = 1}) := by
               refine' ContinuousOn.div _ _ _;
@@ -443,7 +477,10 @@ theorem posDefSmoothMetric_stability {n : ℕ}
               refine' ⟨ K, hK.1, fun x hx v hv => _ ⟩;
               have := hK.2 ( x, ‖v‖⁻¹ • v ) ⟨ hx, by simp +decide [ norm_smul, hv ] ⟩ ; simp_all +decide [ div_le_iff₀, norm_smul ] ;
               simp_all +decide [ Matrix.mulVec_smul, dotProduct_smul, mul_assoc, mul_comm, mul_left_comm, sq, norm_smul ];
-              convert mul_le_mul_of_nonneg_right this ( mul_self_nonneg ‖v‖ ) using 1 ; ring ; simp +decide [ hv ];
+              convert mul_le_mul_of_nonneg_right this ( mul_self_nonneg ‖v‖ ) using 1
+              · rfl
+              · have hn : ‖v‖ ≠ 0 := norm_ne_zero_iff.mpr hv
+                field_simp
           obtain ⟨ K, hK₀, hK ⟩ := h_compact; use K, hK₀; intro x v hv; specialize hK ( fun i => x i - ⌊x i / ( 2 * Real.pi ) ⌋ * ( 2 * Real.pi ) ) ?_ v hv <;> simp_all +decide [ Matrix.mulVec, dotProduct ] ;
           · exact ⟨ fun i => sub_nonneg.2 <| by nlinarith [ Int.floor_le ( x i / ( 2 * Real.pi ) ), Real.pi_pos, mul_div_cancel₀ ( x i ) ( by positivity : ( 2 * Real.pi ) ≠ 0 ) ], fun i => sub_le_iff_le_add'.2 <| by nlinarith [ Int.lt_floor_add_one ( x i / ( 2 * Real.pi ) ), Real.pi_pos, mul_div_cancel₀ ( x i ) ( by positivity : ( 2 * Real.pi ) ≠ 0 ) ] ⟩;
           · have := hg.smoothPeriodic.2; simp_all +decide [ IsPeriodic2Pi ] ;
@@ -464,7 +501,9 @@ theorem posDefSmoothMetric_stability {n : ℕ}
               have h_pos : ∀ i : Fin n, |(h x).mulVec v i| ≤ matOpNorm (h x) * ‖v‖ := by
                 intro i
                 have h_pos : ‖(h x).mulVec v‖ ≤ matOpNorm (h x) * ‖v‖ := by
-                  convert ContinuousLinearMap.le_opNorm ( h x |> Matrix.toLin' |> LinearMap.toContinuousLinearMap ) v using 1;
+                  unfold matOpNorm
+                  have := ContinuousLinearMap.le_opNorm ( h x |> Matrix.toLin' |> LinearMap.toContinuousLinearMap ) v
+                  simpa [LinearMap.coe_toContinuousLinearMap', Matrix.toLin'_apply] using this
                 exact le_trans ( norm_le_pi_norm ( h x *ᵥ v ) i ) h_pos;
               have h_pos : |dotProduct v (Matrix.mulVec (h x) v)| ≤ ∑ i : Fin n, |v i| * |(h x).mulVec v i| := by
                 simpa only [ ← abs_mul, dotProduct ] using Finset.abs_sum_le_sum_abs _ _;

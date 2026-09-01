@@ -101,7 +101,7 @@ lemma etaDerivMass_pos (n : ℕ) : 0 < etaDerivMass n := by
   -- some point has nonzero derivative, else η would be constant
   have hnc : ∃ t, deriv (eta n) t ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hdiff : Differentiable ℝ (eta n) := (eta_contDiff n).differentiable NashEmbedding.Sobolev.infty_ne_zero
     have hconst := is_const_of_deriv_eq_zero hdiff h
     have h1 := hconst 0 (bumpRadius n)
@@ -152,14 +152,14 @@ lemma integral_dil_sq (n : ℕ) {β : ℝ} (hβ : 0 < β) :
     ∫ t, dil n β t ^ 2 = etaMass n / β := by
   unfold dil etaMass
   have h := Measure.integral_comp_mul_left (fun t => eta n t ^ 2) β
-  simp only at h
+  try simp only at h
   rw [h, abs_of_pos (inv_pos.mpr hβ), smul_eq_mul, inv_mul_eq_div]
 
 lemma integral_deriv_dil_sq (n : ℕ) {β : ℝ} (hβ : 0 < β) :
     ∫ t, deriv (dil n β) t ^ 2 = β * etaDerivMass n := by
   simp_rw [deriv_dil]
   have h := Measure.integral_comp_mul_left (fun t => deriv (eta n) t ^ 2) β
-  simp only at h
+  try simp only at h
   simp_rw [mul_pow]
   rw [integral_const_mul, h, abs_of_pos (inv_pos.mpr hβ), smul_eq_mul]
   unfold etaDerivMass
@@ -175,7 +175,8 @@ lemma integral_dil_mul_deriv (n : ℕ) {β : ℝ} (hβ : 0 < β) :
     (f := dil n β) (g := dil n β) (v := (1 : ℝ))
     (hint _ _ (deriv_dil_continuous n β) (dil_continuous n β) (dil_hasCompactSupport n hβ))
     (hint _ _ (dil_continuous n β) (deriv_dil_continuous n β) (deriv_dil_hasCompactSupport n hβ))
-    (hint _ _ (dil_continuous n β) (dil_continuous n β) (dil_hasCompactSupport n hβ)) hd hd
+    (hint _ _ (dil_continuous n β) (dil_continuous n β) (dil_hasCompactSupport n hβ))
+    (fun x _ => hd.differentiableAt) (fun x _ => hd.differentiableAt)
   simp only [fderiv_apply_one_eq_deriv] at key
   have h2 : ∫ t, dil n β t * deriv (dil n β) t = ∫ t, deriv (dil n β) t * dil n β t := by
     congr 1; funext t; ring
@@ -382,8 +383,8 @@ theorem gram_rotBump {β : Fin n → ℝ} (hβ : ∀ k, 1 ≤ β k) {M : Matrix 
       ((prodBumpPD_continuous β k).mul (prodBumpPD_continuous β l)) ?_
     exact ((prodBumpPD_continuous β k).mul (prodBumpPD_continuous β l)).integrable_of_hasCompactSupport
       ((prodBumpPD_hasCompactSupport hβ l).mul_left)
-  rw [integral_finset_sum _ (fun k _ => integrable_finset_sum _ (fun l _ => hint k l))]
-  simp_rw [integral_finset_sum _ (fun l _ => hint _ l), integral_const_mul]
+  rw [integral_finsetSum _ (fun k _ => integrable_finsetSum _ (fun l _ => hint k l))]
+  simp_rw [integral_finsetSum _ (fun l _ => hint _ l), integral_const_mul]
   have hcv : ∀ k l : Fin n,
       ∫ x, (fun y => prodBumpPD n β k y * prodBumpPD n β l y) (M.mulVec x)
         = gram (prodBump n β) k l := by
@@ -404,7 +405,7 @@ theorem gram_rotBump {β : Fin n → ℝ} (hβ : ∀ k, 1 ≤ β k) {M : Matrix 
 lemma gram_const_mul {χ : (Fin n → ℝ) → ℝ} (hχ : Differentiable ℝ χ) (A : ℝ) (i j : Fin n) :
     gram (fun x => A * χ x) i j = A ^ 2 * gram χ i j := by
   unfold gram
-  simp_rw [fderiv_const_mul (hχ _), ContinuousLinearMap.smul_apply, smul_eq_mul]
+  simp_rw [fderiv_const_mul (hχ _), _root_.smul_apply, smul_eq_mul]
   rw [← integral_const_mul]
   congr 1; funext x; ring
 

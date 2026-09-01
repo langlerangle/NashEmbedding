@@ -176,7 +176,7 @@ private lemma perEntry_residual_bound
               * g (meshPoint n M k) : ℝ) : ℂ)) := by
     refine Complex.ofRealCLM.continuous.comp ?_
     refine continuous_const.mul ?_
-    apply continuous_finset_sum
+    apply continuous_finsetSum
     intro k _
     refine Continuous.mul ?_ continuous_const
     refine Complex.reCLM.continuous.comp ?_

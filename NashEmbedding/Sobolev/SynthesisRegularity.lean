@@ -85,7 +85,7 @@ private def freqCLM (n : ℕ) (m : Fin n → ℤ) : (Fin n → ℝ) →L[ℝ] �
 
 private lemma freqCLM_apply (m : Fin n → ℤ) (θ : Fin n → ℝ) :
     freqCLM n m θ = ∑ j, (m j : ℝ) * θ j := by
-  simp [freqCLM, ContinuousLinearMap.sum_apply]
+  simp [freqCLM, _root_.sum_apply]
 
 private lemma norm_freqCLM_le (m : Fin n → ℤ) : ‖freqCLM n m‖ ≤ ∑ j, |(m j : ℝ)| := by
   refine ContinuousLinearMap.opNorm_le_bound _

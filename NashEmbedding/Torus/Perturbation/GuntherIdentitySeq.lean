@@ -341,7 +341,7 @@ theorem gunther_identity_seq (hn : 0 < n) {v : VecSeq n N} (hv : VRapid n N v) (
           - 2 * ((sumSqDeriv V x ⬝ᵥ pderiv i (pderiv j V) x : ℝ) : ℂ))
         (g := fun x => 2 * ∑ k, ((pderiv i (pderiv k V) x ⬝ᵥ pderiv j (pderiv k V) x : ℝ) : ℂ))
         (((cA.add cB).sub (continuous_const.mul cC)))
-        (continuous_const.mul (continuous_finset_sum _ fun k _ => cD k)),
+        (continuous_const.mul (continuous_finsetSum _ fun k _ => cD k)),
       stdFourierCoeff_sub
         (f := fun x => ((pderiv i (fun y => sumSqDeriv V y ⬝ᵥ pderiv j V y) x : ℝ) : ℂ)
           + ((pderiv j (fun y => sumSqDeriv V y ⬝ᵥ pderiv i V y) x : ℝ) : ℂ))

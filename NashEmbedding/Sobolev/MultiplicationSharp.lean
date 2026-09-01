@@ -81,11 +81,16 @@ lemma half_power_weight_ineq {s : ℝ} (hs : 0 ≤ s) (i j : Fin n → ℤ) :
         exact Real.rpow_le_rpow ( by positivity ) ( by linarith [ le_max_left a b, le_max_right a b ] ) ( by positivity );
       rw [ Real.mul_rpow ( by positivity ) ( by positivity ) ] at h_ineq;
       exact h_ineq.trans ( mul_le_mul_of_nonneg_left ( by rw [ max_def_lt ] ; split_ifs <;> linarith [ Real.rpow_nonneg ha ( s / 2 ), Real.rpow_nonneg hb ( s / 2 ) ] ) ( by positivity ) );
-    convert h_sum_ineq_pow ( 2 * ( 1 + ∑ k, ( i k : ℝ ) ^ 2 ) ) ( 2 * ( 1 + ∑ k, ( j k : ℝ ) ^ 2 ) ) ( by positivity ) ( by positivity ) using 1 ; ring;
-    rw [ show ( 2 + ( ∑ k : Fin n, ( i k : ℝ ) ^ 2 ) * 2 ) = 2 * ( 1 + ∑ k : Fin n, ( i k : ℝ ) ^ 2 ) by ring, show ( 2 + ( ∑ k : Fin n, ( j k : ℝ ) ^ 2 ) * 2 ) = 2 * ( 1 + ∑ k : Fin n, ( j k : ℝ ) ^ 2 ) by ring, Real.mul_rpow ( by positivity ) ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ), Real.mul_rpow ( by positivity ) ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ] ; ring;
-  convert le_trans _ h_sum_ineq_pow using 1;
-  · rw [ mul_right_comm, ← Real.rpow_add ] <;> norm_num;
-  · exact Real.rpow_le_rpow ( add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ( mod_cast h_sum_ineq ) ( by positivity )
+    convert h_sum_ineq_pow ( 2 * ( 1 + ∑ k, ( i k : ℝ ) ^ 2 ) ) ( 2 * ( 1 + ∑ k, ( j k : ℝ ) ^ 2 ) ) ( by positivity ) ( by positivity ) using 1
+    all_goals (first
+      | rfl
+      | (ring; done)
+      | (rw [ Real.mul_rpow ( by positivity : (0:ℝ) ≤ 2 ) ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ), Real.mul_rpow ( by positivity : (0:ℝ) ≤ 2 ) ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ]; ring))
+  convert le_trans _ h_sum_ineq_pow using 1
+  all_goals (first
+    | rfl
+    | (rw [ mul_right_comm, ← Real.rpow_add ] <;> norm_num; done)
+    | (exact Real.rpow_le_rpow ( add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) (by exact_mod_cast h_sum_ineq) ( by positivity )))
 
 /-
 `weight n s m = weight n (s/2) m * weight n (s/2) m`.
@@ -159,8 +164,9 @@ lemma summable_alpha_abs_b {s : ℝ} (hs : 0 ≤ s)
       have h_conv : Summable (fun j => (weight n (s / 2) (m - j) * ‖a (m - j)‖) ^ 2) := by
         exact h_g.comp_injective ( sub_right_injective )
       exact Summable.of_nonneg_of_le ( fun j => mul_nonneg ( norm_nonneg _ ) ( mul_nonneg ( weight_nonneg _ _ ) ( norm_nonneg _ ) ) ) ( fun j => by nlinarith only [ sq_nonneg ( ‖b j‖ - weight n ( s / 2 ) ( m - j ) * ‖a ( m - j )‖ ), norm_nonneg ( b j ), mul_nonneg ( weight_nonneg ( s / 2 ) ( m - j ) ) ( norm_nonneg ( a ( m - j ) ) ) ] ) ( Summable.add ‹Summable fun j => ‖b j‖ ^ 2› h_conv );
-    convert h_conv using 1;
-  convert h_conv.comp_injective ( show Function.Injective ( fun i => m - i ) from fun x y hxy => by simpa using hxy ) using 2 ; simp +decide [ mul_assoc, mul_comm, mul_left_comm ]
+    convert h_conv using 1
+  convert h_conv.comp_injective ( show Function.Injective ( fun i => m - i ) from fun x y hxy => by simpa using hxy ) using 2
+  all_goals (first | rfl | (simp +decide [ mul_assoc, mul_comm, mul_left_comm ]; done))
 
 /-
 Summability of the |a|⋅β convolution term at each point.
@@ -253,10 +259,16 @@ lemma young_alpha_b_bound {s : ℝ} (hn : 0 < n) (hs : (n : ℝ) < 2 * s)
     intro m; rw [ ← Equiv.tsum_eq ( Equiv.subLeft m ) ] ; simp +decide [ mul_assoc, mul_comm, mul_left_comm ] ;
   have := @this n ( fun m => ‖b m‖ ) ( fun m => weight n ( s / 2 ) m * ‖a m‖ ) ?_ ?_ ?_ ?_ <;> simp_all +decide [ mul_pow, mul_assoc, mul_comm, mul_left_comm, tsum_mul_left, tsum_mul_right ];
   · have h_summable : (∑' i, ‖b i‖) ^ 2 ≤ sobolevEmbedConstSq n s * sobolevNormSq n s b := by
-      convert tsum_norm_sq_le hn ( by linarith : ( n : ℝ ) < 2 * s ) hb using 1;
-    convert this.2.trans ( mul_le_mul_of_nonneg_right h_summable <| tsum_nonneg fun _ => by positivity ) using 1 ; ring;
-    rw [ show sobolevNormSq n s a = ∑' m, ‖a m‖ ^ 2 * weight n ( s * ( 1 / 2 ) ) m ^ 2 by
-          convert sobolevNormSq_half_weight s a using 3 ; ring ] ; ring;
+      convert tsum_norm_sq_le hn ( by linarith : ( n : ℝ ) < 2 * s ) hb using 1
+      unfold sobolevEmbedConstSq
+      rfl
+    convert this.2.trans ( mul_le_mul_of_nonneg_right h_summable <| tsum_nonneg fun _ => by positivity ) using 1
+    all_goals (first
+      | rfl
+      | (ring; done)
+      | (rw [ show sobolevNormSq n s a = ∑' m, ‖a m‖ ^ 2 * weight n ( s * ( 1 / 2 ) ) m ^ 2 by
+            convert sobolevNormSq_half_weight s a using 3
+            all_goals (first | rfl | (ring; done)) ]; ring))
   · exact fun m => mul_nonneg ( norm_nonneg _ ) ( weight_nonneg _ _ );
   · exact summable_norm_of_memSobolev hn ( by linarith ) hb;
   · have := ha;

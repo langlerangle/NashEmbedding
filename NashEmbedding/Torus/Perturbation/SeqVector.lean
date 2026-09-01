@@ -164,7 +164,7 @@ theorem vmem_of_tendsto_coeff {s : ℝ} {u : ℕ → VecSeq n N} {a : VecSeq n N
     -- the finite partial sum is the limit of the corresponding partial sums of `u p`
     have hpt : Tendsto (fun p => ∑ m ∈ F, ∑ α, weight n s m * ‖u p α m‖ ^ 2) atTop
         (𝓝 (∑ m ∈ F, g m)) := by
-      refine tendsto_finset_sum _ fun m _ => tendsto_finset_sum _ fun α _ => ?_
+      refine tendsto_finsetSum _ fun m _ => tendsto_finsetSum _ fun α _ => ?_
       exact ((hlim α m).norm.pow 2).const_mul _
     refine le_of_tendsto hpt (Filter.Eventually.of_forall fun p => ?_)
     rw [Finset.sum_comm]
@@ -194,8 +194,8 @@ theorem exists_limit_of_cauchy_vec {s : ℝ} {u : ℕ → VecSeq n N}
   choose b hb using hα
   refine ⟨b, fun α => (hb α).1, fun α => (hb α).2.1, ?_⟩
   unfold vecNormSq
-  have := tendsto_finset_sum (Finset.univ : Finset (Fin N)) fun α _ => (hb α).2.2
-  simpa using this
+  have := tendsto_finsetSum (Finset.univ : Finset (Fin N)) fun α _ => (hb α).2.2
+  simpa [← Pi.sub_apply] using this
 
 end NashEmbedding
 

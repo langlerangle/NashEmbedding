@@ -99,7 +99,7 @@ lemma continuous_quadForm (M : Matrix (Fin N) (Fin N) ℝ) :
   (minimum over the unit sphere is continuous in `A`). -/
 theorem isOpen_quadForm_pos :
     IsOpen {A : Matrix (Fin N) (Fin N) ℝ | ∀ x, x ≠ 0 → 0 < x ⬝ᵥ A.mulVec x} := by
-  rw [Metric.isOpen_iff]
+  apply Metric.isOpen_iff.mpr
   intro A hA
   obtain ⟨c, hc0, hc⟩ : ∃ c > 0, ∀ x : Fin N → ℝ, ‖x‖ = 1 → c ≤ x ⬝ᵥ A.mulVec x := by
     rcases Set.eq_empty_or_nonempty (Metric.sphere (0 : Fin N → ℝ) 1) with he | hne
@@ -122,7 +122,10 @@ theorem isOpen_quadForm_pos :
     rw [hu, smul_smul, mul_inv_cancel₀ (ne_of_gt hxn), one_smul]
   have hBA : A + (B - A) = B := by abel
   have hbd : |u ⬝ᵥ (B - A).mulVec u| ≤ (N : ℝ) ^ 2 * ‖B - A‖ := abs_quadForm_le _ (le_of_eq hun)
-  have hdist : ‖B - A‖ < c / ((N : ℝ) ^ 2 + 1) := by simpa [dist_eq_norm] using hB
+  have hdist : ‖B - A‖ < c / ((N : ℝ) ^ 2 + 1) := by
+    have h := hB
+    simp only [Metric.mem_ball, dist_eq_norm] at h
+    exact h
   have hposu : 0 < u ⬝ᵥ B.mulVec u := by
     have h1 : c ≤ u ⬝ᵥ A.mulVec u := hc u hun
     have h2 : u ⬝ᵥ B.mulVec u = u ⬝ᵥ A.mulVec u + u ⬝ᵥ (B - A).mulVec u := by
@@ -218,7 +221,7 @@ theorem periodicExtR_eq_self_of_mem {φ : (Fin N → ℝ) → ℝ} (hsupp : ∀ 
     · intro l hl
       obtain ⟨j, hj⟩ : ∃ j, l j ≠ 0 := by
         by_contra h
-        push_neg at h
+        push Not at h
         exact hl (funext h)
       have hzero : φ (x + periodicShift N l) = 0 := by
         by_contra hne

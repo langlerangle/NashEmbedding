@@ -12,7 +12,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 TOOLCHAIN_TAG=$(sed -e 's/^leanprover\/lean4://' lean-toolchain | tr -d '[:space:]')
-WORK="${COMPARATOR_WORK:-$HOME/.cache/nash-comparator}"
+# Key the cache by toolchain: a comparator built with one Lean cannot read oleans
+# produced by another ("incompatible header"), so stale clones must never be reused
+# across a pin bump.
+WORK="${COMPARATOR_WORK:-$HOME/.cache/nash-comparator-$TOOLCHAIN_TAG}"
 mkdir -p "$WORK"
 
 resolve_tag() {

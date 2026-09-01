@@ -47,7 +47,12 @@ lemma weight_tendsto_zero_of_lt {s t : ℝ} (hst : s < t) :
       (Filter.cofinite) (nhds 0) := by
   -- The weight ratio `(1 + |m|²)^{(s-t)/2}` tends to 0 as `|m| → ∞`.
   have h_weight_ratio_zero : Filter.Tendsto (fun m : ℝ => (1 + m) ^ ((s - t) / 2)) Filter.atTop (nhds 0) := by
-    simpa using tendsto_rpow_neg_atTop ( show 0 < - ( ( s - t ) / 2 ) by linarith ) |> Filter.Tendsto.comp <| tendsto_const_nhds.add_atTop Filter.tendsto_id;
+    have h1 : Filter.Tendsto (fun m : ℝ => m ^ ((s - t) / 2)) Filter.atTop (nhds 0) := by
+      have := tendsto_rpow_neg_atTop (show 0 < -((s - t) / 2) by linarith)
+      simpa using this
+    have h2 : Filter.Tendsto (fun m : ℝ => 1 + m) Filter.atTop Filter.atTop :=
+      tendsto_const_nhds.add_atTop Filter.tendsto_id
+    simpa [Function.comp_def] using h1.comp h2
   refine h_weight_ratio_zero.comp ?_;
   refine' Filter.tendsto_atTop.2 fun x => _;
   refine' Set.Finite.subset ( Set.finite_Icc ( -⌈x⌉₊ : Fin n → ℤ ) ⌈x⌉₊ ) _;
@@ -95,7 +100,7 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
       intro N
       have h_dominated : ∀ k, ∑ m ∈ N, weight n t m * ‖a (φ k) m‖ ^ 2 ≤ 1 := by
         exact fun k => le_trans ( Summable.sum_le_tsum ( N ) ( fun _ _ => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) ( ha_mem _ ) ) ( ha_bdd _ );
-      exact le_of_tendsto_of_tendsto' ( tendsto_finset_sum _ fun m _ => Filter.Tendsto.mul ( tendsto_const_nhds ) ( Filter.Tendsto.pow ( Filter.Tendsto.norm ( ha_lim m ) ) 2 ) ) tendsto_const_nhds h_dominated;
+      exact le_of_tendsto_of_tendsto' ( tendsto_finsetSum _ fun m _ => Filter.Tendsto.mul ( tendsto_const_nhds ) ( Filter.Tendsto.pow ( Filter.Tendsto.norm ( ha_lim m ) ) 2 ) ) tendsto_const_nhds h_dominated;
     refine' summable_of_sum_le _ _;
     exacts [ 1, fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ), h_dominated ]
   have ha_lim_conv : Filter.Tendsto (fun k => sobolevNormSq n s (fun m => (a (φ k) m) - (a_lim m))) Filter.atTop (nhds 0) := by
@@ -108,10 +113,16 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
         have := h_eps.eventually ( gt_mem_nhds <| show 0 < Real.sqrt ( ε / 4 ) by positivity );
         obtain ⟨ F, hF ⟩ := this.exists_finset;
         use F;
-        intro m hm; specialize hF m; simp_all +decide [ weight ] ;
-        convert pow_lt_pow_left₀ hm ( Real.rpow_nonneg ( add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) _ ) two_ne_zero using 1 <;> norm_num [ Real.sqrt_eq_rpow, ← Real.rpow_mul ( add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ];
-        · rw [ ← Real.rpow_natCast _ 2, ← Real.rpow_mul ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ] ; ring;
-        · rw [ div_pow, ← Real.rpow_natCast, ← Real.rpow_mul ] <;> norm_num ; linarith;
+        intro m hm; replace hm : weight n ((s - t) / 2) m < Real.sqrt (ε / 4) := by
+          simpa using (hF m).not.mp hm
+        simp_all +decide [ weight ] ;
+        have hX : (0:ℝ) ≤ 1 + ∑ i : Fin n, ((m i : ℝ) ^ 2) :=
+          add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _
+        convert pow_lt_pow_left₀ hm ( Real.rpow_nonneg hX _ ) two_ne_zero using 1
+        all_goals first
+        | rfl
+        | (rw [div_pow, Real.sq_sqrt hε_pos.le, Real.sq_sqrt (by norm_num : (0:ℝ) ≤ 4)])
+        | (rw [← Real.rpow_natCast _ 2, ← Real.rpow_mul hX]; congr 1; push_cast; ring)
       use F;
       intro k
       have h_split : ∑' m, weight n s m * ‖(a (φ k) m) - (a_lim m)‖ ^ 2 = ∑ m ∈ F, weight n s m * ‖(a (φ k) m) - (a_lim m)‖ ^ 2 + ∑' m, weight n s m * ‖(a (φ k) m) - (a_lim m)‖ ^ 2 * (if m ∈ F then 0 else 1) := by
@@ -188,7 +199,9 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
             · exact mul_le_of_le_one_right ( mul_nonneg ( weight_nonneg _ _ ) ( add_nonneg ( sq_nonneg _ ) ( sq_nonneg _ ) ) ) ( weight_le_one_of_nonpos ( by linarith ) _ );
         · refine' Summable.mul_left _ _;
           have := ha_mem ( φ k );
-          convert this.add ha_lim_mem using 2 ; ring;
+          convert this.add ha_lim_mem using 1
+          · rfl
+          · ext m; ring
       -- Since $\sum' m, weight n t m * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖ ^ 2) \leq 2$, we can bound the second sum.
       have h_second_sum_final : ∑' m, weight n t m * (‖a (φ k) m‖ ^ 2 + ‖a_lim m‖ ^ 2) ≤ 2 := by
         have h_second_sum_final : ∑' m, weight n t m * ‖a (φ k) m‖ ^ 2 ≤ 1 ∧ ∑' m, weight n t m * ‖a_lim m‖ ^ 2 ≤ 1 := by
@@ -199,11 +212,12 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
               have h_second_sum_final : ∀ k, ∑ m ∈ N, weight n t m * ‖a (φ k) m‖ ^ 2 ≤ 1 := by
                 intro k;
                 exact le_trans ( Summable.sum_le_tsum _ ( fun _ _ => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) ( ha_mem _ ) ) ( ha_bdd _ );
-              exact le_of_tendsto_of_tendsto' ( tendsto_finset_sum _ fun m _ => Filter.Tendsto.mul ( tendsto_const_nhds ) ( Filter.Tendsto.pow ( Filter.Tendsto.norm ( ha_lim m ) ) 2 ) ) tendsto_const_nhds h_second_sum_final;
+              exact le_of_tendsto_of_tendsto' ( tendsto_finsetSum _ fun m _ => Filter.Tendsto.mul ( tendsto_const_nhds ) ( Filter.Tendsto.pow ( Filter.Tendsto.norm ( ha_lim m ) ) 2 ) ) tendsto_const_nhds h_second_sum_final;
             contrapose! h_second_sum_final;
             exact ( Summable.hasSum ( show Summable _ from by exact ( by { by_contra h; rw [ tsum_eq_zero_of_not_summable h ] at h_second_sum_final; linarith } ) ) ) |> fun h => h.eventually ( lt_mem_nhds h_second_sum_final ) |> fun h => h.exists;
-        convert add_le_add h_second_sum_final.1 h_second_sum_final.2 using 1;
-        · rw [ ← Summable.tsum_add ] ; congr ; ext m ; ring;
+        convert add_le_add h_second_sum_final.1 h_second_sum_final.2 using 1
+        · rfl
+        · rw [ ← Summable.tsum_add ] ; congr ; ext m ; ring
           · exact ha_mem ( φ k );
           · exact ha_lim_mem;
         · norm_num;
@@ -213,7 +227,7 @@ theorem compactInclusion_lp_weighted {s t : ℝ} (hst : s < t)
     obtain ⟨F, hF⟩ := h_eps (ε / 2) (half_pos hε_pos);
     -- Since `a(φ(k))` converges pointwise to `a_lim`, the sum over `F` tends to zero.
     have h_sum_F_zero : Filter.Tendsto (fun k => ∑ m ∈ F, weight n s m * ‖(a (φ k) m) - (a_lim m)‖ ^ 2) Filter.atTop (nhds 0) := by
-      exact le_trans ( tendsto_finset_sum _ fun m _ => Filter.Tendsto.mul tendsto_const_nhds <| Filter.Tendsto.pow ( Filter.Tendsto.norm <| Filter.Tendsto.sub ( ha_lim m ) tendsto_const_nhds ) _ ) <| by norm_num;
+      exact le_trans ( tendsto_finsetSum _ fun m _ => Filter.Tendsto.mul tendsto_const_nhds <| Filter.Tendsto.pow ( Filter.Tendsto.norm <| Filter.Tendsto.sub ( ha_lim m ) tendsto_const_nhds ) _ ) <| by norm_num;
     filter_upwards [ h_sum_F_zero.eventually ( gt_mem_nhds <| half_pos hε_pos ) ] with k hk using abs_lt.mpr ⟨ by linarith! [ show 0 ≤ ∑' m : Fin n → ℤ, weight n s m * ‖a ( φ k ) m - a_lim m‖ ^ 2 from tsum_nonneg fun _ => mul_nonneg ( Real.rpow_nonneg ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) _ ) <| sq_nonneg _ ], by linarith! [ hF k ] ⟩;
   exact ⟨ φ, hφ_mono, a_lim, MemSobolev.mono ha_lim_mem hst.le, ha_lim_conv ⟩
 

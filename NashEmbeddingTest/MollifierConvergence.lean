@@ -1,15 +1,22 @@
 /-
-  # Sharp `mollifier_convergence` witness tests
-
-  Concrete witness checks for `mollifier_convergence` applied to a
-  momentum-space delta `δ_{m₀}`:
-  - **W1** — `δ_{m₀} ∈ H^s_*` for every `s`.
-  - **W2** — On a momentum-space delta, the rescaled-convolution
-    distribution is a scalar multiple of `δ_{m₀}` with explicit
-    coefficient `ftRn φ (ε • m₀)`.
-  - **W3** — `mollifier_convergence` invoked on `δ_{m₀}`.
+Copyright (c) 2026 David Wiygul. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
+  — at the request of David Wiygul
 -/
 import NashEmbedding.Sobolev.Convolution
+
+/-!
+# Sharp `mollifier_convergence` witness tests
+
+Concrete witness checks for `mollifier_convergence` applied to a
+momentum-space delta `δ_{m₀}`:
+- **W1** — `δ_{m₀} ∈ H^s_*` for every `s`.
+- **W2** — On a momentum-space delta, the rescaled-convolution
+  distribution is a scalar multiple of `δ_{m₀}` with explicit
+  coefficient `ftRn φ (ε • m₀)`.
+- **W3** — `mollifier_convergence` invoked on `δ_{m₀}`.
+-/
 
 open scoped BigOperators
 open NashEmbedding.Sobolev MeasureTheory

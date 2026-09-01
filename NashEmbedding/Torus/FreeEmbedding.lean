@@ -465,6 +465,7 @@ theorem freeEmb_isFree (n : ℕ) : IsFree (freeEmb n) := by
   funext m
   have h := congrFun hg (Fintype.equivFin (FreeIdx n) m)
   simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at h ⊢
+  change _ = (0 : ℝ) at h
   rw [← h]
   refine Finset.sum_congr rfl fun k _ => ?_
   rcases k with a | pq

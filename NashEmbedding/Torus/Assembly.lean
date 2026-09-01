@@ -170,7 +170,9 @@ theorem exists_delta_posDef_sub {g g₀ : (Fin n → ℝ) → Matrix (Fin n) (Fi
   have hM1 : (0 : ℝ) < M + 1 := by linarith
   have hδ : 0 < δ := div_pos hη hM1
   set h : (Fin n → ℝ) → Matrix (Fin n) (Fin n) ℝ := fun x => (-δ) • g₀ x with hhdef
-  have hcont : Continuous h := (hg₀.smooth.continuous).const_smul (-δ)
+  have hcont : Continuous h := by
+    refine continuous_matrix fun i j => ?_
+    exact ((continuous_apply j).comp ((continuous_apply i).comp hg₀.smooth.continuous)).const_smul (-δ)
   have hper : IsPeriodic2Pi h := fun x k => by simp only [hhdef, hg₀.periodic x k]
   have hherm : ∀ x, (h x).IsHermitian := by
     intro x
@@ -186,7 +188,10 @@ theorem exists_delta_posDef_sub {g g₀ : (Fin n → ℝ) → Matrix (Fin n) (Fi
     nlinarith [hδ]
   have hposdef := hstab h hcont hper hherm hnorm
   refine ⟨δ, hδ, ⟨⟨?_, ?_⟩, ?_⟩⟩
-  · exact hg.smoothPeriodic.smooth.sub (hg₀.smooth.const_smul δ)
+  · have hdiff : ContDiff ℝ ∞ (fun x => δ • g₀ x) := by
+      refine contDiff_matrix fun i j => ?_
+      exact contDiff_const.mul ((contDiff_apply _ _ j).comp ((contDiff_apply _ _ i).comp hg₀.smooth))
+    exact hg.smoothPeriodic.smooth.sub hdiff
   · intro x k
     show g (x + periodicShift n k) - δ • g₀ (x + periodicShift n k) = g x - δ • g₀ x
     rw [hg.smoothPeriodic.periodic x k, hg₀.periodic x k]

@@ -58,7 +58,7 @@ lemma inv_contDiff {M : (Fin n → ℝ) → Matrix ι ι ℝ}
     ContDiff ℝ ∞ (fun x => (M x)⁻¹ i j) := by
   have h : (fun x => (M x)⁻¹ i j) = fun x => ((M x).det)⁻¹ * (M x).adjugate i j := by
     funext x
-    rw [inv_def, Ring.inverse_eq_inv, smul_apply, smul_eq_mul]
+    rw [inv_def, Ring.inverse_eq_inv, Matrix.smul_apply, smul_eq_mul]
   rw [h]
   exact ((det_contDiff hM).inv hdet).mul (adjugate_contDiff hM i j)
 

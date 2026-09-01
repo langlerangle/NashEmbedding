@@ -103,6 +103,27 @@ def PullsBackEuclidean (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : 
   smoothly along `u`.  (Whitney via `SmoothBumpCovering.exists_immersion_euclidean`'s
   construction `eEF ∘ embeddingPiTangent`, then `WhitneyExtension`, then scaling by a small
   `ε > 0`.) -/
+/- `ChartedSpace` on matrices over themselves, with the topology spelled two ways:
+the model side carries the norm-derived chain (as `𝓘(ℝ, Matrix …)` elaborates it),
+the manifold side the direct Pi-derived instance.  The two are definitionally equal,
+but v4.31's `Matrix` is a `def`, so instance search needs this exact mixed shape;
+`chartedSpaceSelf` alone can never match it.  This bridge is necessary, not a
+workaround for our instance choices: the same mixed goal defeats even Mathlib's
+own scoped `Matrix.Norms.Elementwise` instances (with or without `fast_instance%`),
+so at v4.31 any `ContMDiff _ 𝓘(ℝ, Matrix _ _ ℝ) _ _` statement needs a
+user-supplied instance of this shape. -/
+instance instChartedSpaceMatrixSelf {N : ℕ} :
+    @ChartedSpace (Matrix (Fin N) (Fin N) ℝ)
+      (@UniformSpace.toTopologicalSpace (Matrix (Fin N) (Fin N) ℝ)
+        (@PseudoMetricSpace.toUniformSpace (Matrix (Fin N) (Fin N) ℝ)
+          (@SeminormedAddCommGroup.toPseudoMetricSpace (Matrix (Fin N) (Fin N) ℝ)
+            (@NormedAddCommGroup.toSeminormedAddCommGroup (Matrix (Fin N) (Fin N) ℝ)
+              (instNormedAddCommGroupMatrixFinReal_nashEmbedding N)))))
+      (Matrix (Fin N) (Fin N) ℝ)
+      (@instTopologicalSpaceMatrix (Fin N) (Fin N) ℝ
+        (@UniformSpace.toTopologicalSpace ℝ (@PseudoMetricSpace.toUniformSpace ℝ Real.pseudoMetricSpace))) :=
+  @chartedSpaceSelf (Matrix (Fin N) (Fin N) ℝ) _
+
 theorem exists_immersion_in_cube [T2Space M] [CompactSpace M] [I.Boundaryless] [Nonempty M] :
     ∃ (N : ℕ) (u : M → EuclideanSpace ℝ (Fin N)), 0 < N ∧
       ContMDiff I 𝓘(ℝ, EuclideanSpace ℝ (Fin N)) ∞ u ∧ Injective u ∧
@@ -122,16 +143,16 @@ theorem exists_immersion_in_cube [T2Space M] [CompactSpace M] [I.Boundaryless] [
   have hN : 0 < n := Module.finrank_pos
   set eEF : (ι → E × ℝ) ≃L[ℝ] EuclideanSpace ℝ (Fin n) :=
     ContinuousLinearEquiv.ofFinrankEq finrank_euclideanSpace_fin.symm with heEF
-  set Phi : M → EuclideanSpace ℝ (Fin n) := fun x => eEF (f.embeddingPiTangent x) with hPhi
-  have hPhicomp : Phi = ⇑eEF ∘ ⇑f.embeddingPiTangent := rfl
+  set Phi : M → EuclideanSpace ℝ (Fin n) := fun x => eEF (f.embPiTan x) with hPhi
+  have hPhicomp : Phi = ⇑eEF ∘ ⇑f.embPiTan := rfl
   have hPhism : ContMDiff I 𝓘(ℝ, EuclideanSpace ℝ (Fin n)) ∞ Phi :=
-    eEF.toDiffeomorph.contMDiff.comp f.embeddingPiTangent.contMDiff
-  have hPhiinj : Injective Phi := eEF.injective.comp f.embeddingPiTangent_injective
+    eEF.toDiffeomorph.contMDiff.comp f.embPiTan.contMDiff
+  have hPhiinj : Injective Phi := eEF.injective.comp (f.embPiTan_injective)
   have hPhid : ∀ x, Injective (mfderiv I 𝓘(ℝ, EuclideanSpace ℝ (Fin n)) Phi x) := by
     intro x
     rw [hPhicomp, mfderiv_comp x eEF.differentiableAt.mdifferentiableAt
-        (f.embeddingPiTangent.contMDiff.mdifferentiableAt (by simp)), eEF.mfderiv_eq]
-    exact eEF.injective.comp (f.embeddingPiTangent_injective_mfderiv _ trivial)
+        (f.embPiTan.contMDiff.mdifferentiableAt (by simp)), eEF.mfderiv_eq]
+    exact eEF.injective.comp (f.embPiTan_injective_mfderiv _ trivial)
   -- the image of the compact `M` is bounded, so a small enough dilation lands in the cube
   obtain ⟨x₀, -, hmax⟩ := isCompact_univ.exists_isMaxOn (univ_nonempty (α := M))
     (continuous_norm.comp hPhism.continuous).continuousOn
@@ -156,7 +177,8 @@ theorem exists_immersion_in_cube [T2Space M] [CompactSpace M] [I.Boundaryless] [
       nlinarith [Real.pi_pos]
     linarith
   refine ⟨n, fun x => eps • Phi x, hN, ?_, ?_, ?_, ?_, ?_⟩
-  · exact contMDiff_const.smul hPhism
+  · have hc : ContMDiff I 𝓘(ℝ, ℝ) ∞ (fun _ : M => eps) := contMDiff_const
+    exact hc.smul hPhism
   · intro x y hxy
     exact hPhiinj (smul_right_injective (EuclideanSpace ℝ (Fin n)) hepsne hxy)
   · intro x
@@ -244,7 +266,7 @@ theorem exists_ambient_metric_of_equiv {E' F : Type*} [NormedAddCommGroup E']
   have hPL : ∀ (x : M) (v : E), P x (diff (I := I) u x v) = ll v := by
     intro x v
     have h := ContinuousLinearMap.ext_iff.1 (pinv_comp (hLhinj x)) (ll v)
-    simp only [ContinuousLinearMap.coe_comp', Function.comp_apply,
+    simp only [ContinuousLinearMap.coe_comp, Function.comp_apply,
       ContinuousLinearMap.id_apply] at h
     have h2 : Lh x (ll v) = diff (I := I) u x v := by simp [hLhdef]
     rw [h2] at h
@@ -610,9 +632,13 @@ theorem PullsBackEuclidean.injective_mfderiv
   have h0 : mfderiv I 𝓘(ℝ, EuclideanSpace ℝ (Fin q)) w x (v - v') = 0 := by
     rw [map_sub, hvv', sub_self]
   have key : g.inner x (v - v') (v - v') = 0 := by
-    have := h x (v - v') (v - v')
-    rw [h0] at this
-    simpa [toEuclid] using this
+    have hgen := h x (v - v') (v - v')
+    rw [h0] at hgen
+    rw [hgen]
+    -- `simp [norm_zero]` cannot fire here: the `0` carries `TangentSpace`'s derived
+    -- `Zero` instance (v4.31 makes `TangentSpace` non-reducible), which only tactic
+    -- `exact` reconciles with the Euclidean instances at default transparency.
+    exact inner_zero_left _
   exact hpos.ne' key
 
 end Statement
@@ -647,11 +673,15 @@ example : ∃ (q : ℕ) (w : Pt → EuclideanSpace ℝ (Fin q)),
     Function.Injective w ∧ PullsBackEuclidean ptMetric w := by
   refine ⟨0, id, contMDiff_id, Function.injective_id, ?_⟩
   intro x v v'
-  have hv : (v : Pt) = 0 := Subsingleton.elim (α := Pt) _ _
-  have hv' : (v' : Pt) = 0 := Subsingleton.elim (α := Pt) _ _
+  -- On the `0`-dimensional space every inner product is `0`; stating this with
+  -- quantified arguments lets `rw` match both sides without any syntactic
+  -- sensitivity to which `Zero` instance each vanishing argument carries.
+  have hz : ∀ a b : EuclideanSpace ℝ (Fin 0), inner ℝ a b = (0 : ℝ) := fun a b => by
+    rw [Subsingleton.elim a (0 : EuclideanSpace ℝ (Fin 0))]
+    exact inner_zero_left _
   show inner ℝ (v : Pt) (v' : Pt) = _
-  rw [hv, hv']
-  simp [toEuclid]
+  rw [hz]
+  exact hz _ _
 
 end Witnesses
 

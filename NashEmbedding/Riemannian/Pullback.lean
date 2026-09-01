@@ -207,7 +207,7 @@ theorem pullbackForm_contMDiff {f : M → N}
   rw [pullbackForm_trivialization_apply f h hx, pullbackForm_apply]
   show _ = ht (f x) (Lt x a) (Lt x b)
   rw [htdef, metric_trivialization_apply h hfx, hLtx]
-  simp only [ContinuousLinearMap.coe_comp', Function.comp_apply]
+  simp only [ContinuousLinearMap.coe_comp, Function.comp_apply]
   rw [tcoord_tcoordInv hfx, tcoord_tcoordInv hfx]
 
 /-- The pullback metric `f^*h` of a smooth immersion `f : M → N`. -/
@@ -280,7 +280,7 @@ theorem prodForm_eq_pullback (g : ContMDiffRiemannianMetric I ∞ E (TangentSpac
     mfderiv_snd
   refine ContinuousLinearMap.ext fun v => ContinuousLinearMap.ext fun w => ?_
   rw [prodForm_apply]
-  simp only [ContinuousLinearMap.add_apply, pullbackForm_apply, h1, h2,
+  simp only [_root_.add_apply, pullbackForm_apply, h1, h2,
     ContinuousLinearMap.coe_fst', ContinuousLinearMap.coe_snd']
 
 omit [FiniteDimensional ℝ E] [FiniteDimensional ℝ E'] in

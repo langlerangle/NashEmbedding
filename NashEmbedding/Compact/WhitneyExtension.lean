@@ -4,7 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
   — at the request of David Wiygul
 -/
-import Mathlib
+module
+
+public import Mathlib
+import all Mathlib.Geometry.Manifold.WhitneyEmbedding
 
 /-!
 # Whitney extension along the bump-covering embedding
@@ -173,13 +176,35 @@ variable {ι : Type*} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
   {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
+/-- Public opaque re-export of `SmoothBumpCovering.embeddingPiTangent` for legacy-file consumers
+that cannot use `import all` to reach the private Mathlib constant. Downstream files should use
+`embPiTan` and the associated `embPiTan_*` API lemmas. -/
+public noncomputable def _root_.SmoothBumpCovering.embPiTan
+    [T2Space M] [Fintype ι] (f : SmoothBumpCovering ι I M) :
+    C^∞⟮I, M; 𝓘(ℝ, ι → E × ℝ), ι → E × ℝ⟯ :=
+  f.embeddingPiTangent
+
+/-- Public wrapper for `SmoothBumpCovering.embeddingPiTangent_injective`. -/
+public theorem _root_.SmoothBumpCovering.embPiTan_injective
+    [T2Space M] [Fintype ι] (f : SmoothBumpCovering ι I M) :
+    Function.Injective f.embPiTan :=
+  f.embeddingPiTangent_injective
+
+/-- Public wrapper for `SmoothBumpCovering.embeddingPiTangent_injective_mfderiv`. -/
+public theorem _root_.SmoothBumpCovering.embPiTan_injective_mfderiv
+    [T2Space M] [Fintype ι] (f : SmoothBumpCovering ι I M)
+    (x : M) (hx : x ∈ Set.univ) :
+    Function.Injective (mfderiv I 𝓘(ℝ, ι → E × ℝ) f.embPiTan x) :=
+  f.embeddingPiTangent_injective_mfderiv x hx
+
 /-- **L6 / S2 (Whitney extension).**  Every smooth `h : M → V` on a compact
   boundaryless manifold extends smoothly along the bump-covering embedding
   `Φ = f.embeddingPiTangent : M → (ι → E × ℝ)`. -/
-theorem SmoothBumpCovering.exists_extension [T2Space M] [CompactSpace M] [I.Boundaryless]
+public theorem _root_.SmoothBumpCovering.exists_extension [T2Space M] [CompactSpace M] [I.Boundaryless]
     [Fintype ι] (f : SmoothBumpCovering ι I M) {h : M → V}
     (hh : ContMDiff I 𝓘(ℝ, V) ∞ h) :
-    ∃ F : (ι → E × ℝ) → V, ContDiff ℝ ∞ F ∧ ∀ x, F (f.embeddingPiTangent x) = h x := by
+    ∃ F : (ι → E × ℝ) → V, ContDiff ℝ ∞ F ∧ ∀ x, F (f.embPiTan x) = h x := by
+  change ∃ F : (ι → E × ℝ) → V, ContDiff ℝ ∞ F ∧ ∀ x, F (f.embeddingPiTangent x) = h x
   -- Plan: θ from L1; ψ from L4; for each i, `g i := fun x => ψ i x • h x` is smooth
   -- with `tsupport (g i) ⊆ interior {f i = 1} ⊆ (chartAt H (f.c i)).source`
   -- (name this `hsupp i`; the second inclusion is `SmoothBumpCovering.support_subset_source`-
@@ -225,7 +250,7 @@ theorem SmoothBumpCovering.exists_extension [T2Space M] [CompactSpace M] [I.Boun
           norm_num at hle
         rw [hθ0 _ hle, hψ0]
         simp
-      · push_neg at hle
+      · push Not at hle
         have hne0 : f i x ≠ 0 := by
           intro h0
           rw [h0] at hle

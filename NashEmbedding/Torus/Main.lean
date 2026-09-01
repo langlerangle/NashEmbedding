@@ -128,7 +128,8 @@ lemma smoothPeriodic_smul_sub_matrix {A B : (Fin n → ℝ) → Matrix (Fin n) (
     SmoothPeriodic (c • (A - B)) := by
   refine ⟨?_, ?_⟩
   · show ContDiff ℝ ∞ (fun y => c • (A y - B y))
-    exact (hA.smooth.sub hB.smooth).const_smul c
+    refine contDiff_matrix fun i j => ?_
+    exact contDiff_const.mul (((contDiff_apply _ _ j).comp ((contDiff_apply _ _ i).comp (hA.smooth.sub hB.smooth))))
   · intro x k
     show c • (A (x + periodicShift n k) - B (x + periodicShift n k))
         = c • (A x - B x)

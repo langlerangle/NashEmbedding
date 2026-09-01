@@ -53,8 +53,11 @@ Bound on the Fourier transform: `‖φ̂(ξ)‖ ≤ ∫ ‖φ‖`.
 -/
 lemma ftRn_norm_le (φ : (Fin n → ℝ) → ℂ) (_hφ : Integrable φ) (ξ : Fin n → ℝ) :
     ‖ftRn n φ ξ‖ ≤ ∫ y, ‖φ y‖ := by
-      convert MeasureTheory.norm_integral_le_integral_norm ( _ : _ → ℂ ) using 1;
-      norm_num [ Complex.norm_exp ]
+      convert MeasureTheory.norm_integral_le_integral_norm
+          ( fun y => φ y * exp ( - ( I * ↑( ∑ j : Fin n, ξ j * y j ) ) ) ) using 1
+      all_goals first
+      | rfl
+      | ( norm_num [ Complex.norm_exp ] ; done )
 
 /-
 Continuity of the Fourier transform in `ξ`.
@@ -177,12 +180,18 @@ theorem mollifier_convergence (φ : (Fin n → ℝ) → ℂ)
         (convDistrib n (rescale n φ ε) u - ftRn n φ 0 • u))
       (nhdsWithin (0 : ℝ) (Set.Ioi 0))
       (nhds 0) := by
-        convert tendsto_tsum_of_dominated_convergence _ _ _;
-        rw [ tsum_zero ];
-        exact inferInstance;
-        use fun m => weight n s m * ( 2 * ∫ y, ‖φ y‖ ) ^ 2 * ‖fourierCoeffDistrib u m‖ ^ 2;
-        · convert hu.mul_left ( ( 2 * ∫ y, ‖φ y‖ ) ^ 2 ) using 2 ; ring;
-        · intro m;
+        convert tendsto_tsum_of_dominated_convergence
+            (f := fun ε m => weight n s m *
+              ‖fourierCoeffDistrib (convDistrib n (rescale n φ ε) u - ftRn n φ 0 • u) m‖ ^ 2)
+            (g := fun _ => (0:ℝ))
+            (bound := fun m => weight n s m * (2 * ∫ y, ‖φ y‖) ^ 2 * ‖fourierCoeffDistrib u m‖ ^ 2)
+            ?hsum ?hab ?hbound using 1
+        all_goals try first
+        | rfl
+        | (simp only [ tsum_zero ])
+        case hsum => convert hu.mul_left ( ( 2 * ∫ y, ‖φ y‖ ) ^ 2 ) using 2 <;> first | rfl | ( ring ; done ) | ( funext m ; ring )
+        case hab =>
+          intro m;
           -- By definition of $fourierCoeffDistrib$, we know that
           have h_fourierCoeffDistrib : ∀ x > 0, fourierCoeffDistrib (convDistrib n (rescale n φ x) u - ftRn n φ 0 • u) m = (ftRn n φ (x • (fun j => (m j : ℝ))) - ftRn n φ 0) * fourierCoeffDistrib u m := by
             grind +suggestions;
@@ -190,7 +199,8 @@ theorem mollifier_convergence (φ : (Fin n → ℝ) → ℂ)
           refine' tendsto_nhdsWithin_of_tendsto_nhds _;
           refine' Continuous.tendsto' _ _ _ _ <;> norm_num;
           exact Continuous.mul continuous_const <| Continuous.pow ( Continuous.mul ( Continuous.norm <| Continuous.sub ( continuous_ftRn _ hφ |> Continuous.comp <| continuous_id.smul continuous_const ) continuous_const ) continuous_const ) _;
-        · refine' Filter.eventually_of_mem self_mem_nhdsWithin fun ε hε => fun m => _;
+        case hbound =>
+          refine' Filter.eventually_of_mem self_mem_nhdsWithin fun ε hε => fun m => _;
           rw [ fourierCoeffDistrib_sub, fourierCoeffDistrib_convDistrib, fourierCoeffDistrib_smul_complex ];
           rw [ show ftRn n ( rescale n φ ε ) ( fun j => ( m j : ℝ ) ) = ftRn n φ ( ε • fun j => ( m j : ℝ ) ) from ftRn_rescale _ hφ hε _ ];
           -- Apply the triangle inequality to the norm.

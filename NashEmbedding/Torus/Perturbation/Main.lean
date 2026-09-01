@@ -397,7 +397,8 @@ private lemma ssynth_smoothPeriodic (hn : 0 < n) {f : Seq n} (hf : IsRapidDecay 
     SmoothPeriodic (ssynth n f) := by
   constructor
   · have h := Complex.reCLM.contDiff.comp (fourierSynthesis_contDiff hn hf)
-    simpa [ssynth, Function.comp] using h
+    unfold ssynth
+    exact h
   · intro x k
     unfold ssynth
     rw [fourierSynthesis_isPeriodic2Pi x k]
@@ -531,11 +532,11 @@ theorem vcoeff_Wfun (hn : 0 < n) {u₀ : (Fin n → ℝ) → (Fin N → ℝ)} (h
     fun pq => (continuous_const.mul (cHv pq.1 pq.2).1.continuous).mul (cBv pq.1 pq.2).1.continuous
   have ctN : Continuous
       (fun x => -∑ i, ((Ftil n v i x : ℝ) : ℂ) * ((dualA u₀ i x α : ℝ) : ℂ)) :=
-    (continuous_finset_sum _ fun i _ => ctA i).neg
+    (continuous_finsetSum _ fun i _ => ctA i).neg
   have ctS2 : Continuous (fun x => ∑ pq ∈ pairs n,
       (((1 / 2 : ℂ) * ((Util n v pq.1 pq.2 x : ℝ) : ℂ)) * ((dualB u₀ pq.1 pq.2 x α : ℝ) : ℂ)
         - ((1 / 2 : ℂ) * ((h x pq.1 pq.2 : ℝ) : ℂ)) * ((dualB u₀ pq.1 pq.2 x α : ℝ) : ℂ))) :=
-    continuous_finset_sum _ fun pq _ => (ctU pq).sub (ctH pq)
+    continuous_finsetSum _ fun pq _ => (ctU pq).sub (ctH pq)
   show stdFourierCoeff n (fun x => ((Wfun n u₀ h v x α : ℝ) : ℂ)) = _
   rw [hfun, stdFourierCoeff_add ctN ctS2, stdFourierCoeff_neg,
     stdFourierCoeff_finset_sum' _ (fun i _ => ctA i),

@@ -57,7 +57,7 @@ lemma exists_finset_periodicExtension {φ : (Fin n → ℝ) → ℂ} (hsupp : Ha
     have h_bound : |y i| ≤ ‖x‖ + 1 := by
       have h_bound : |y i - x i| ≤ ‖y - x‖ := by
         exact norm_le_pi_norm ( y - x ) i;
-      exact abs_le.mpr ⟨ by linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp ( norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by simpa using hy_ball ], by linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp ( norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by simpa using hy_ball ] ⟩;
+      exact abs_le.mpr ⟨ by linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp ( norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by rw [← dist_eq_norm]; exact hy_ball ], by linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp ( norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by rw [← dist_eq_norm]; exact hy_ball ] ⟩;
     rw [ le_div_iff₀ ] <;> cases abs_cases ( k i : ℝ ) <;> cases abs_cases ( y i + 2 * Real.pi * ( k i : ℝ ) ) <;> cases abs_cases ( y i ) <;> nlinarith [ Real.pi_gt_three ];
   have h_finite_k : Set.Finite {k : Fin n → ℤ | ∀ i : Fin n, |(k i : ℝ)| ≤ (R + ‖x‖ + 1) / (2 * Real.pi)} := by
     have h_finite_k : ∀ i : Fin n, Set.Finite {k : ℤ | |(k : ℝ)| ≤ (R + ‖x‖ + 1) / (2 * Real.pi)} := by
@@ -89,14 +89,13 @@ lemma partialDeriv_periodicExtension {φ : (Fin n → ℝ) → ℂ}
   have hsum0 : HasFDerivAt (∑ k ∈ S, fun y => φ (y + NashEmbedding.Sobolev.periodicShift n k))
       (∑ k ∈ S, fderiv ℝ φ (x + NashEmbedding.Sobolev.periodicShift n k)) x := by
     refine HasFDerivAt.sum fun k _ => ?_
-    have h1 := (hdiff (x + NashEmbedding.Sobolev.periodicShift n k)).hasFDerivAt.comp x
+    exact (hdiff (x + NashEmbedding.Sobolev.periodicShift n k)).hasFDerivAt.comp x
       ((hasFDerivAt_id x).add_const (NashEmbedding.Sobolev.periodicShift n k))
-    simpa using h1
   have hsum : HasFDerivAt (fun y => ∑ k ∈ S, φ (y + NashEmbedding.Sobolev.periodicShift n k))
       (∑ k ∈ S, fderiv ℝ φ (x + NashEmbedding.Sobolev.periodicShift n k)) x := by
     convert hsum0 using 1
     funext y; simp [Finset.sum_apply]
-  rw [hsum.fderiv, ContinuousLinearMap.sum_apply]
+  rw [hsum.fderiv, _root_.sum_apply]
   -- the right-hand side is the same finite sum: the other terms vanish
   unfold periodicExtension
   rw [tsum_eq_sum (s := S)]
@@ -146,7 +145,7 @@ lemma periodicExtension_mul {φ ψ : (Fin n → ℝ) → ℂ}
       tsum_eq_single k₀ (fun k hk => by
         show φ (x + NashEmbedding.Sobolev.periodicShift n k) * ψ (x + NashEmbedding.Sobolev.periodicShift n k) = 0
         rw [hφ0 k hk, zero_mul])]
-  · push_neg at hex
+  · push Not at hex
     have hφ0 : ∀ k, φ (x + NashEmbedding.Sobolev.periodicShift n k) = 0 := by
       intro k; by_contra h
       obtain ⟨j, hj⟩ := hex k
@@ -168,9 +167,8 @@ lemma rescaleBump_fderiv_mul {χ : (Fin n → ℝ) → ℝ} (hχ : ContDiff ℝ 
     intro v
     have hin : HasFDerivAt (fun y : Fin n → ℝ => χ (ε⁻¹ • y))
         ((fderiv ℝ χ (ε⁻¹ • x)).comp (ε⁻¹ • ContinuousLinearMap.id ℝ (Fin n → ℝ))) x := by
-      have h1 := (hχ.differentiable NashEmbedding.Sobolev.infty_ne_zero (ε⁻¹ • x)).hasFDerivAt.comp x
+      exact (hχ.differentiable NashEmbedding.Sobolev.infty_ne_zero (ε⁻¹ • x)).hasFDerivAt.comp x
         ((hasFDerivAt_id x).const_smul ε⁻¹)
-      simpa using h1
     have hall : HasFDerivAt (rescaleBump n χ ε)
         (c • ((fderiv ℝ χ (ε⁻¹ • x)).comp (ε⁻¹ • ContinuousLinearMap.id ℝ (Fin n → ℝ)))) x :=
       hin.const_mul c
@@ -290,8 +288,10 @@ lemma gram_pe_bump {χ : (Fin n → ℝ) → ℝ} (hχ : ContDiff ℝ ∞ χ) (h
       = a * fderiv ℝ (pe n χ) (x - z) v := by
     intro v
     have h1 : HasFDerivAt (fun x => pe n χ (x - z)) (fderiv ℝ (pe n χ) (x - z)) x := by
-      have := (hpe (x - z)).hasFDerivAt.comp x ((hasFDerivAt_id x).sub_const z)
-      simpa using this
+      first
+      | exact (hpe (x - z)).hasFDerivAt.comp x ((hasFDerivAt_id x).sub_const z)
+      | (have h0 := (hpe (x - z)).hasFDerivAt.comp x ((hasFDerivAt_id x).sub_const z)
+         simpa [Function.comp, ContinuousLinearMap.comp_id] using h0)
     rw [(h1.const_mul a).fderiv]
     simp
   rw [hd, hd, fderiv_pe hχ hs, fderiv_pe hχ hs]
@@ -495,7 +495,7 @@ lemma perEntry_residual_bound_c
               * g (meshPoint n M k) : ℝ) : ℂ)) := by
     refine Complex.ofRealCLM.continuous.comp ?_
     refine continuous_const.mul ?_
-    apply continuous_finset_sum
+    apply continuous_finsetSum
     intro k _
     refine Continuous.mul ?_ continuous_const
     refine Complex.reCLM.continuous.comp ?_
@@ -852,7 +852,7 @@ lemma integrationEmbed_finset_sum {ι : Type*} (t : Finset ι) (F : ι → (Fin 
     rw [h1, NashEmbedding.Sobolev.integrationEmbed_add (f := fun x => ((F a x : ℝ) : ℂ))
       (g := fun x => ((∑ b ∈ t, F b x : ℝ) : ℂ))
       (Complex.continuous_ofReal.comp (hF a))
-      (Complex.continuous_ofReal.comp (continuous_finset_sum _ fun b _ => hF b))]
+      (Complex.continuous_ofReal.comp (continuous_finsetSum _ fun b _ => hF b))]
 
 lemma memSobolevDistrib_zero (s : ℝ) : MemSobolevDistrib n s
     (0 : NashEmbedding.Sobolev.TrigPolyDual n) := by
@@ -1049,14 +1049,14 @@ theorem realizable_approx (hn : 0 < n) {g : (Fin n → ℝ) → Matrix (Fin n) (
             (partialDeriv i (U_k k) x ⬝ᵥ partialDeriv j (U_k k) x -
               f k x * B k i j)) : ℝ) : ℂ)) := by
       refine Complex.continuous_ofReal.comp ?_
-      refine continuous_finset_sum _ ?_
+      refine continuous_finsetSum _ ?_
       intro k _
       exact ((hU_k_pd_dot_cd k i j).sub ((hf_cd k).mul contDiff_const)).continuous
     have hcont_b : Continuous (fun x : Fin n → ℝ =>
         (((∑ k : Fin n → Fin M, f k x * B k i j) - g x i j : ℝ) : ℂ)) := by
       refine Complex.continuous_ofReal.comp ?_
       refine Continuous.sub ?_ (hg_cd i j).continuous
-      refine continuous_finset_sum _ ?_
+      refine continuous_finsetSum _ ?_
       intro k _
       exact ((hf_cd k).mul contDiff_const).continuous
     have h_add_split : integrationEmbed n (fun x =>

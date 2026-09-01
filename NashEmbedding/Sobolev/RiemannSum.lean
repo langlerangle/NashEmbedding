@@ -164,7 +164,8 @@ lemma norm_riemannK_normalized_le {s : ℝ} (hn : 0 < n) (hs : (n : ℝ) < 2 * s
   · refine' le_trans ( mul_le_mul_of_nonneg_left ( norm_sum_le _ _ ) ( by positivity ) ) _;
     refine' le_trans ( mul_le_mul_of_nonneg_left ( Finset.sum_le_sum fun _ _ => _ ) ( by positivity ) ) _;
     use fun _ => ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖;
-    · convert sup_norm_fourierSeries_le _ _ using 1;
+    · convert sup_norm_fourierSeries_le _ _ using 1
+      all_goals try rfl
       rw [ norm_mul, norm_fourierExp ];
       rw [ mul_one ];
       congr! 1;
@@ -369,13 +370,20 @@ theorem riemannSum_convergence (φ : (Fin n → ℝ) → ℂ)
     rw [ mul_pow, mul_assoc ];
     exact mul_le_mul_of_nonneg_left ( by nlinarith only [ show 0 ≤ ‖ftRn n φ fun j => ( m j : ℝ )‖ ^ 2 by positivity, show 0 ≤ ‖↑ ( ( 2 * Real.pi ) ^ n ) ⁻¹ * riemannK n u M m - fourierCoeffDistrib u m‖ ^ 2 by positivity, h_fourier_coeff_bound, show ‖↑ ( ( 2 * Real.pi ) ^ n ) ⁻¹ * riemannK n u M m - fourierCoeffDistrib u m‖ ^ 2 ≤ ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^ 2 by gcongr ] ) ( weight_nonneg s m );
   have h_dom : Summable (fun m : Fin n → ℤ => weight n s m * (2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖) ^ 2 * ‖ftRn n φ (fun j => (m j : ℝ))‖ ^ 2) := by
-    convert hφ_rd s |> Summable.mul_left ( ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^ 2 ) using 2 ; ring;
-  convert tendsto_tsum_of_dominated_convergence _ _ _;
-  any_goals exact h_dom;
-  rw [ tsum_zero ];
-  · infer_instance;
-  · exact fun m => by simpa using Filter.Tendsto.const_mul _ ( ‹∀ m : Fin n → ℤ, Filter.Tendsto ( fun M : ℕ => ‖fourierCoeffDistrib ( riemannSumDistrib n φ u M - convDistrib n φ u ) m‖ ^ 2 ) Filter.atTop ( nhds 0 ) › m ) ;
-  · filter_upwards [ Filter.eventually_gt_atTop 0 ] with M hM using fun m => by rw [ Real.norm_of_nonneg ( mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) ] ; exact ‹∀ M : ℕ, ∀ m : Fin n → ℤ, weight n s m * ‖fourierCoeffDistrib ( riemannSumDistrib n φ u M - convDistrib n φ u ) m‖ ^ 2 ≤ weight n s m * ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^ 2 * ‖ftRn n φ fun j => ↑ ( m j )‖ ^ 2› M m;
+    convert hφ_rd s |> Summable.mul_left ( ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^ 2 ) using 2 <;> first | rfl | ( ring ; done ) | ( funext m ; ring );
+  have h_ab : ∀ m : Fin n → ℤ, Filter.Tendsto (fun M : ℕ => weight n s m * ‖fourierCoeffDistrib (riemannSumDistrib n φ u M - convDistrib n φ u) m‖ ^ 2) Filter.atTop (nhds 0) :=
+    fun m => by simpa using Filter.Tendsto.const_mul _ ( ‹∀ m : Fin n → ℤ, Filter.Tendsto ( fun M : ℕ => ‖fourierCoeffDistrib ( riemannSumDistrib n φ u M - convDistrib n φ u ) m‖ ^ 2 ) Filter.atTop ( nhds 0 ) › m )
+  have h_bound : ∀ᶠ M in Filter.atTop, ∀ m : Fin n → ℤ, ‖weight n s m * ‖fourierCoeffDistrib (riemannSumDistrib n φ u M - convDistrib n φ u) m‖ ^ 2‖ ≤ weight n s m * (2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖) ^ 2 * ‖ftRn n φ (fun j => (m j : ℝ))‖ ^ 2 := by
+    filter_upwards [ Filter.eventually_gt_atTop 0 ] with M hM using fun m => by rw [ Real.norm_of_nonneg ( mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) ] ; exact ‹∀ M : ℕ, ∀ m : Fin n → ℤ, weight n s m * ‖fourierCoeffDistrib ( riemannSumDistrib n φ u M - convDistrib n φ u ) m‖ ^ 2 ≤ weight n s m * ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^ 2 * ‖ftRn n φ fun j => ↑ ( m j )‖ ^ 2› M m
+  convert tendsto_tsum_of_dominated_convergence
+      (f := fun M m => weight n s m *
+        ‖fourierCoeffDistrib (riemannSumDistrib n φ u M - convDistrib n φ u) m‖ ^ 2)
+      (g := fun _ => (0:ℝ))
+      (bound := fun m => weight n s m * (2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖) ^ 2 * ‖ftRn n φ (fun j => (m j : ℝ))‖ ^ 2)
+      h_dom h_ab h_bound using 1
+  all_goals first
+  | rfl
+  | (simp only [ tsum_zero ])
 
 end NashEmbedding.Sobolev
 

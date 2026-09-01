@@ -38,8 +38,8 @@ theorem not_pullsBackEuclidean_const {E : Type*} [NormedAddCommGroup E] [NormedS
     rw [mfderiv_const]; rfl
   have := h x v v
   rw [h0] at this
-  simp [toEuclid] at this
-  exact absurd this hpos.ne'
+  simp only [toEuclid] at this
+  exact absurd (this.trans (inner_zero_left _)) hpos.ne'
 
 end NashEmbedding
 

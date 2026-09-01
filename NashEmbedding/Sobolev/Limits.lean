@@ -225,7 +225,7 @@ theorem memSobolev_of_tendsto_coeff {s : ℝ} {v : ℕ → (Fin n → ℤ) → �
     intro T
     have hT : Tendsto (fun p => ∑ m ∈ T, weight n s m * ‖v p m‖ ^ 2) atTop
         (𝓝 (∑ m ∈ T, weight n s m * ‖a m‖ ^ 2)) := by
-      exact tendsto_finset_sum _ fun m _ => (((hlim m).norm).pow 2).const_mul _
+      exact tendsto_finsetSum _ fun m _ => (((hlim m).norm).pow 2).const_mul _
     refine le_of_tendsto hT ?_
     filter_upwards with p
     calc ∑ m ∈ T, weight n s m * ‖v p m‖ ^ 2 ≤ sobolevNormSq n s (v p) :=

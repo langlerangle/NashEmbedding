@@ -150,8 +150,7 @@ lemma ftRn_partialDeriv_single
             hasDerivAt_id _ |> HasDerivAt.ofReal_comp)
           <| hasDerivAt_const _ _)
         using 1
-      norm_num
-      ring
+      all_goals (first | rfl | (norm_num; ring; done) | (ring; done))
     exact h1d.unique hexp
   -- (fderiv E · e_j) · φ integrable, via the fderiv computation.
   have hdE_phi_int : Integrable (fun y => fderiv ℝ E y (Pi.single j 1) * φ y) := by
@@ -164,7 +163,7 @@ lemma ftRn_partialDeriv_single
   have hIBP : ∫ y, E y * fderiv ℝ φ y (Pi.single j 1)
               = - ∫ y, fderiv ℝ E y (Pi.single j 1) * φ y :=
     integral_mul_fderiv_eq_neg_fderiv_mul_of_integrable
-      hdE_phi_int hE_dphi_int hEφ_int hE_diff hφ_diff
+      hdE_phi_int hE_dphi_int hEφ_int (fun x _ => hE_diff.differentiableAt) (fun x _ => hφ_diff.differentiableAt)
   -- LHS is ftRn (partialDeriv j φ) ξ up to mul_comm.
   have hLHS : (∫ y, E y * fderiv ℝ φ y (Pi.single j 1))
               = ftRn n (partialDeriv j φ) ξ := by
@@ -237,7 +236,7 @@ lemma ftRn_finset_sum {ι : Type*} (s : Finset ι)
       ((hf_ct i₀ hi_in).mul hE_ct).integrable_of_hasCompactSupport
         (hf_supp i₀ hi_in).mul_right
     have hf_s_ct : Continuous (fun y : (Fin n → ℝ) => ∑ j ∈ s₀, f j y) :=
-      continuous_finset_sum s₀ (fun j hj => hf_ct_s j hj)
+      continuous_finsetSum s₀ (fun j hj => hf_ct_s j hj)
     have hf_s_supp : HasCompactSupport (fun y : (Fin n → ℝ) => ∑ j ∈ s₀, f j y) := by
       have h0 : HasCompactSupport (0 : (Fin n → ℝ) → ℂ) := by
         unfold HasCompactSupport tsupport; simp [Function.support_zero]

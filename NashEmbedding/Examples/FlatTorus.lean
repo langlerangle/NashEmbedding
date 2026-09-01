@@ -142,6 +142,12 @@ theorem mfderiv_torus2Wrap_apply (θ : Fin 2 → ℝ) (v : Fin 2 → ℝ) :
   rw [hwrap, key]
   rfl
 
+/- v4.31: `TangentSpace` is no longer unfolded at `instances` transparency, which breaks
+type-class search and `rw` in goals that (by v4.28-era design) mix model-typed and
+tangent-typed terms. We restore the old defeq semantics per declaration with the same
+option Mathlib itself uses at this boundary (cf. `NormedSpace.fromTangentSpace`).
+Migrating this file off the identification is tracked as post-registration debt. -/
+set_option backward.isDefEq.respectTransparency false in
 /-- The differential of `circleCoe ∘ Circle.exp` at `t`, applied to `s : ℝ`:
   `s • (exp (i t) · i)`. -/
 theorem mfderiv_circleCoe_exp_apply (t s : ℝ) :
@@ -160,11 +166,16 @@ theorem mfderiv_circleCoe_exp_apply (t s : ℝ) :
   rw [hfun] at hcomp
   have hfd := hasMFDerivAt_iff_hasFDerivAt.1 hcomp
   have h0 : HasDerivAt (fun t : ℝ => (t : ℂ)) 1 t := by
-    simpa using Complex.ofRealCLM.hasDerivAt (x := t)
+    have h_raw : HasDerivAt (⇑Complex.ofRealCLM) 1 t := Complex.ofRealCLM.hasDerivAt
+    exact h_raw
   have h2 : HasDerivAt (fun t : ℝ => Complex.exp ((t : ℂ) * Complex.I))
       (Complex.exp ((t : ℂ) * Complex.I) * (1 * Complex.I)) t := (h0.mul_const Complex.I).cexp
   have huniq := hfd.unique h2.hasFDerivAt
-  simpa using congrArg (fun L : ℝ →L[ℝ] ℂ => L s) huniq
+  -- `simpa` cannot match across the `TangentSpace`-vs-`ℂ` Eq-carrier; everything except
+  -- `1 * I` is definitional, so rewrite that and let `exact` reconcile the rest.
+  have happ := congrArg (fun L : ℝ →L[ℝ] ℂ => L s) huniq
+  rw [one_mul] at happ
+  exact happ
 
 /-- The tangent vectors `s • (exp (i t) · i)` are unit vectors: their real inner products
   reduce to products of the scalars. -/
@@ -174,6 +185,7 @@ theorem inner_deriv_circle (t a b : ℝ) :
   rw [real_inner_smul_left, real_inner_smul_right, real_inner_self_eq_norm_sq]
   simp [Complex.norm_exp_ofReal_mul_I]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- **L3.** The pullback of `flatTorus2Metric` along `torus2Wrap` is the flat metric on
   `ℝ²`: at every `θ` and for any tangent vectors `v, v' : Fin 2 → ℝ`,
   `⟨v, v'⟩ = (flatTorus2Metric)_{torus2Wrap θ} (dtorus2Wrap v, dtorus2Wrap v')`.
@@ -246,6 +258,7 @@ theorem dotProduct_equiv {q : ℕ} (x y : EuclideanSpace ℝ (Fin q)) :
       = inner ℝ x y := by
   simp [dotProduct, PiLp.inner_apply, mul_comm]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The partial derivatives of the composite `equiv ∘ w ∘ torus2Wrap`, via the chain rule. -/
 theorem partialDeriv_flatTorus {q : ℕ}
     (w : Circle × Circle → EuclideanSpace ℝ (Fin q))
@@ -273,6 +286,7 @@ theorem partialDeriv_flatTorus {q : ℕ}
   rw [partialDeriv, hfderiv]
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /-- **L5.** The composite `u = equiv ∘ w ∘ torus2Wrap` realizes the flat metric on `ℝ²`:
   `∂ᵢu · ∂ⱼu = δᵢⱼ`.
 

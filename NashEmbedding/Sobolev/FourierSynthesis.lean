@@ -62,14 +62,20 @@ lemma norm_derivCoeff_le {k : ℕ} {α : Fin n → ℕ} (hα : multiDeg α ≤ k
       have h_abs_term : ‖(m j : ℂ)‖ ≤ (1 + ∑ j, (m j : ℝ) ^ 2) ^ (1 / 2 : ℝ) := by
         norm_num [ ← Real.sqrt_eq_rpow ];
         exact Real.abs_le_sqrt ( by nlinarith only [ Finset.single_le_sum ( fun i _ => sq_nonneg ( m i : ℝ ) ) ( Finset.mem_univ j ) ] );
-      convert pow_le_pow_left₀ ( norm_nonneg _ ) h_abs_term ( α j ) using 1 <;> norm_num ; ring;
-      rw [ ← Real.rpow_natCast, ← Real.rpow_mul ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ] ; ring;
+      convert pow_le_pow_left₀ ( norm_nonneg _ ) h_abs_term ( α j ) using 1
+      all_goals (first
+        | rfl
+        | (norm_num; done)
+        | (rw [← Real.rpow_natCast _ (α j), ← Real.rpow_mul
+              (add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _)];
+           congr 1; push_cast; ring))
     simpa [ Finset.sum_div _ _ _, Real.rpow_sum_of_pos ( add_pos_of_pos_of_nonneg zero_lt_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ] using Finset.prod_le_prod ( fun _ _ => norm_nonneg _ ) fun j ( hj : j ∈ Finset.univ ) => h_abs_term j;
-  convert mul_le_mul_of_nonneg_right h_prod ( show 0 ≤ ‖a m‖ by positivity ) |> le_trans <| ?_ using 1;
-  · unfold derivCoeff;
-    unfold monomialPow; norm_num [ Complex.norm_exp ] ;
-  · gcongr;
-    exact Real.rpow_le_rpow_of_exponent_le ( le_add_of_nonneg_right <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) <| by rw [ div_le_div_iff_of_pos_right <| by positivity ] ; exact_mod_cast hα;
+  convert mul_le_mul_of_nonneg_right h_prod ( show 0 ≤ ‖a m‖ by positivity ) |> le_trans <| ?_ using 1
+  · rfl
+  · unfold derivCoeff
+    unfold monomialPow; norm_num [ Complex.norm_exp ]
+  · gcongr
+    exact Real.rpow_le_rpow_of_exponent_le ( le_add_of_nonneg_right <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) <| by rw [ div_le_div_iff_of_pos_right <| by positivity ] ; exact_mod_cast hα
 
 /-
 If `a ∈ ℓ²_(s+k)` and `|α| ≤ k`, then `m ↦ (im)^α aₘ` is in `ℓ²_(s)`.
@@ -79,9 +85,18 @@ lemma memSobolev_derivCoeff {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
     {a : (Fin n → ℤ) → ℂ} (ha : MemSobolev n (s + k) a) :
     MemSobolev n s (derivCoeff α a) := by
   refine' .of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg s m ) ( sq_nonneg _ ) ) ( fun m => _ ) ( ha.mul_left ( 1 : ℝ ) );
-  convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( norm_derivCoeff_le hα a m ) 2 ) ( weight_nonneg s m ) using 1 ; ring!;
-  unfold weight; norm_num [ mul_assoc, mul_comm, mul_left_comm, sq, ← Real.rpow_add ( one_pos.trans_le <| one_le_weight_base m ) ] ;
-  exact Or.inl ( by rw [ ← Real.rpow_add ( by exact add_pos_of_pos_of_nonneg zero_lt_one <| Finset.sum_nonneg fun _ _ => mul_self_nonneg _ ) ] ; rw [ ← Real.rpow_add ( by exact add_pos_of_pos_of_nonneg zero_lt_one <| Finset.sum_nonneg fun _ _ => mul_self_nonneg _ ) ] ; ring )
+  have hXp : (0 : ℝ) < 1 + ∑ i : Fin n, ((m i : ℝ) ^ 2) :=
+    add_pos_of_pos_of_nonneg zero_lt_one (Finset.sum_nonneg fun _ _ => sq_nonneg _)
+  have h_weight_split : weight n (s + ↑k) m
+                      = weight n s m * weight n ((↑k : ℝ) * (1/2)) m ^ 2 := by
+    unfold weight
+    rw [pow_two, ← Real.rpow_add hXp, ← Real.rpow_add hXp]
+    congr 1; push_cast; ring
+  convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( norm_derivCoeff_le hα a m ) 2 ) ( weight_nonneg s m ) using 1
+  all_goals (first
+    | rfl
+    | (ring!; done)
+    | (rw [h_weight_split]; ring))
 
 /-
 If `a ∈ ℓ²_(s+k)`, `2s > n`, and `|α| ≤ k`, then `m ↦ (im)^α aₘ ∈ ℓ¹`.
@@ -110,23 +125,37 @@ theorem fourierSynthesis_supBound {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
         sobolevNormSq n (s + k) a ^ (1/2 : ℝ) := by
   -- Apply the Cauchy-Schwarz inequality to the sum.
   have h_cauchy_schwarz : (∑' m : Fin n → ℤ, ‖derivCoeff α a m‖) ^ 2 ≤ (∑' m : Fin n → ℤ, weight n (-s) m) * (∑' m : Fin n → ℤ, weight n (s : ℝ) m * ‖derivCoeff α a m‖ ^ 2) := by
-    convert tsum_norm_sq_le hn hs ( memSobolev_derivCoeff hα ha ) using 1;
+    convert tsum_norm_sq_le hn hs ( memSobolev_derivCoeff hα ha ) using 1
+    simp [sobolevNormSq]
   -- Apply the norm_derivCoeff_le bound to the sum.
   have h_norm_derivCoeff_le_sum : (∑' m : Fin n → ℤ, weight n s m * ‖derivCoeff α a m‖ ^ 2) ≤ (∑' m : Fin n → ℤ, weight n (s + k) m * ‖a m‖ ^ 2) := by
     have h_norm_derivCoeff_le_sum : ∀ m : Fin n → ℤ, weight n s m * ‖derivCoeff α a m‖ ^ 2 ≤ weight n (s + k) m * ‖a m‖ ^ 2 := by
       intro m
       have h_norm_derivCoeff_le : ‖derivCoeff α a m‖ ≤ weight n (k / 2 : ℝ) m * ‖a m‖ := by
         convert norm_derivCoeff_le hα a m using 1;
-      convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) h_norm_derivCoeff_le 2 ) ( weight_nonneg s m ) using 1 ; ring;
-      grind +suggestions;
+      have hXp : (0 : ℝ) < 1 + ∑ i : Fin n, ((m i : ℝ) ^ 2) :=
+        add_pos_of_pos_of_nonneg zero_lt_one (Finset.sum_nonneg fun _ _ => sq_nonneg _)
+      have h_pow_sq_div : ((1 + ∑ i : Fin n, ((m i : ℝ) ^ 2)) ^ ((↑k : ℝ) / 2)) ^ 2
+                       = (1 + ∑ i : Fin n, ((m i : ℝ) ^ 2)) ^ ((↑k : ℝ)) := by
+        rw [← Real.rpow_natCast _ 2, ← Real.rpow_mul hXp.le]
+        congr 1; push_cast; ring
+      convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) h_norm_derivCoeff_le 2 ) ( weight_nonneg s m ) using 1
+      all_goals (first
+        | rfl
+        | (ring; done)
+        | (unfold weight
+           rw [mul_pow, h_pow_sq_div, ← mul_assoc, ← Real.rpow_add hXp]))
     apply_rules [ Summable.tsum_le_tsum ];
     exact Summable.of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) h_norm_derivCoeff_le_sum ha;
   -- Apply the triangle inequality to the sum.
   have h_triangle : ‖∑' m : Fin n → ℤ, derivCoeff α a m * fourierExp n m θ‖ ≤ ∑' m : Fin n → ℤ, ‖derivCoeff α a m‖ := by
     convert sup_norm_fourierSeries_le _ θ using 1;
     convert summable_norm_derivCoeff hn hs hα ha using 1;
-  convert h_triangle.trans ( Real.le_sqrt_of_sq_le h_cauchy_schwarz ) |> le_trans <| Real.sqrt_le_sqrt <| mul_le_mul_of_nonneg_left h_norm_derivCoeff_le_sum <| tsum_nonneg fun _ => weight_nonneg _ _ using 1 ; norm_num [ ← Real.sqrt_eq_rpow ];
-  rw [ Real.sqrt_mul <| tsum_nonneg fun _ => weight_nonneg _ _ ] ; rfl
+  convert h_triangle.trans ( Real.le_sqrt_of_sq_le h_cauchy_schwarz ) |> le_trans <| Real.sqrt_le_sqrt <| mul_le_mul_of_nonneg_left h_norm_derivCoeff_le_sum <| tsum_nonneg fun _ => weight_nonneg _ _ using 1
+  all_goals (first
+    | rfl
+    | (unfold sobolevNormSq
+       rw [← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow, ← Real.sqrt_mul (tsum_nonneg fun _ => weight_nonneg _ _)]))
 
 /-- **Fourier synthesis: 2π-periodicity.** The Fourier synthesis `ǎ` is
 `2π`-periodic in each variable. -/
@@ -197,8 +226,19 @@ theorem fourierSynthesis_injective
           have h_integral_zero : ∫ θ_j : ℝ in Set.Icc 0 (2 * Real.pi), Complex.exp (Complex.I * ((m j : ℝ) - (m₀ j : ℝ)) * θ_j) = 0 := by
             rw [ MeasureTheory.integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le Real.two_pi_pos.le ];
             have := @integral_exp_mul_complex 0 ( 2 * Real.pi );
-            convert this ( show ( I * ( m j - m₀ j : ℂ ) ) ≠ 0 from mul_ne_zero Complex.I_ne_zero <| sub_ne_zero_of_ne <| mod_cast hj ) using 1 ; norm_num;
-            exact Eq.symm ( div_eq_zero_iff.mpr <| Or.inl <| sub_eq_zero.mpr <| Complex.exp_eq_one_iff.mpr ⟨ m j - m₀ j, by push_cast; ring ⟩ );
+            have hz : I * ((m j : ℂ) - (m₀ j : ℂ)) * (2 * (π : ℂ))
+                    = ((m j - m₀ j : ℤ) : ℂ) * (2 * π * I) := by push_cast; ring
+            convert this ( show ( I * ( m j - m₀ j : ℂ ) ) ≠ 0 from mul_ne_zero Complex.I_ne_zero <| sub_ne_zero_of_ne <| mod_cast hj ) using 1
+            all_goals (first
+              | rfl
+              | (norm_num; done)
+              | (push_cast; ring; done)
+              | (symm
+                 rw [div_eq_zero_iff]
+                 left
+                 simp only [Complex.ofReal_zero, mul_zero, Complex.exp_zero]
+                 push_cast
+                 exact sub_eq_zero.mpr (Complex.exp_eq_one_iff.mpr ⟨m j - m₀ j, hz⟩)));
           simp_all +decide [ Finset.prod_eq_zero ( Finset.mem_univ j ) ];
       convert h_fourier_coeff_inner using 3 ; norm_num [ fourierExp ] ; ring;
       norm_num [ Complex.ext_iff, Complex.exp_re, Complex.exp_im, Finset.sum_sub_distrib ];
@@ -209,7 +249,7 @@ theorem fourierSynthesis_injective
       · intro m; exact Continuous.aestronglyMeasurable ( by
           refine' Continuous.mul _ _;
           · refine' continuous_const.mul _;
-            exact Complex.continuous_exp.comp <| Continuous.mul continuous_const <| Complex.continuous_ofReal.comp <| continuous_finset_sum _ fun _ _ => Continuous.mul ( continuous_const ) <| continuous_apply _;
+            exact Complex.continuous_exp.comp <| Continuous.mul continuous_const <| Complex.continuous_ofReal.comp <| continuous_finsetSum _ fun _ _ => Continuous.mul ( continuous_const ) <| continuous_apply _;
           · exact Complex.continuous_conj.comp ( Complex.continuous_exp.comp <| by continuity ) ) ;
       · refine' ne_of_lt ( lt_of_le_of_lt ( ENNReal.tsum_le_tsum fun m => _ ) _ );
         use fun m => ENNReal.ofReal ( ‖a m‖ * ( 2 * Real.pi ) ^ n );

@@ -146,7 +146,7 @@ lemma fourierExp_add_two_pi (m : Fin n → ℤ) (θ : Fin n → ℝ) (j : Fin n)
     fourierExp n m (Function.update θ j (θ j + 2 * π)) = fourierExp n m θ := by
   unfold fourierExp;
   convert Complex.exp_periodic.int_mul ( m j ) _ using 2 ; ring;
-  rw [ Finset.sum_eq_add_sum_diff_singleton ( Finset.mem_univ j ) ] ; ring;
+  rw [ Finset.sum_eq_add_sum_sdiff_singleton_of_mem ( Finset.mem_univ j ) ] ; ring;
   rw [ Finset.sum_congr rfl fun x hx => by aesop ] ; norm_num ; ring
 
 lemma fourierExp_contDiff (c : Fin n → ℤ) : ContDiff ℝ ∞ (fourierExp n c) := by

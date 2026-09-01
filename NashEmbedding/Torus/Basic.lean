@@ -19,9 +19,15 @@ open Matrix NashEmbedding.Sobolev
 
 noncomputable section
 
--- Matrix needs norm instances for ContDiff to work
-instance (n : ℕ) : NormedAddCommGroup (Matrix (Fin n) (Fin n) ℝ) := Pi.normedAddCommGroup
-instance (n : ℕ) : NormedSpace ℝ (Matrix (Fin n) (Fin n) ℝ) := Pi.normedSpace
+-- Matrix needs norm instances for ContDiff to work. `fast_instance%` rebuilds each
+-- structure so its parent projections reuse Mathlib's existing `Matrix` instances
+-- (topology, uniformity, scalar actions); without it, TC cannot reconcile the
+-- norm-derived chain with e.g. `instTopologicalSpaceMatrix` or synthesize
+-- `IsScalarTower ℝ ℝ (Matrix _ _ ℝ)` through this instance.
+instance (n : ℕ) : NormedAddCommGroup (Matrix (Fin n) (Fin n) ℝ) :=
+  fast_instance% Pi.normedAddCommGroup
+instance (n : ℕ) : NormedSpace ℝ (Matrix (Fin n) (Fin n) ℝ) :=
+  fast_instance% Pi.normedSpace
 
 namespace NashEmbedding
 

@@ -1,24 +1,31 @@
 /-
-  # NashEmbedding tests: ContDiff encoding patch (smooth vs analytic)
-
-  Diagnostic tests for the `SmoothPeriodic.smooth` field encoding.
-
-  Background. In Mathlib v4.28's `WithTop ℕ∞` encoding a bare `⊤` means
-  analytic (`ω`), not C^∞ (`∞`). `SmoothPeriodic.smooth` was once typed
-  `ContDiff ℝ ⊤ f` by mistake and is now `ContDiff ℝ ∞ f`; these tests
-  guard against the encoding regressing.
-
-  Test X is the discriminating test:
-   - With `smooth = ContDiff ℝ ⊤` (analytic), X fails to elaborate because
-     the witness `expNegInvGlue ∘ sin` is not analytic.
-   - With `smooth = ContDiff ℝ ∞` (C^∞, the current state), X elaborates.
-
-  Tests A1, W, Y, Z elaborate in either state — they exercise concrete
-  witnesses (zero, `flatTorusEmb`, `flatMetric`) all of which happen to
-  be analytic.
+Copyright (c) 2026 David Wiygul. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
+  — at the request of David Wiygul
 -/
 import NashEmbedding.Torus.Basic
 import NashEmbedding.Torus.RealizableMetrics
+
+/-!
+# NashEmbedding tests: ContDiff encoding patch (smooth vs analytic)
+
+Diagnostic tests for the `SmoothPeriodic.smooth` field encoding.
+
+Background. In Mathlib v4.28's `WithTop ℕ∞` encoding a bare `⊤` means
+analytic (`ω`), not C^∞ (`∞`). `SmoothPeriodic.smooth` was once typed
+`ContDiff ℝ ⊤ f` by mistake and is now `ContDiff ℝ ∞ f`; these tests
+guard against the encoding regressing.
+
+Test X is the discriminating test:
+ - With `smooth = ContDiff ℝ ⊤` (analytic), X fails to elaborate because
+   the witness `expNegInvGlue ∘ sin` is not analytic.
+ - With `smooth = ContDiff ℝ ∞` (C^∞, the current state), X elaborates.
+
+Tests A1, W, Y, Z elaborate in either state — they exercise concrete
+witnesses (zero, `flatTorusEmb`, `flatMetric`) all of which happen to
+be analytic.
+-/
 
 open scoped ContDiff
 open NashEmbedding NashEmbedding.Sobolev

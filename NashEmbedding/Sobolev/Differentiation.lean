@@ -64,7 +64,11 @@ theorem hasDerivAt_fourierSeries_partial
       have h_deriv : HasDerivAt (fun t : ℝ => fourierExp n m (Function.update θ j t)) (Complex.I * (m j : ℂ) * fourierExp n m θ) (θ j) := by
         unfold fourierExp;
         simp +decide [ Function.update_apply, Finset.sum_ite, Finset.filter_eq', Finset.filter_ne' ];
-        convert HasDerivAt.comp ( θ j ) ( Complex.hasDerivAt_exp _ ) ( HasDerivAt.const_mul Complex.I <| HasDerivAt.add ( HasDerivAt.const_mul ( m j : ℂ ) <| hasDerivAt_id _ |> HasDerivAt.ofReal_comp ) <| hasDerivAt_const _ _ ) using 1 ; norm_num ; ring;
+        convert HasDerivAt.comp ( θ j ) ( Complex.hasDerivAt_exp _ ) ( HasDerivAt.const_mul Complex.I <| HasDerivAt.add ( HasDerivAt.const_mul ( m j : ℂ ) <| hasDerivAt_id _ |> HasDerivAt.ofReal_comp ) <| hasDerivAt_const _ ((∑ x, ((m x : ℂ) * (θ x : ℂ))) - (m j : ℂ) * (θ j : ℂ)) ) using 1
+        all_goals (first
+          | rfl
+          | (funext t; simp only [Pi.add_apply, Function.comp, id_eq]; push_cast; ring)
+          | (simp only [Pi.add_apply, id_eq]; push_cast; ring))
       convert h_deriv.tendsto_slope_zero.const_mul ( b m ) using 2 <;> norm_num [ div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm, partialCoeff ];
     · -- We'll use the fact that |exp(i * x) - exp(i * y)| ≤ |x - y| for any real numbers x and y.
       have h_exp_diff : ∀ x y : ℝ, ‖Complex.exp (Complex.I * x) - Complex.exp (Complex.I * y)‖ ≤ |x - y| := by

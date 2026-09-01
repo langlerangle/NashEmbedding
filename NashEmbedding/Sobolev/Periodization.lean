@@ -102,11 +102,11 @@ lemma periodicExtension_contDiff {φ : (Fin n → ℝ) → ℂ}
       have h_bound : ‖y + periodicShift n k‖ < R := by
         exact lt_of_not_ge fun h => hy_nonzero <| hR _ h;
       have h_bound : |(y i + 2 * Real.pi * (k i : ℝ))| ≤ R := by
-        exact le_trans ( by simpa using norm_le_pi_norm ( y + periodicShift n k ) i ) h_bound.le;
+        exact le_trans ( by simpa [Pi.add_apply, periodicShift] using norm_le_pi_norm ( y + periodicShift n k ) i ) h_bound.le;
       have h_bound : |y i| ≤ ‖x‖ + 1 := by
         have h_bound : |y i - x i| ≤ ‖y - x‖ := by
           exact norm_le_pi_norm ( y - x ) i;
-        exact abs_le.mpr ⟨ by linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp ( norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by simpa using hy_ball ], by linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp ( norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by simpa using hy_ball ] ⟩;
+        exact abs_le.mpr ⟨ by linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp ( norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by rw [← dist_eq_norm]; exact hy_ball ], by linarith [ abs_le.mp h_bound, abs_le.mp ( norm_le_pi_norm x i ), abs_le.mp ( norm_le_pi_norm ( y - x ) i ), show ‖y - x‖ < 1 from by rw [← dist_eq_norm]; exact hy_ball ] ⟩;
       rw [ le_div_iff₀ ] <;> cases abs_cases ( k i : ℝ ) <;> cases abs_cases ( y i + 2 * Real.pi * ( k i : ℝ ) ) <;> cases abs_cases ( y i ) <;> nlinarith [ Real.pi_gt_three ];
     -- Since $|k_i| \leq \frac{R + \|x\| + 1}{2\pi}$ for all $i$, the set of such $k$ is finite.
     have h_finite_k : Set.Finite {k : Fin n → ℤ | ∀ i : Fin n, |(k i : ℝ)| ≤ (R + ‖x‖ + 1) / (2 * Real.pi)} := by
@@ -185,7 +185,11 @@ lemma hasDerivAt_fourierExp_update (c : Fin n → ℤ) (θ : Fin n → ℝ) (j :
       (Complex.I * (c j : ℂ) * fourierExp n c θ) (θ j) := by
   unfold fourierExp
   simp +decide [ Function.update_apply, Finset.sum_ite, Finset.filter_eq', Finset.filter_ne' ]
-  convert HasDerivAt.comp ( θ j ) ( Complex.hasDerivAt_exp _ ) ( HasDerivAt.const_mul Complex.I <| HasDerivAt.add ( HasDerivAt.const_mul ( c j : ℂ ) <| hasDerivAt_id _ |> HasDerivAt.ofReal_comp ) <| hasDerivAt_const _ _ ) using 1 ; norm_num ; ring
+  convert HasDerivAt.comp ( θ j ) ( Complex.hasDerivAt_exp _ ) ( HasDerivAt.const_mul Complex.I <| HasDerivAt.add ( HasDerivAt.const_mul ( c j : ℂ ) <| hasDerivAt_id _ |> HasDerivAt.ofReal_comp ) <| hasDerivAt_const _ ((∑ x, ((c x : ℂ) * (θ x : ℂ))) - (c j : ℂ) * (θ j : ℂ)) ) using 1
+  all_goals (first
+    | rfl
+    | (funext t; simp only [Pi.add_apply, Function.comp, id_eq]; push_cast; ring)
+    | (simp only [Pi.add_apply, id_eq]; push_cast; ring))
 
 lemma fderiv_fourierExp_single (c : Fin n → ℤ) (θ : Fin n → ℝ) (j : Fin n) :
     fderiv ℝ (fourierExp n c) θ (Pi.single j 1) = Complex.I * (c j : ℂ) * fourierExp n c θ := by
@@ -223,7 +227,7 @@ lemma fderiv_mul_fourierExp_single {g : (Fin n → ℝ) → ℂ} (hg : ContDiff 
     (hg.differentiable infty_ne_zero θ).hasFDerivAt.mul
       ((fourierExp_contDiff c).differentiable infty_ne_zero θ).hasFDerivAt
   rw [hF.fderiv]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul,
+  simp only [_root_.add_apply, _root_.smul_apply, smul_eq_mul,
     fderiv_fourierExp_single, partialDeriv]
   ring
 
@@ -369,7 +373,7 @@ lemma stdFourierCoeff_finset_sum {ι : Type*} (s : Finset ι) (g : ι → (Fin n
     stdFourierCoeff n (fun θ => ∑ i ∈ s, g i θ) m = ∑ i ∈ s, stdFourierCoeff n (g i) m := by
   unfold stdFourierCoeff
   simp_rw [Finset.sum_mul]
-  rw [integral_finset_sum s (f := fun i θ => g i θ * fourierExp n (-m) θ) (fun i hi =>
+  rw [integral_finsetSum s (f := fun i θ => g i θ * fourierExp n (-m) θ) (fun i hi =>
     ((hg i hi).mul (fourierExp_contDiff _).continuous).continuousOn.integrableOn_compact
       isCompact_Icc), Finset.mul_sum]
 
@@ -495,14 +499,23 @@ lemma memSobolev_of_rapid_decay (hn : 0 < n) {a : (Fin n → ℤ) → ℂ}
   have h_bound : ∀ m : Fin n → ℤ, weight n s m * ‖a m‖^2 ≤ C^2 * weight n (s - N) m := by
     intro m
     have h_bound_step : weight n s m * ‖a m‖^2 ≤ C^2 * weight n s m * weight n (-(N / 2 : ℝ)) m^2 := by
-      convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( hC m ) 2 ) ( show 0 ≤ weight n s m by exact le_of_lt ( weight_pos s m ) ) using 1 ; ring;
-    convert h_bound_step using 1 ; ring;
-    grind +suggestions;
+      convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( hC m ) 2 ) ( show 0 ≤ weight n s m by exact le_of_lt ( weight_pos s m ) ) using 1
+      all_goals (first | rfl | (ring; done))
+    have hXp : (0 : ℝ) < 1 + ∑ i : Fin n, ((m i : ℝ) ^ 2) :=
+      add_pos_of_pos_of_nonneg zero_lt_one (Finset.sum_nonneg fun _ _ => sq_nonneg _)
+    have h_weight_split : weight n (s - ↑N) m = weight n s m * weight n (-(↑N / 2 : ℝ)) m ^ 2 := by
+      unfold weight
+      rw [pow_two, ← Real.rpow_add hXp, ← Real.rpow_add hXp]
+      congr 1; push_cast; ring
+    calc weight n s m * ‖a m‖^2
+        ≤ C^2 * weight n s m * weight n (-(↑N / 2 : ℝ)) m ^ 2 := h_bound_step
+      _ = C^2 * weight n (s - ↑N) m := by rw [h_weight_split]; ring
   refine' Summable.of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) ( fun m => h_bound m ) _;
   refine' Summable.mul_left _ _;
-  convert summable_weight_neg hn _ using 1;
-  rotate_left;
-  exacts [ N - s, by linarith, funext fun m => by simp +decide [ weight ] ]
+  have h_pos : (n : ℝ) < 2 * ((↑N : ℝ) - s) := by push_cast at hN; linarith
+  have h_sum := summable_weight_neg (s := (↑N : ℝ) - s) hn h_pos
+  convert h_sum using 1
+  all_goals (first | rfl | (funext m; simp only [weight]; congr 1; push_cast; ring))
 
 /-! ## Transport to the unit torus -/
 
@@ -657,7 +670,6 @@ lemma mFourierCoeff_toUnitTorusCM {f : (Fin n → ℝ) → ℂ} (hf : Continuous
     exact h
   simp_rw [hpt]
   have hsc := integral_cube_scale (n := n) (fun y => f y * fourierExp n (-m) y)
-  simp only at hsc
   rw [hsc, integral_Ioc_cube_eq_Icc]
   unfold stdFourierCoeff
   rw [Complex.real_smul]
@@ -807,9 +819,9 @@ lemma smooth_periodic_memSobolevDistrib (hn : 0 < n)
     {f : (Fin n → ℝ) → ℂ} (hsmooth : ContDiff ℝ ∞ f)
     (hper : IsPeriodic2Pi f) (s : ℝ) :
     MemSobolevDistrib n s (integrationEmbed n f) := by
-  convert memSobolev_of_rapid_decay hn _ s;
-  convert stdFourierCoeff_rapid_decay hn hsmooth hper using 1;
-  rw [ fourierCoeffDistrib_integrationEmbed ]
+  unfold MemSobolevDistrib
+  rw [fourierCoeffDistrib_integrationEmbed]
+  exact memSobolev_of_rapid_decay hn (stdFourierCoeff_rapid_decay hn hsmooth hper) s
 
 end NashEmbedding.Sobolev
 

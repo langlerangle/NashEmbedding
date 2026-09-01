@@ -69,7 +69,7 @@ lemma periodicExtension_eq_self_of_mem {φ : (Fin n → ℝ) → ℂ}
   · intro l hl
     obtain ⟨j, hj⟩ : ∃ j, l j ≠ 0 := by
       by_contra h
-      push_neg at h
+      push Not at h
       exact hl (funext h)
     by_contra hne
     have hb := hsupp _ hne j
@@ -164,7 +164,6 @@ theorem riemann_positionSpace
       (g := fun θ' => periodicExtension n φ θ' * fourierExp n (-m) θ')
       (hpec.mul (fourierExp_contDiff _).continuous)
       (fun x l => by simp only [hpep x l, fourierExp_isPeriodic2Pi (-m) x l]) (-(meshPoint n M k))
-    simp only at hti
     rw [integral_mul_const, hti, integral_periodicExtension_mul_fourierExp hsmooth hsuppC hsupp m,
       mul_comm]
   -- pull the finite sum out of the integral
@@ -180,7 +179,7 @@ theorem riemann_positionSpace
     refine Finset.sum_congr rfl fun k _ => ?_
     ring
   simp_rw [h2]
-  rw [integral_finset_sum _ (fun k _ => ?_)]
+  rw [integral_finsetSum _ (fun k _ => ?_)]
   · simp_rw [integral_const_mul, hk]
     rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
