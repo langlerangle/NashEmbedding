@@ -176,6 +176,21 @@ automation:
         against Harmonic's logs.
       cost:
         tokens: "not exposed by the service"
+    - method: agent
+      models: ["Claude Fable 5 (Anthropic)", "Claude Opus 4.7 (Anthropic)"]
+      framework: "Claude Code"
+      tool_setup: >-
+        September 2026: two Claude sessions ported the tree from Lean/Mathlib
+        v4.28.0 to v4.31.0 (`fabf563a7c`). Proof-tactic-only edits throughout,
+        with one disclosed statement change (see README provenance record and
+        `exists_extension` in `NashEmbedding/Compact/WhitneyExtension.lean`);
+        instance names preserved. New public opaque wrappers around Mathlib's
+        `SmoothBumpCovering.embeddingPiTangent` API (non-public at v4.31.0 per
+        Mathlib PR #39886). Verification: full serial build, `scripts/audit.sh`
+        (canonical axiom footprint on all principal results), `scripts/verify.sh`
+        (Comparator replay green), and a two-pin statement-fidelity capture
+        confirming the compared statement byte-identical at pp.all across the
+        pins.
   notes: >-
     project.authors lists the four contributors credited with authorship of
     the formalization (not of the mathematics formalized, which is credited

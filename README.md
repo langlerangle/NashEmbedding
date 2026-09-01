@@ -249,8 +249,9 @@ full; the only external review is the AI audit described under *Trust*.
 
 ### Provenance record
 
-Toolchain for every Aristotle job and every build: Lean `v4.28.0`, Mathlib `v4.28.0`
-(`8f9d9cff6bd728b17a24e163c9402775d9e6a365`), Aristotle CLI 2.1.0.
+Toolchain for every Aristotle job: Lean `v4.28.0`, Mathlib `v4.28.0`
+(`8f9d9cff6bd728b17a24e163c9402775d9e6a365`), Aristotle CLI 2.1.0. Post-port
+build (September 2026): Lean `v4.31.0`, Mathlib `v4.31.0` (`fabf563a7c`).
 
 Per file (A = authored by Aristotle — in the May 2026 stages the statements too, from Claude's
 informal blueprints; from August, proofs from Claude-written principal statements, plus
@@ -292,6 +293,15 @@ dedicated job:
 | `Riemannian/Induced`, `Examples/Sphere`, `Examples/Negative` | A/H | `c61ad094` |
 | `Riemannian/Pullback` | A/H | `d8adebcb` |
 | `Examples/FlatTorus` | A/H (statements by Slate, leaves A) | `1c05ddd8` |
+
+In the September 2026 v4.31 port, `Compact/WhitneyExtension` gained public
+opaque wrappers `embPiTan`, `embPiTan_injective`, and `embPiTan_injective_mfderiv`
+around Mathlib's `SmoothBumpCovering.embeddingPiTangent` API (non-public at
+v4.31.0 per Mathlib PR #39886); the `exists_extension` theorem (now `public`
+under the module system) has its conclusion referencing the wrapper
+(`F (f.embPiTan x)` in place of `F (f.embeddingPiTangent x)`) — the two are
+definitionally equal. This is the only statement change in the port; other
+edits are proof-tactic-only.
 
 May 2026 stage jobs (torus Sobolev toolkit stages 1–8 and Theorem A stage 1, with
 retakes), in submission order: `c9c0c69f`, `18d0b04c`, `2d9e0e3e`, `5c12ab8a`, `7d4a1962`,
