@@ -7,8 +7,7 @@ on:
   workflow_dispatch:
 
 # Only one CI run per (workflow, branch) — a new push cancels a still-running
-# older one on the same ref, so David doesn't have to cancel stacked runs by
-# hand after a series of documentation-only pushes.
+# older one on the same ref, so newer pushes supersede stale runs.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -19,10 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Cache .lake (Mathlib oleans + our build)
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: .lake
           # Rebuild the whole cache when either the Mathlib pin or the Lean
@@ -30,7 +29,7 @@ jobs:
           key: lake-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}
 
       - name: Install Lean toolchain and build
-        uses: leanprover/lean-action@v1
+        uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1
         with:
           # Builds `defaultTargets` from lakefile.toml:
           # NashEmbedding, Challenge, Solution, NashEmbeddingTest.
@@ -47,17 +46,17 @@ jobs:
     needs: build-and-audit
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Install Lean toolchain
-        uses: leanprover/lean-action@v1
+        uses: leanprover/lean-action@50fcf42d2e460296f1a34b402e990d1b24f8b596 # v1
         with:
           # Just install elan + the pinned toolchain; no build here.
           # scripts/verify.sh does its own `lake exe cache get` and builds.
           build: false
 
       - name: Cache comparator + lean4export builds
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/nash-comparator
           key: nash-comparator-${{ hashFiles('lean-toolchain') }}

@@ -21,7 +21,8 @@ auxiliary lemmas of Aristotle's own; H = directly authored by Claude; A/H = mixe
 supplied the principal statements and some declarations and proofs, Aristotle the remaining
 proof bodies and, where applicable, auxiliary lemma statements), with the Aristotle
 project identifiers (first eight characters) where a file's leaves were proved in a
-dedicated job:
+dedicated job. `Origin` records principal / original authorship; later compatibility or
+linter-maintenance edits do not change a file's classification:
 
 | File | Origin | Aristotle job(s) |
 |---|---|---|

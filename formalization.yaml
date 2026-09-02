@@ -161,8 +161,8 @@ automation:
         closed-manifold reduction, the metric constructions and the examples), of
         which one was a duplicate submission whose result was not used; every
         August contribution that was used passed on first submission. Project
-        identifiers are listed in the README so that the record can be checked
-        against Harmonic's logs.
+        identifiers are listed in PROVENANCE.md so that the record can be
+        checked against Harmonic's logs.
       cost:
         tokens: "not exposed by the service"
     - method: agent

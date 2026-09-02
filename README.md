@@ -152,7 +152,10 @@ does not say.
   of statements, signatures and section variables, with `autoImplicit` off; the linters that
   judge the style of proof bodies (`refine` vs `exact`, `show`, unused `simp` arguments, line
   length, whitespace, unused local hypotheses, …) are disabled, because most of the proof
-  text was produced by Aristotle, and proof bodies are not reformatted or rewritten. The build has no warnings beyond the one deliberate `sorry` in `Challenge.lean`.
+  text was produced by Aristotle. We generally preserve Aristotle-generated proof bodies
+  rather than restyling them; the v4.31 audit pass removed only locally unused,
+  unreachable, or no-op tactic material reported by the linter. The build has no warnings
+  beyond the one deliberate `sorry` in `Challenge.lean`.
 * The audit script prints the axiom dependencies of the principal results enumerated in
   ([`scripts/axioms.lean`](scripts/axioms.lean)); all are `propext`, `Classical.choice`,
   `Quot.sound`. It runs in CI on every push, followed by the Comparator check of
@@ -191,7 +194,7 @@ formalizations of Nash's or Günther's theorem) found no earlier formalization o
 isometric embedding theorem in any proof assistant; that is the result of that search,
 not a claim that none exists.
 
-For the v4.28-era Mathlib coverage survey supporting this no-novelty claim, see
+For a historical v4.28-era survey of Mathlib coverage, see
 [PROVENANCE.md](PROVENANCE.md).
 
 ## How this was produced
@@ -232,12 +235,14 @@ scrutiny is the AI audit (not a proof review) described under *Trust*.
 
 The per-file provenance table, toolchain history, Aristotle job identifiers,
 and the detailed record of the September 2026 v4.31 port's compatibility
-changes are in [PROVENANCE.md](PROVENANCE.md). The port made exactly one
-source-level statement change: the `exists_extension` theorem in
-`Compact/WhitneyExtension.lean` now states its conclusion through a wrapper
-of a Mathlib constant that became non-public at v4.31.0 — the two forms are
-definitionally equal; all other edits are proof- and elaboration-compatibility
-work.
+changes are in [PROVENANCE.md](PROVENANCE.md). Among pre-existing
+declarations, the `exists_extension` API adaptation in
+`Compact/WhitneyExtension.lean` is the only source-level theorem/definition
+type change — its conclusion now uses a wrapper of a Mathlib constant that
+became non-public at v4.31.0, and the two forms are definitionally equal.
+The port also adds documented compatibility declarations and one bridge
+instance; other edits are proof- and elaboration-compatibility work,
+deprecation and API-name migrations, and documentation cleanup.
 
 ## License
 
