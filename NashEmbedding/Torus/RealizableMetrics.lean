@@ -20,7 +20,7 @@ noncomputable section
 
 namespace NashEmbedding
 
-/-- Bridge lemma for Mathlib v4.31+ where `Matrix` is a `def` (no longer `abbrev`).
+/-- Bridge lemma for the Mathlib v4.31 pin, where `Matrix` is a `def` (no longer `abbrev`).
 `rw`'s syntactic matching no longer sees through Matrix, but `apply`/`exact`/`refine`
 unify up to defeq — so a term-mode bridge closes the gap. Mirrors `continuous_matrix`. -/
 @[fun_prop]

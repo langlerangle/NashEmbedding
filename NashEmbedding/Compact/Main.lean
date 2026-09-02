@@ -107,11 +107,11 @@ def PullsBackEuclidean (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace I : 
 the model side carries the norm-derived chain (as `𝓘(ℝ, Matrix …)` elaborates it),
 the manifold side the direct Pi-derived instance.  The two are definitionally equal,
 but v4.31's `Matrix` is a `def`, so instance search needs this exact mixed shape;
-`chartedSpaceSelf` alone can never match it.  This bridge is necessary, not a
-workaround for our instance choices: the same mixed goal defeats even Mathlib's
-own scoped `Matrix.Norms.Elementwise` instances (with or without `fast_instance%`),
-so at v4.31 any `ContMDiff _ 𝓘(ℝ, Matrix _ _ ℝ) _ _` statement needs a
-user-supplied instance of this shape. -/
+`chartedSpaceSelf` alone cannot match it.  This bridge is not a workaround for
+our instance choices: in isolated tests the same mixed goal also defeated
+Mathlib's scoped `Matrix.Norms.Elementwise` instances (with or without
+`fast_instance%`), so the `ContMDiff _ 𝓘(ℝ, Matrix _ _ ℝ) _ _` statements in
+this file need a user-supplied instance of this shape at the v4.31 pin. -/
 instance instChartedSpaceMatrixSelf {N : ℕ} :
     @ChartedSpace (Matrix (Fin N) (Fin N) ℝ)
       (@UniformSpace.toTopologicalSpace (Matrix (Fin N) (Fin N) ℝ)

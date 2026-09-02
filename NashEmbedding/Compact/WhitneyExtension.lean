@@ -63,7 +63,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- **L1.** A smooth cutoff on `ℝ` equal to `1` at `1` and to `0` on `(-∞, 1/2]`. -/
-theorem exists_cutoff_one_half :
+public theorem exists_cutoff_one_half :
     ∃ θ : ℝ → ℝ, ContDiff ℝ ∞ θ ∧ θ 1 = 1 ∧ ∀ t ≤ (1 / 2 : ℝ), θ t = 0 := by
   refine ⟨fun t => Real.smoothTransition (2 * t - 1), ?_, ?_, ?_⟩
   · exact (Real.smoothTransition.contDiff (n := ⊤)).comp
@@ -77,7 +77,7 @@ omit [FiniteDimensional ℝ E] in
   support inside the source of the chart at `c`, and `I` has no boundary, then
   `g ∘ (extChartAt I c).symm`, extended by `0`, is a smooth function on `E`
   agreeing with `g` through the chart on the chart source. -/
-theorem exists_chart_pushforward [I.Boundaryless] (c : M) {g : M → V}
+public theorem exists_chart_pushforward [I.Boundaryless] (c : M) {g : M → V}
     (hg : ContMDiff I 𝓘(ℝ, V) ∞ g) (hsupp : tsupport g ⊆ (chartAt H c).source)
     (hcpt : HasCompactSupport g) :
     ∃ G : E → V, ContDiff ℝ ∞ G ∧
@@ -123,7 +123,7 @@ theorem exists_chart_pushforward [I.Boundaryless] (c : M) {g : M → V}
 omit [IsManifold I ∞ M] in
 /-- **L3.** For a smooth bump covering of `M`, the interiors of the sets `{f i = 1}`
   form an open cover of `M`. -/
-theorem SmoothBumpCovering.interior_eq_one_cover {ι : Type*}
+public theorem SmoothBumpCovering.interior_eq_one_cover {ι : Type*}
     (f : SmoothBumpCovering ι I M) :
     (∀ i, IsOpen (interior {x | f i x = 1})) ∧
       (univ : Set M) ⊆ ⋃ i, interior {x | f i x = 1} := by
@@ -133,7 +133,7 @@ theorem SmoothBumpCovering.interior_eq_one_cover {ι : Type*}
   filter_upwards [hi] with y hy using hy
 
 /-- **L4.** A smooth partition of unity subordinate to that cover. -/
-theorem SmoothBumpCovering.exists_partition_subordinate_interior_eq_one {ι : Type*}
+public theorem SmoothBumpCovering.exists_partition_subordinate_interior_eq_one {ι : Type*}
     [T2Space M] [CompactSpace M] (f : SmoothBumpCovering ι I M) :
     ∃ ψ : SmoothPartitionOfUnity ι I M univ,
       ψ.IsSubordinate fun i => interior {x | f i x = 1} := by
@@ -143,7 +143,7 @@ theorem SmoothBumpCovering.exists_partition_subordinate_interior_eq_one {ι : Ty
 omit [FiniteDimensional ℝ E] in
 /-- **L5.** The building block `p ↦ θ p.2 • G (p.2⁻¹ • p.1)` on `E × ℝ` is smooth
   when `θ` vanishes on `(-∞, 1/2]` (so the `p.2⁻¹` singularity is never seen). -/
-theorem contDiff_cutoff_smul_rescale {θ : ℝ → ℝ} (hθ : ContDiff ℝ ∞ θ)
+public theorem contDiff_cutoff_smul_rescale {θ : ℝ → ℝ} (hθ : ContDiff ℝ ∞ θ)
     (hθ0 : ∀ t ≤ (1 / 2 : ℝ), θ t = 0) {G : E → V} (hG : ContDiff ℝ ∞ G) :
     ContDiff ℝ ∞ (fun p : E × ℝ => θ p.2 • G (p.2⁻¹ • p.1)) := by
   -- Smoothness is local: the open sets `{p | p.2 < 1/2}` and `{p | 0 < p.2}` cover

@@ -4,7 +4,7 @@
 # Modelled on the audit script in Tao's teorth/sendov repo.  What it checks:
 #
 #   1. no forbidden tokens under NashEmbedding/ and Solution.lean
-#      (sorry, admit, exact?, native_decide, ⊤ as a smoothness order)
+#      (sorry, admit, exact?, native_decide)
 #   2. exactly one `sorry` in Challenge.lean (the statement of record uses
 #      `sorry` in place of a proof, by design — Solution.lean proves it)
 #   3. every `set_option max*` in the repository is disclosed
@@ -76,8 +76,18 @@ else
     printf '%s\n' "$BADFOOT" >&2
   fi
   if [[ -z "$BADAX" && -z "$BADFOOT" ]]; then
+    # A declaration depending on NO axioms would print without a
+    # "depends on axioms:" line and silently escape the exact-set check
+    # above (harmlessly — fewer axioms is stronger — but then the count
+    # would fall short of the number of `#print axioms` commands, so
+    # require the counts to agree for the report to be literally exact).
     N=$(grep -cE 'depends on axioms:' "$AXIOM_LOG")
-    ok "all $N declarations on [propext, Classical.choice, Quot.sound]"
+    EXPECTED=$(grep -cE '^#print axioms' scripts/axioms.lean)
+    if [[ "$N" -ne "$EXPECTED" ]]; then
+      fail "expected $EXPECTED axiom reports, found $N (a declaration may depend on no axioms; inspect manually)"
+    else
+      ok "all $N of $EXPECTED declarations on [propext, Classical.choice, Quot.sound]"
+    fi
   fi
 fi
 rm -f "$AXIOM_LOG"
