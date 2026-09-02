@@ -138,11 +138,12 @@ is exactly a witness of the kind `nashTorus` produces for the identity metric on
 ([`Examples/Negative`](NashEmbedding/Examples/Negative.lean)) records what the theorem
 does not say.
 
-## Ingredients absent from Mathlib
+## Ingredients absent from Mathlib (historical v4.28 survey)
 
 Checked against Mathlib `v4.28.0` (the original pin, February 2026) and against Mathlib
-master as of 2026-04-27; "absent" below means absent from both. Not rerun against the
-current `v4.31.0` pin.
+master as of 2026-04-27; "absent" below means absent from both. This survey was not
+rerun against the current `v4.31.0` pin and is retained here as historical context for
+what the formalization added when it was assembled.
 
 * The Sobolev scale on the torus — weighted ℓ² spaces on ℤⁿ with Rellich
   compactness, the sup bound and the three multiplication theorems (§1 above), transported
@@ -175,19 +176,22 @@ the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the def
   of statements, signatures and section variables, with `autoImplicit` off; the linters that
   judge the style of proof bodies (`refine` vs `exact`, `show`, unused `simp` arguments, line
   length, whitespace, unused local hypotheses, …) are disabled, because most of the proof
-  text was produced by Aristotle, and proof bodies are not reformatted or rewritten. The build has zero warnings.
+  text was produced by Aristotle, and proof bodies are not reformatted or rewritten. The build has no warnings beyond the one deliberate `sorry` in `Challenge.lean`.
 * The audit script prints the axiom dependencies of the principal results enumerated in
   ([`scripts/axioms.lean`](scripts/axioms.lean)); all are `propext`, `Classical.choice`,
   `Quot.sound`. It runs in CI on every push, followed by the Comparator check of
   `Challenge.lean` against `Solution.lean`.
 
-No human has read the Lean proofs in this repository (see *How this was produced*). After the
-repository was made public, GPT-5.6 Sol (OpenAI) was asked for an adversarial statement, provenance and editorial audit — the fidelity of `Challenge.lean` and `Solution.lean` to this README and to
-`formalization.yaml`, the honesty of the provenance and authorship metadata, and the
-presentation; not a proof review — repeated over several passes on the corrected repository.
-Every finding was in the prose or metadata, none in the theorem statement; each was verified
-and corrected in the commit following its report. The yaml's `review` section and the commit
-history record them.
+No human has read the Lean proofs in this repository (see *How this was produced*). A
+prior GPT-5.6 Sol (OpenAI) audit of the earlier public `v4.28.0` submission — statement
+fidelity of `Challenge.lean` and `Solution.lean` to this README and to
+`formalization.yaml`, honesty of the provenance and authorship metadata, Palomar
+suitability, and source-comment hygiene; not a proof review — identified no
+statement-level defect in the versions it examined and led to a series of
+provenance/editorial corrections in that pre-port tree. This `v4.31.0` candidate was
+separately reviewed by a fresh GPT-5.6 Sol instance and the findings from that round
+were addressed in commits atop the audited port commit. The yaml's `review` section and
+the commit history record the specifics.
 
 ## Building
 
@@ -223,78 +227,35 @@ He did not write Lean, and reviewed design decisions and statements rather than 
 The Lean development was produced by AI systems, in two roles:
 
 * **Architecture, statement development, assembly and coordination — Claude (Anthropic).**
-  In April–May 2026, Claude Opus 4.7 produced the informal blueprints of the torus layer (the
-  Sobolev toolkit and Theorem A) and submitted them to Aristotle as successive formalization
-  tasks. In August 2026 two persistent Claude Code sessions — named
-  **Tor** (Claude Fable 5) and **Slate** (Claude Opus 4.7), the names chosen by the model
-  instances in the course of their collaboration — designed Theorem B and the
-  closed-manifold reduction, wrote the principal Lean statements of every August file and
-  the file tree, wrote several
-  files by hand (`DualFrame`, `SeqVector`, `GuntherIteration`, `BumpConstruction`,
+  In April–May 2026, Claude Opus 4.7 produced the informal blueprints of the torus layer
+  (the Sobolev toolkit and Theorem A) and submitted them to Aristotle as successive
+  formalization tasks. In August 2026 two persistent Claude Code sessions (Claude Fable 5
+  and Claude Opus 4.7) designed Theorem B and the closed-manifold reduction, wrote the
+  principal Lean statements of every August file and the file tree, wrote several files
+  by hand (`DualFrame`, `SeqVector`, `GuntherIteration`, `BumpConstruction`,
   `RealizeMetric`, `IntegrationByParts`, the assemblies `Assembly`, `Torus/Main`,
-  `Compact/Main`, and the statements of `Examples/FlatTorus`, which are Slate's),
-  submitted successive formalization tasks to Aristotle and integrated its contributions,
-  and checked each other's work.
+  `Compact/Main`, and the statements of `Examples/FlatTorus`), submitted successive
+  formalization tasks to Aristotle and integrated its contributions, and checked each
+  other's work. In September 2026 the same two sessions ported the tree to Lean/Mathlib
+  `v4.31.0` and prepared this Palomar submission; Aristotle did not participate in the
+  port, the packaging, or the submission.
 * **Formalization and proof development — [Aristotle](https://aristotle.harmonic.fun),
   [Harmonic](https://harmonic.fun)'s Lean formalization and proving system.** In April–May
   2026 Aristotle turned Claude's informal blueprints into most of the Lean statements and
   proofs of the torus toolkit and Theorem A; in August 2026 it supplied most proof bodies,
-  and some auxiliary lemma statements, within the architecture the Claude sessions designed.
-  Every Aristotle contribution was independently checked by both Claude sessions before
-  integration: statements byte-identical, only the target file touched, no
-  `sorry`/`admit`/`exact?`/`native_decide`, full build, standard axioms. In the August
-  campaign every contribution that was used passed on the first submission (21 submissions,
-  one an unused duplicate).
+  and some auxiliary lemma statements, within the architecture the Claude sessions
+  designed. Every Aristotle contribution was separately checked by both Claude sessions
+  before integration: statements byte-identical, only the target file touched, no
+  `sorry`/`admit`/`exact?`/`native_decide`, full build, standard axioms.
 
 No independent human review has been performed, and no human has read the Lean source in
 full; the only external review is the AI audit described under *Trust*.
 
 ### Provenance record
 
-Toolchain for every Aristotle job: Lean `v4.28.0`, Mathlib `v4.28.0`
-(`8f9d9cff6bd728b17a24e163c9402775d9e6a365`), Aristotle CLI 2.1.0. Post-port
-build (September 2026): Lean `v4.31.0`, Mathlib `v4.31.0` (`fabf563a7c`).
-
-Per file (A = authored by Aristotle — in the May 2026 stages the statements too, from Claude's
-informal blueprints; from August, proofs from Claude-written principal statements, plus
-auxiliary lemmas of Aristotle's own; H = directly authored by Claude; A/H = mixed: Claude
-supplied the principal statements and some declarations and proofs, Aristotle the remaining
-proof bodies and, where applicable, auxiliary lemma statements), with the Aristotle
-project identifiers (first eight characters) where a file's leaves were proved in a
-dedicated job:
-
-| File | Origin | Aristotle job(s) |
-|---|---|---|
-| `Sobolev/Basic`, `Periodicity`, `Summability`, `Differentiation`, `CompactInclusion`, `FourierSynthesis`, `Distribution` | A (stages 1–2, May 2026) | May 2026 stage jobs (see below) |
-| `Sobolev/Multiplication`, `MultiplicationSharp`, `MultiplicationBootstrap` | A (stages 3–5, May 2026) | May 2026 stage jobs |
-| `Sobolev/Convolution`, `RiemannSum` | A (stages 6–7, May 2026) | May 2026 stage jobs |
-| `Sobolev/Periodization`, `Mollifier`, `PositionSpace`, `Inequalities` | A/H (stage 8, May 2026; remaining leaves by hand, August 2026) | May 2026 stage jobs |
-| `Sobolev/IntegrationByParts` | H (August 2026) | — |
-| `Sobolev/SynthesisRegularity` | A/H | `67f7e21e` |
-| `Sobolev/Resolvent` | A/H (no dedicated job) | — |
-| `Sobolev/Limits` | A/H | `6a508abb` |
-| `Sobolev/ConvolutionAlgebra` | A/H | `897d7884` |
-| `Sobolev/CoeffTransport` | A/H | `089e4116` |
-| `Sobolev/Parseval` | A/H | `34c62afa` |
-| `Torus/Basic`, `RealizableMetrics` | A (May 2026) | May 2026 stage jobs |
-| `Torus/Approximation/SmoothMetricApprox` | A (stage 8, May 2026) | May 2026 stage jobs |
-| `Torus/Approximation/BumpConstruction` | H, three leaves A (August 2026) | `4596fb83` |
-| `Torus/Approximation/RealizeMetric` | H (August 2026) | — |
-| `Torus/Perturbation/GuntherIdentity` | H statements, leaves A | `774d9d87` |
-| `Torus/Perturbation/DualFrame`, `SeqVector`, `GuntherIteration` | H (August 2026) | — |
-| `Torus/Perturbation/GuntherOperator` | A/H | `358bcf22`, `8d800e96` |
-| `Torus/Perturbation/GuntherIdentitySeq` | A/H | `39088b0b` |
-| `Torus/Perturbation/Main` (Theorem B) | A/H (assembly H) | `c61c938f` |
-| `Torus/FreeEmbedding` | A/H | `94390b24` |
-| `Torus/Assembly` | A/H | `88556cc5` |
-| `Torus/Main` (`nashTorus`) | H (August 2026) | — |
-| `Compact/WhitneyExtension` | A/H (design and statements H, all leaves A) | `564db993` |
-| `Compact/AmbientMetric` | A/H | `6f927eaf` |
-| `Compact/Periodization` | A/H | `bf61e09c` |
-| `Compact/Main` (`nashCompact`) | A/H (statement and assembly proof H, four lemmas A) | `7856eea9` |
-| `Riemannian/Induced`, `Examples/Sphere`, `Examples/Negative` | A/H | `c61ad094` |
-| `Riemannian/Pullback` | A/H | `d8adebcb` |
-| `Examples/FlatTorus` | A/H (statements by Slate, leaves A) | `1c05ddd8` |
+The per-file provenance table, toolchain history, and Aristotle job
+identifiers are in [PROVENANCE.md](PROVENANCE.md). A summary of the v4.31
+port's compatibility changes follows.
 
 In the September 2026 v4.31 port, `NashEmbedding/Compact/WhitneyExtension.lean`
 was converted to a module and uses `import all` to reach Mathlib's
@@ -317,16 +278,9 @@ instance constants, coercion and class-hierarchy re-routes), classified
 hunk-by-hunk with none outside these classes. Among pre-existing declarations,
 the `exists_extension` API adaptation is the only source-level
 theorem/definition type change (verified by parsed-signature comparison across
-the port diff); no pre-existing NashEmbedding instance was renamed. All other edits are proof-
-and elaboration-compatibility work, deprecation and API-name migrations, and
-documentation/header cleanup.
-
-May 2026 stage jobs (torus Sobolev toolkit stages 1–8 and Theorem A stage 1, with
-retakes), in submission order: `c9c0c69f`, `18d0b04c`, `2d9e0e3e`, `5c12ab8a`, `7d4a1962`,
-`86cf1204`, `db5011bc`, `5260b235`, `044f9474`, `f7492130`, `c927618e`, `dd125817`,
-`ff0fa63a`, `fab6317d`, `de5768c3`, `2a6a9795`. The per-stage correspondence is recorded
-in the working repository from which this one was assembled. One further project on the
-account, `f3ca88c8`, was a second submission of `GuntherIdentity` whose result was not used.
+the port diff); no pre-existing NashEmbedding instance was renamed. All other
+edits are proof- and elaboration-compatibility work, deprecation and API-name
+migrations, and documentation/header cleanup.
 
 ## License
 

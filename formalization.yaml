@@ -26,25 +26,12 @@ project:
     claimed. Concrete instances (round spheres of every dimension, products of
     spheres, the flat torus 𝕊¹ × 𝕊¹) are derived, and the flat-torus instance is
     shown to reproduce the torus theorem's conclusion, tying the two layers
-    together. Nothing here is claimed to be new. Essentially all Lean text was
-    produced by AI systems: the architecture, the assembly and (from August 2026) the
-    principal statements by Claude (Anthropic) sessions; the proofs, some auxiliary
-    lemma statements, and in the first stages
-    most of the statements as well, by Aristotle (Harmonic);
-    the human author proposed the project, chose the source and made early design
-    decisions. There is no sorry outside the deliberate hole in Challenge.lean, no
-    project-defined axiom, and no native_decide.
+    together. Nothing here is claimed to be new.
   authors:
-    - "Aristotle (Harmonic)"
-    - "Claude Fable 5 (Anthropic)"
-    - "Claude Opus 4.7 (Anthropic)"
     - "David Wiygul"
   license: "Apache-2.0"
   responsible_maintainers:
     - "David Wiygul"
-
-repository:
-  role: substantive-development
 
 classification:
   arxiv: [math.DG, math.AP]
@@ -150,15 +137,17 @@ automation:
       models: ["Claude Fable 5 (Anthropic)", "Claude Opus 4.7 (Anthropic)"]
       framework: "Claude Code"
       tool_setup: >-
-        August 2026: two persistent sessions, named "Tor" (Claude Fable 5) and
-        "Slate" (Claude Opus 4.7) by the model instances themselves, working
-        with the author but largely with each other. They designed the perturbation
-        theorem and the closed-manifold reduction, wrote the principal Lean statements of every August file and
-        the file architecture, wrote several files by hand (dual frames, the
-        abstract fixed point, the bump construction, the assemblies), submitted
-        successive formalization tasks to Aristotle, integrated its contributions, and independently double-checked every Aristotle
-        contribution before integrating it (statements byte-identical, only the target file
-        touched, no sorry/admit/exact?/native_decide, full build, standard axioms).
+        August 2026: two persistent Claude Code sessions (Claude Fable 5 and
+        Claude Opus 4.7) worked with the author but largely with each other.
+        They designed the perturbation theorem and the closed-manifold
+        reduction, wrote the principal Lean statements of every August file
+        and the file architecture, wrote several files by hand (dual frames,
+        the abstract fixed point, the bump construction, the assemblies),
+        submitted successive formalization tasks to Aristotle, integrated its
+        contributions, and separately double-checked every Aristotle contribution
+        before integrating it (statements byte-identical, only the target file
+        touched, no sorry/admit/exact?/native_decide, full build, standard
+        axioms).
     - method: agent
       framework: "Aristotle (Harmonic), CLI 2.1.0, pinned to Lean v4.28.0 and Mathlib v4.28.0"
       models: []
@@ -206,17 +195,26 @@ automation:
         statement-fidelity capture confirming the compared statement
         byte-identical at pp.all across the pins.
   notes: >-
-    project.authors lists the four contributors credited with authorship of
-    the formalization (not of the mathematics formalized, which is credited
-    under sources). The Lean file headers separately list the three systems
-    that wrote Lean and identify David Wiygul as the requester and human
-    design contributor; the initial commit message records the division of
-    labor and is co-authored by Aristotle-Harmonic.
-    The human author proposed the project, selected Wassermann's notes as the
-    source, and took part in the early design decisions; the Lean development was
-    produced by the AI systems above, with the author reviewing design decisions
-    and statements rather than proofs. No Lean proof in this repository has been
-    read in full by a human.
+    project.authors lists the human project author, per the Palomar policy
+    reserving that field for humans; material AI contributions are credited
+    in automation.methods above and in the per-file provenance record
+    ([PROVENANCE.md](PROVENANCE.md)). The Lean file headers separately list
+    the systems that wrote Lean and identify David Wiygul as the requester
+    and human design contributor; the initial commit message records the
+    division of labor and credits Aristotle-Harmonic. The human author
+    proposed the project, selected Wassermann's notes as the source, and
+    took part in the early design decisions; the Lean development was
+    produced by the AI systems above, with the author reviewing design
+    decisions and statements rather than proofs. No Lean proof in this
+    repository has been read in full by a human. Essentially all Lean text
+    was produced by AI systems: the architecture, the assembly and (from
+    August 2026) the principal statements by Claude (Anthropic) sessions;
+    the proofs, some auxiliary lemma statements, and in the first stages
+    most of the statements as well, by Aristotle (Harmonic). The repository
+    contains no project-defined axiom and no native_decide.
+    Aristotle did not participate in the v4.31 port, the Palomar packaging,
+    or the preparation of this submission (see the September 2026 entry in
+    automation.methods above).
 
 review:
   status: self-assessed
@@ -224,25 +222,25 @@ review:
     - "David Wiygul"
     - "GPT-5.6 Sol (OpenAI), statement, provenance and editorial audit"
   notes: >-
-    No independent human review of the mathematics or of the Lean source. Every
-    theorem is checked by Lean; scripts/audit.sh checks the trust conditions (no
-    forbidden tokens, exactly one deliberate sorry in Challenge.lean, standard
-    axioms for each principal result listed in scripts/axioms.lean); and each
-    Aristotle contribution was
-    independently verified by two separate AI sessions before being merged. The
-    compared statement in Challenge.lean was reviewed at the statement level by
-    both sessions against the informal theorem. In addition, after the
-    repository was made public, the author asked GPT-5.6 Sol (OpenAI) for an
-    adversarial audit — statement fidelity of Challenge.lean and Solution.lean
-    to the prose, honesty and checkability of the provenance and authorship
-    metadata, Palomar suitability and presentation, and source-comment hygiene;
-    explicitly not a proof review — repeated on the corrected repository over
-    several passes. Every finding was in the prose or metadata, none in the
-    theorem statement, and each was verified and corrected in the commit
-    following its report; the commit history is the detailed record. None of this is a proof review or an independent validation of the informal
-    argument; the statement-level portion of the external audit did assess the
-    Challenge against the standard qualitative Nash theorem and the relevant
-    Mathlib meanings.
+    No independent human review of the mathematics or of the Lean source.
+    Every theorem is checked by Lean; scripts/audit.sh checks the trust
+    conditions (no forbidden tokens, exactly one deliberate sorry in
+    Challenge.lean, standard axioms for each principal result listed in
+    scripts/axioms.lean); and each Aristotle contribution was separately
+    verified by two Claude sessions before being merged. The compared
+    statement in Challenge.lean was reviewed at the statement level by both
+    sessions against the informal theorem. A prior GPT-5.6 Sol (OpenAI)
+    audit of the earlier public v4.28.0 submission identified no
+    statement-level defect in the versions it examined and led to a series
+    of provenance/editorial corrections in that pre-port tree. This
+    v4.31.0 candidate was separately reviewed by a fresh GPT-5.6 Sol
+    instance — statement, metadata, provenance, Palomar-readiness and
+    editorial review; not an independent proof review — and the findings
+    from that round were addressed in the commits atop the audited port
+    commit. None of this is a proof review or an independent validation of
+    the informal argument; the statement-level portion of the external
+    audit did assess the Challenge against the standard qualitative Nash
+    theorem and the relevant Mathlib meanings.
 
 alignment:
   namespace: "NashEmbedding"
