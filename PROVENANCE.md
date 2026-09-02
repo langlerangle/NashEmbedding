@@ -75,8 +75,8 @@ PR #39886). The module adds three public wrappers (`embPiTan`,
 theorem (now `public`) has its conclusion adjusted to reference the wrapper
 (`F (f.embPiTan x)` in place of `F (f.embeddingPiTangent x)`). The two are
 definitionally equal within the defining module (as witnessed by the opening
-`change` in the proof); the wrapper is intentionally unexposed to downstream
-importers. Two further compatibility declarations were added: `contDiff_matrix`
+`change` in the proof); the public wrapper is intentionally opaque downstream —
+its definition body is not exposed. Two further compatibility declarations were added: `contDiff_matrix`
 (a `@[fun_prop]` helper in `NashEmbedding/Torus/RealizableMetrics.lean`) and one
 global `ChartedSpace` bridge instance in `NashEmbedding/Compact/Main.lean`.
 Four declarations in `NashEmbedding/Examples/FlatTorus.lean` carry

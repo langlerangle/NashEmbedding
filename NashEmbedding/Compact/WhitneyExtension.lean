@@ -13,7 +13,8 @@ import all Mathlib.Geometry.Manifold.WhitneyEmbedding
 # Whitney extension along the bump-covering embedding
 
 Let `f : SmoothBumpCovering ι I M` be a finite smooth bump covering of a compact
-manifold `M` (no boundary), and `Φ = f.embeddingPiTangent : M → (ι → E × ℝ)`,
+manifold `M` (no boundary), and `Φ = f.embPiTan : M → (ι → E × ℝ)` (this module's
+public wrapper around Mathlib's `embeddingPiTangent`),
 `Φ x i = (f i x • extChartAt I (c i) x, f i x)`, Mathlib's Whitney map.
 
 **Theorem** (`SmoothBumpCovering.exists_extension`): every smooth `h : M → V`
@@ -177,8 +178,9 @@ variable {ι : Type*} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Public opaque re-export of `SmoothBumpCovering.embeddingPiTangent` for legacy-file consumers
-that cannot use `import all` to reach the private Mathlib constant. Downstream files should use
-`embPiTan` and the associated `embPiTan_*` API lemmas. -/
+that cannot use `import all` to reach the constant, which is non-public at v4.31.0
+(Mathlib PR #39886). Downstream files should use `embPiTan` and the associated
+`embPiTan_*` API lemmas. -/
 public noncomputable def _root_.SmoothBumpCovering.embPiTan
     [T2Space M] [Fintype ι] (f : SmoothBumpCovering ι I M) :
     C^∞⟮I, M; 𝓘(ℝ, ι → E × ℝ), ι → E × ℝ⟯ :=
@@ -199,7 +201,8 @@ public theorem _root_.SmoothBumpCovering.embPiTan_injective_mfderiv
 
 /-- **L6 / S2 (Whitney extension).**  Every smooth `h : M → V` on a compact
   boundaryless manifold extends smoothly along the bump-covering embedding
-  `Φ = f.embeddingPiTangent : M → (ι → E × ℝ)`. -/
+  `Φ = f.embPiTan : M → (ι → E × ℝ)`, the public wrapper around Mathlib's
+  `embeddingPiTangent`. -/
 public theorem _root_.SmoothBumpCovering.exists_extension [T2Space M] [CompactSpace M] [I.Boundaryless]
     [Fintype ι] (f : SmoothBumpCovering ι I M) {h : M → V}
     (hh : ContMDiff I 𝓘(ℝ, V) ∞ h) :

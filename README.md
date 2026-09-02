@@ -225,9 +225,14 @@ The Lean development was produced by AI systems, in two roles:
   2026 Aristotle turned Claude's informal blueprints into most of the Lean statements and
   proofs of the torus toolkit and Theorem A; in August 2026 it supplied most proof bodies,
   and some auxiliary lemma statements, within the architecture the Claude sessions
-  designed. Every Aristotle contribution was separately checked by both Claude sessions
-  before integration: statements byte-identical, only the target file touched, no
-  `sorry`/`admit`/`exact?`/`native_decide`, full build, standard axioms.
+  designed. Every August 2026 Aristotle contribution was separately checked by both
+  Claude sessions before integration: statements byte-identical, only the target file
+  touched, no `sorry`/`admit`/`exact?`/`native_decide`, full build, standard axioms. In
+  April–May 2026 each Aristotle contribution was reviewed against the informal
+  blueprints by Claude Opus 4.7 and by the author at the statement level, and was
+  Lean-checked on return (full build, standard-axiom footprint). Further scrutiny came
+  from the later `NashEmbeddingTest/` witness tests and from the audit passes recorded
+  in the commit history.
 
 The human author reviewed the design and the principal statements, but did not review
 the Lean source in detail; no other human review has been performed. The only external

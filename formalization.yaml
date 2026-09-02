@@ -57,7 +57,7 @@ status:
     never used.
   sorry_count: 0
   sorry_in_definitions: 0
-  axioms: []
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
   main_results:
     - declaration: "NashEmbeddingTheorem.nash_isometric_embedding"
       file: "Solution.lean"
@@ -226,8 +226,13 @@ review:
     Every theorem is checked by Lean; scripts/audit.sh checks the trust
     conditions (no forbidden tokens, exactly one deliberate sorry in
     Challenge.lean, standard axioms for each principal result listed in
-    scripts/axioms.lean); and each Aristotle contribution was separately
-    verified by two Claude sessions before being merged. The compared
+    scripts/axioms.lean); each August 2026 Aristotle contribution was
+    separately verified by two Claude sessions before being merged, while
+    April–May 2026 Aristotle contributions were reviewed against the informal
+    blueprints by Claude Opus 4.7 and by the author at the statement level,
+    and were Lean-checked on return (full build, standard-axiom footprint);
+    further scrutiny came from the later `NashEmbeddingTest/` witness tests
+    and from the audit passes recorded in the commit history. The compared
     statement in Challenge.lean was reviewed at the statement level by both
     sessions against the informal theorem. A prior GPT-5.6 Sol (OpenAI)
     audit of the earlier public v4.28.0 submission identified no
