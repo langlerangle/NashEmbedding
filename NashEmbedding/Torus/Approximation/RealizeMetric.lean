@@ -288,10 +288,7 @@ lemma gram_pe_bump {χ : (Fin n → ℝ) → ℝ} (hχ : ContDiff ℝ ∞ χ) (h
       = a * fderiv ℝ (pe n χ) (x - z) v := by
     intro v
     have h1 : HasFDerivAt (fun x => pe n χ (x - z)) (fderiv ℝ (pe n χ) (x - z)) x := by
-      first
-      | exact (hpe (x - z)).hasFDerivAt.comp x ((hasFDerivAt_id x).sub_const z)
-      | (have h0 := (hpe (x - z)).hasFDerivAt.comp x ((hasFDerivAt_id x).sub_const z)
-         simpa [Function.comp, ContinuousLinearMap.comp_id] using h0)
+      exact (hpe (x - z)).hasFDerivAt.comp x ((hasFDerivAt_id x).sub_const z)
     rw [(h1.const_mul a).fderiv]
     simp
   rw [hd, hd, fderiv_pe hχ hs, fderiv_pe hχ hs]

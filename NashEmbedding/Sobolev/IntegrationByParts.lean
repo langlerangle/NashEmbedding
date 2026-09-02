@@ -150,7 +150,7 @@ lemma ftRn_partialDeriv_single
             hasDerivAt_id _ |> HasDerivAt.ofReal_comp)
           <| hasDerivAt_const _ _)
         using 1
-      all_goals (first | rfl | (norm_num; ring; done) | (ring; done))
+      all_goals (first | rfl | (norm_num; ring))
     exact h1d.unique hexp
   -- (fderiv E · e_j) · φ integrable, via the fderiv computation.
   have hdE_phi_int : Integrable (fun y => fderiv ℝ E y (Pi.single j 1) * φ y) := by

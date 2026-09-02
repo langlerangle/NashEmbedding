@@ -341,9 +341,7 @@ theorem sobolev_embedding_factorization_dist
   convert seqToDual_fourierCoeffDistrib φ using 1;
   refine' LinearMap.ext fun x => _;
   convert congr_arg ( fun a => ( Finsupp.linearCombination ℂ ( fun m => a ( -m ) ) ) x ) ( funext fun m => sobolev_embedding_factorization hn hs hφ m ) using 1
-  all_goals (first
-    | rfl
-    | (simp [integrationEmbed, seqToDual, stdFourierCoeff, Finsupp.linearCombination]))
+  all_goals rfl
 
 /-- **Sobolev embedding: linearity.** The Fourier synthesis map
 `a ↦ ǎ` is linear. -/

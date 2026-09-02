@@ -188,7 +188,6 @@ lemma hasDerivAt_fourierExp_update (c : Fin n → ℤ) (θ : Fin n → ℝ) (j :
   convert HasDerivAt.comp ( θ j ) ( Complex.hasDerivAt_exp _ ) ( HasDerivAt.const_mul Complex.I <| HasDerivAt.add ( HasDerivAt.const_mul ( c j : ℂ ) <| hasDerivAt_id _ |> HasDerivAt.ofReal_comp ) <| hasDerivAt_const _ ((∑ x, ((c x : ℂ) * (θ x : ℂ))) - (c j : ℂ) * (θ j : ℂ)) ) using 1
   all_goals (first
     | rfl
-    | (funext t; simp only [Pi.add_apply, Function.comp, id_eq]; push_cast; ring)
     | (simp only [Pi.add_apply, id_eq]; push_cast; ring))
 
 lemma fderiv_fourierExp_single (c : Fin n → ℤ) (θ : Fin n → ℝ) (j : Fin n) :
@@ -500,22 +499,22 @@ lemma memSobolev_of_rapid_decay (hn : 0 < n) {a : (Fin n → ℤ) → ℂ}
     intro m
     have h_bound_step : weight n s m * ‖a m‖^2 ≤ C^2 * weight n s m * weight n (-(N / 2 : ℝ)) m^2 := by
       convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( hC m ) 2 ) ( show 0 ≤ weight n s m by exact le_of_lt ( weight_pos s m ) ) using 1
-      all_goals (first | rfl | (ring; done))
+      all_goals (first | rfl | ring)
     have hXp : (0 : ℝ) < 1 + ∑ i : Fin n, ((m i : ℝ) ^ 2) :=
       add_pos_of_pos_of_nonneg zero_lt_one (Finset.sum_nonneg fun _ _ => sq_nonneg _)
     have h_weight_split : weight n (s - ↑N) m = weight n s m * weight n (-(↑N / 2 : ℝ)) m ^ 2 := by
       unfold weight
       rw [pow_two, ← Real.rpow_add hXp, ← Real.rpow_add hXp]
-      congr 1; push_cast; ring
+      congr 1; ring
     calc weight n s m * ‖a m‖^2
         ≤ C^2 * weight n s m * weight n (-(↑N / 2 : ℝ)) m ^ 2 := h_bound_step
       _ = C^2 * weight n (s - ↑N) m := by rw [h_weight_split]; ring
   refine' Summable.of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) ) ( fun m => h_bound m ) _;
   refine' Summable.mul_left _ _;
-  have h_pos : (n : ℝ) < 2 * ((↑N : ℝ) - s) := by push_cast at hN; linarith
+  have h_pos : (n : ℝ) < 2 * ((↑N : ℝ) - s) := by linarith
   have h_sum := summable_weight_neg (s := (↑N : ℝ) - s) hn h_pos
   convert h_sum using 1
-  all_goals (first | rfl | (funext m; simp only [weight]; congr 1; push_cast; ring))
+  all_goals (first | rfl | (funext m; simp only [weight]; congr 1; ring))
 
 /-! ## Transport to the unit torus -/
 

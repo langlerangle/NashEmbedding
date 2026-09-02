@@ -243,7 +243,7 @@ theorem sobolev_mul_seq {s : ℝ}
                                                                                                                                         unfold weight; rw [ ← Real.rpow_natCast, ← Real.rpow_mul ( by exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ] ; ring; ] ; ring;
           rw [ Real.sqrt_mul <| by positivity, Real.sqrt_mul <| by positivity, Real.sqrt_sq <| by positivity, Real.sqrt_sq <| by exact weight_nonneg _ _ ];
         convert mul_le_mul_of_nonneg_right h_peetre_step ( norm_nonneg ( b i * a ( m - i ) ) ) using 1
-        all_goals (first | rfl | (norm_num; ring; done) | (ring; done))
+        all_goals (first | rfl | (norm_num; ring))
       by_cases h : Summable ( fun i => b i * a ( m - i ) ) <;> simp_all +decide [ tsum_eq_zero_of_not_summable, mul_assoc ];
       · refine' le_trans ( mul_le_mul_of_nonneg_left ( norm_tsum_le_tsum_norm _ ) ( Real.sqrt_nonneg _ ) ) _;
         · exact h.norm;
@@ -267,12 +267,12 @@ theorem sobolev_mul_seq {s : ℝ}
     convert pow_le_pow_left₀ ( by positivity ) h_peetre_step 2 using 1
     all_goals (first
       | rfl
-      | (rw [ mul_pow, Real.sq_sqrt <| weight_nonneg _ _ ]; done)
-      | (ring; done))
+      | (rw [ mul_pow, Real.sq_sqrt <| weight_nonneg _ _ ])
+      | ring)
   have h_young : Summable (fun m => (∑' i, ‖b i‖ * (weight n (|s| / 2) i) * Real.sqrt (weight n s (m - i)) * ‖a (m - i)‖) ^ 2) ∧
     ∑' m, (∑' i, ‖b i‖ * (weight n (|s| / 2) i) * Real.sqrt (weight n s (m - i)) * ‖a (m - i)‖) ^ 2 ≤
     (∑' i, ‖b i‖ * (weight n (|s| / 2) i)) ^ 2 * ∑' m, (weight n s m) * ‖a m‖ ^ 2 := by
-      have := @young_conv_sq_bound n ( fun i => ‖b i‖ * weight n ( |s| / 2 ) i ) ( fun m => Real.sqrt ( weight n s m ) * ‖a m‖ ) ?_ ?_ ?_ ?_ <;> norm_num at *;
+      have := @young_conv_sq_bound n ( fun i => ‖b i‖ * weight n ( |s| / 2 ) i ) ( fun m => Real.sqrt ( weight n s m ) * ‖a m‖ ) ?_ ?_ ?_ ?_;
       · simp_all +decide [ mul_assoc, mul_pow, Real.sq_sqrt ( weight_nonneg _ _ ) ];
       · exact fun m => mul_nonneg ( norm_nonneg _ ) ( weight_nonneg _ _ );
       · exact fun m => mul_nonneg ( Real.sqrt_nonneg _ ) ( norm_nonneg _ );

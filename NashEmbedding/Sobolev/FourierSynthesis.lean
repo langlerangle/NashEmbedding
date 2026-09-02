@@ -68,7 +68,7 @@ lemma norm_derivCoeff_le {k : ℕ} {α : Fin n → ℕ} (hα : multiDeg α ≤ k
         | (norm_num; done)
         | (rw [← Real.rpow_natCast _ (α j), ← Real.rpow_mul
               (add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _)];
-           congr 1; push_cast; ring))
+           congr 1; ring))
     simpa [ Finset.sum_div _ _ _, Real.rpow_sum_of_pos ( add_pos_of_pos_of_nonneg zero_lt_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ] using Finset.prod_le_prod ( fun _ _ => norm_nonneg _ ) fun j ( hj : j ∈ Finset.univ ) => h_abs_term j;
   convert mul_le_mul_of_nonneg_right h_prod ( show 0 ≤ ‖a m‖ by positivity ) |> le_trans <| ?_ using 1
   · rfl
@@ -91,7 +91,7 @@ lemma memSobolev_derivCoeff {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
                       = weight n s m * weight n ((↑k : ℝ) * (1/2)) m ^ 2 := by
     unfold weight
     rw [pow_two, ← Real.rpow_add hXp, ← Real.rpow_add hXp]
-    congr 1; push_cast; ring
+    congr 1; ring
   convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( norm_derivCoeff_le hα a m ) 2 ) ( weight_nonneg s m ) using 1
   all_goals (first
     | rfl

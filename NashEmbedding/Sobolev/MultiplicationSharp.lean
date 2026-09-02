@@ -89,7 +89,7 @@ lemma half_power_weight_ineq {s : ℝ} (hs : 0 ≤ s) (i j : Fin n → ℤ) :
   convert le_trans _ h_sum_ineq_pow using 1
   all_goals (first
     | rfl
-    | (rw [ mul_right_comm, ← Real.rpow_add ] <;> norm_num; done)
+    | (rw [ mul_right_comm, ← Real.rpow_add ] <;> norm_num)
     | (exact Real.rpow_le_rpow ( add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) (by exact_mod_cast h_sum_ineq) ( by positivity )))
 
 /-
@@ -166,7 +166,7 @@ lemma summable_alpha_abs_b {s : ℝ} (hs : 0 ≤ s)
       exact Summable.of_nonneg_of_le ( fun j => mul_nonneg ( norm_nonneg _ ) ( mul_nonneg ( weight_nonneg _ _ ) ( norm_nonneg _ ) ) ) ( fun j => by nlinarith only [ sq_nonneg ( ‖b j‖ - weight n ( s / 2 ) ( m - j ) * ‖a ( m - j )‖ ), norm_nonneg ( b j ), mul_nonneg ( weight_nonneg ( s / 2 ) ( m - j ) ) ( norm_nonneg ( a ( m - j ) ) ) ] ) ( Summable.add ‹Summable fun j => ‖b j‖ ^ 2› h_conv );
     convert h_conv using 1
   convert h_conv.comp_injective ( show Function.Injective ( fun i => m - i ) from fun x y hxy => by simpa using hxy ) using 2
-  all_goals (first | rfl | (simp +decide [ mul_assoc, mul_comm, mul_left_comm ]; done))
+  all_goals (first | rfl | simp +decide [ mul_assoc, mul_comm, mul_left_comm ])
 
 /-
 Summability of the |a|⋅β convolution term at each point.
@@ -268,7 +268,7 @@ lemma young_alpha_b_bound {s : ℝ} (hn : 0 < n) (hs : (n : ℝ) < 2 * s)
       | (ring; done)
       | (rw [ show sobolevNormSq n s a = ∑' m, ‖a m‖ ^ 2 * weight n ( s * ( 1 / 2 ) ) m ^ 2 by
             convert sobolevNormSq_half_weight s a using 3
-            all_goals (first | rfl | (ring; done)) ]; ring))
+            all_goals (first | rfl | ring) ]; ring))
   · exact fun m => mul_nonneg ( norm_nonneg _ ) ( weight_nonneg _ _ );
   · exact summable_norm_of_memSobolev hn ( by linarith ) hb;
   · have := ha;
@@ -327,7 +327,7 @@ theorem second_multiplication_theorem_seq
     · exact Summable.mul_left _ ( Summable.add ( young_alpha_b_bound hn hs ha hb |>.1 ) ( young_a_beta_bound hn hs ha hb |>.1 ) );
     · rw [ tsum_mul_left, Summable.tsum_add ];
       · unfold mt2Const;
-        have := young_alpha_b_bound hn hs ha hb; have := young_a_beta_bound hn hs ha hb; norm_num at *; nlinarith [ Real.rpow_pos_of_pos zero_lt_two ( 2 * s ) ] ;
+        have := young_alpha_b_bound hn hs ha hb; have := young_a_beta_bound hn hs ha hb; nlinarith [ Real.rpow_pos_of_pos zero_lt_two ( 2 * s ) ] ;
       · exact young_alpha_b_bound hn hs ha hb |>.1;
       · exact young_a_beta_bound hn hs ha hb |>.1
 

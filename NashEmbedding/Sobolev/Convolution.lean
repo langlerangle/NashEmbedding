@@ -57,7 +57,7 @@ lemma ftRn_norm_le (φ : (Fin n → ℝ) → ℂ) (_hφ : Integrable φ) (ξ : F
           ( fun y => φ y * exp ( - ( I * ↑( ∑ j : Fin n, ξ j * y j ) ) ) ) using 1
       all_goals first
       | rfl
-      | ( norm_num [ Complex.norm_exp ] ; done )
+      | ( norm_num [ Complex.norm_exp ] )
 
 /-
 Continuity of the Fourier transform in `ξ`.
@@ -189,7 +189,7 @@ theorem mollifier_convergence (φ : (Fin n → ℝ) → ℂ)
         all_goals try first
         | rfl
         | (simp only [ tsum_zero ])
-        case hsum => convert hu.mul_left ( ( 2 * ∫ y, ‖φ y‖ ) ^ 2 ) using 2 <;> first | rfl | ( ring ; done ) | ( funext m ; ring )
+        case hsum => convert hu.mul_left ( ( 2 * ∫ y, ‖φ y‖ ) ^ 2 ) using 2 <;> first | rfl | ring
         case hab =>
           intro m;
           -- By definition of $fourierCoeffDistrib$, we know that

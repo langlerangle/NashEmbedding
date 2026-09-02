@@ -18,6 +18,9 @@ weak.linter.style.whitespace = false
 weak.linter.style.setOption = false
 weak.linter.style.maxHeartbeats = false
 weak.linter.style.emptyLine = false
+# The header linter enforces Mathlib-PR header format; this project uses a
+# deliberate uniform credit-line convention (see README, Provenance record).
+weak.linter.style.header = false
 
 [[require]]
 name = "mathlib"

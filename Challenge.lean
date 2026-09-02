@@ -1,8 +1,8 @@
 /-
 Copyright (c) 2026 David Wiygul. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
-  — at the request of David Wiygul
+Authors: Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
+  — at the request and direction of David Wiygul
 -/
 import Mathlib
 
@@ -11,6 +11,9 @@ import Mathlib
 
 This is the statement of record for the Palomar submission.  It states one theorem and
 introduces no definitions of its own; every notion used is Mathlib's.
+
+The underlying `NashEmbedding` development was substantially formalized by
+Aristotle (Harmonic); see the repository provenance record.
 
 ## The statement
 

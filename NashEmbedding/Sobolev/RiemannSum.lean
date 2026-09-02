@@ -370,7 +370,7 @@ theorem riemannSum_convergence (φ : (Fin n → ℝ) → ℂ)
     rw [ mul_pow, mul_assoc ];
     exact mul_le_mul_of_nonneg_left ( by nlinarith only [ show 0 ≤ ‖ftRn n φ fun j => ( m j : ℝ )‖ ^ 2 by positivity, show 0 ≤ ‖↑ ( ( 2 * Real.pi ) ^ n ) ⁻¹ * riemannK n u M m - fourierCoeffDistrib u m‖ ^ 2 by positivity, h_fourier_coeff_bound, show ‖↑ ( ( 2 * Real.pi ) ^ n ) ⁻¹ * riemannK n u M m - fourierCoeffDistrib u m‖ ^ 2 ≤ ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^ 2 by gcongr ] ) ( weight_nonneg s m );
   have h_dom : Summable (fun m : Fin n → ℤ => weight n s m * (2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖) ^ 2 * ‖ftRn n φ (fun j => (m j : ℝ))‖ ^ 2) := by
-    convert hφ_rd s |> Summable.mul_left ( ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^ 2 ) using 2 <;> first | rfl | ( ring ; done ) | ( funext m ; ring );
+    convert hφ_rd s |> Summable.mul_left ( ( 2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖ ) ^ 2 ) using 2 <;> first | rfl | ring;
   have h_ab : ∀ m : Fin n → ℤ, Filter.Tendsto (fun M : ℕ => weight n s m * ‖fourierCoeffDistrib (riemannSumDistrib n φ u M - convDistrib n φ u) m‖ ^ 2) Filter.atTop (nhds 0) :=
     fun m => by simpa using Filter.Tendsto.const_mul _ ( ‹∀ m : Fin n → ℤ, Filter.Tendsto ( fun M : ℕ => ‖fourierCoeffDistrib ( riemannSumDistrib n φ u M - convDistrib n φ u ) m‖ ^ 2 ) Filter.atTop ( nhds 0 ) › m )
   have h_bound : ∀ᶠ M in Filter.atTop, ∀ m : Fin n → ℤ, ‖weight n s m * ‖fourierCoeffDistrib (riemannSumDistrib n φ u M - convDistrib n φ u) m‖ ^ 2‖ ≤ weight n s m * (2 * ∑' k : Fin n → ℤ, ‖fourierCoeffDistrib u k‖) ^ 2 * ‖ftRn n φ (fun j => (m j : ℝ))‖ ^ 2 := by

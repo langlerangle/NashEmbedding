@@ -1,8 +1,8 @@
 /-
 Copyright (c) 2026 David Wiygul. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
-  — at the request of David Wiygul
+Authors: Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anthropic)
+  — at the request and direction of David Wiygul
 -/
 import NashEmbedding.Compact.Main
 
@@ -13,6 +13,9 @@ The declaration of `Challenge.lean`, proved.  It is a thin bridge to `NashEmbedd
 the only difference is bookkeeping: the library states the pullback condition through the
 predicate `PullsBackEuclidean`, whose definition unfolds to exactly the Challenge's clause
 (`toEuclid` is the identity map exposing a tangent vector to Euclidean space as a point of it).
+
+The underlying `NashEmbedding` development was substantially formalized by
+Aristotle (Harmonic); see the repository provenance record.
 -/
 
 open scoped Manifold ContDiff
