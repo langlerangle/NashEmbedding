@@ -181,16 +181,30 @@ automation:
       framework: "Claude Code"
       tool_setup: >-
         September 2026: two Claude sessions ported the tree from Lean/Mathlib
-        v4.28.0 to v4.31.0 (`fabf563a7c`). Proof-tactic-only edits throughout,
-        with one disclosed statement change (see README provenance record and
-        `exists_extension` in `NashEmbedding/Compact/WhitneyExtension.lean`);
-        instance names preserved. New public opaque wrappers around Mathlib's
-        `SmoothBumpCovering.embeddingPiTangent` API (non-public at v4.31.0 per
-        Mathlib PR #39886). Verification: full serial build, `scripts/audit.sh`
-        (canonical axiom footprint on all principal results), `scripts/verify.sh`
-        (Comparator replay green), and a two-pin statement-fidelity capture
-        confirming the compared statement byte-identical at pp.all across the
-        pins.
+        v4.28.0 to v4.31.0 (`fabf563a7c`). Among pre-existing declarations, the
+        port preserves source-level theorem/definition types (verified by
+        parsed-signature comparison across the port diff) except for the
+        disclosed `SmoothBumpCovering.exists_extension` API adaptation (see
+        README provenance record and
+        `NashEmbedding/Compact/WhitneyExtension.lean`); no pre-existing
+        NashEmbedding instance was renamed. Other changes are
+        proof- and elaboration-compatibility edits (including four declaration-
+        scoped `backward.isDefEq.respectTransparency` options in
+        `NashEmbedding/Examples/FlatTorus.lean`, whose elaborated statements
+        differ from the pre-port forms only within documented defeq classes),
+        deprecation and API-name migrations, and the following recorded
+        compatibility declarations: `SmoothBumpCovering.embPiTan` and two
+        lemma wrappers around Mathlib's `embeddingPiTangent` API (non-public
+        at v4.31.0 per Mathlib PR #39886); the `@[fun_prop]` helper
+        `contDiff_matrix` in `NashEmbedding/Torus/RealizableMetrics.lean`; and
+        one global `ChartedSpace` bridge instance in
+        `NashEmbedding/Compact/Main.lean`. `NashEmbedding/Compact/WhitneyExtension.lean`
+        was converted to a module and uses `import all` to reach Mathlib's
+        private implementation. Verification: full serial build,
+        `scripts/audit.sh` (canonical axiom footprint on all principal
+        results), `scripts/verify.sh` (Comparator replay green), and a two-pin
+        statement-fidelity capture confirming the compared statement
+        byte-identical at pp.all across the pins.
   notes: >-
     project.authors lists the four contributors credited with authorship of
     the formalization (not of the mathematics formalized, which is credited

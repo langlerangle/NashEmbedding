@@ -140,8 +140,9 @@ does not say.
 
 ## Ingredients absent from Mathlib
 
-Checked against Mathlib `v4.28.0` (the pin, February 2026) and against Mathlib master as of
-2026-04-27; "absent" below means absent from both.
+Checked against Mathlib `v4.28.0` (the original pin, February 2026) and against Mathlib
+master as of 2026-04-27; "absent" below means absent from both. Not rerun against the
+current `v4.31.0` pin.
 
 * The Sobolev scale on the torus — weighted ℓ² spaces on ℤⁿ with Rellich
   compactness, the sup bound and the three multiplication theorems (§1 above), transported
@@ -196,9 +197,10 @@ lake build
 bash scripts/audit.sh
 ```
 
-Lean `v4.28.0`, Mathlib `v4.28.0` (commit `8f9d9cff6bd728b17a24e163c9402775d9e6a365`),
+Lean `v4.31.0`, Mathlib `v4.31.0` (commit `fabf563a7c95a166b8d7b6efca11c8b4dc9d911f`),
 pinned in `lean-toolchain` and `lake-manifest.json`. `NashEmbeddingTest/` holds a few
-regression checks that are built by `lake build` but not imported by the library.
+regression checks that are built by `lake build` but not imported by the library. The
+provenance record below preserves the original `v4.28.0` pin for reference.
 
 ## Provenance and novelty
 
@@ -294,14 +296,30 @@ dedicated job:
 | `Riemannian/Pullback` | A/H | `d8adebcb` |
 | `Examples/FlatTorus` | A/H (statements by Slate, leaves A) | `1c05ddd8` |
 
-In the September 2026 v4.31 port, `Compact/WhitneyExtension` gained public
-opaque wrappers `embPiTan`, `embPiTan_injective`, and `embPiTan_injective_mfderiv`
-around Mathlib's `SmoothBumpCovering.embeddingPiTangent` API (non-public at
-v4.31.0 per Mathlib PR #39886); the `exists_extension` theorem (now `public`
-under the module system) has its conclusion referencing the wrapper
-(`F (f.embPiTan x)` in place of `F (f.embeddingPiTangent x)`) — the two are
-definitionally equal. This is the only statement change in the port; other
-edits are proof-tactic-only.
+In the September 2026 v4.31 port, `NashEmbedding/Compact/WhitneyExtension.lean`
+was converted to a module and uses `import all` to reach Mathlib's
+`SmoothBumpCovering.embeddingPiTangent` API (non-public at v4.31.0 per Mathlib
+PR #39886). The module adds three public wrappers (`embPiTan`,
+`embPiTan_injective`, `embPiTan_injective_mfderiv`); the `exists_extension`
+theorem (now `public`) has its conclusion adjusted to reference the wrapper
+(`F (f.embPiTan x)` in place of `F (f.embeddingPiTangent x)`). The two are
+definitionally equal within the defining module (as witnessed by the opening
+`change` in the proof); the wrapper is intentionally unexposed to downstream
+importers. Two further compatibility declarations were added: `contDiff_matrix`
+(a `@[fun_prop]` helper in `NashEmbedding/Torus/RealizableMetrics.lean`) and one
+global `ChartedSpace` bridge instance in `NashEmbedding/Compact/Main.lean`.
+Four declarations in `NashEmbedding/Examples/FlatTorus.lean` carry
+`set_option backward.isDefEq.respectTransparency false` (Mathlib's own lever at
+this boundary); their elaborated statements are not byte-identical across the
+pins, but the drift consists entirely of instance-level, definitionally-equal
+re-routes (Fintype instance choice, instance renames, derived TangentSpace
+instance constants, coercion and class-hierarchy re-routes), classified
+hunk-by-hunk with none outside these classes. Among pre-existing declarations,
+the `exists_extension` API adaptation is the only source-level
+theorem/definition type change (verified by parsed-signature comparison across
+the port diff); no pre-existing NashEmbedding instance was renamed. All other edits are proof-
+and elaboration-compatibility work, deprecation and API-name migrations, and
+documentation/header cleanup.
 
 May 2026 stage jobs (torus Sobolev toolkit stages 1–8 and Theorem A stage 1, with
 retakes), in submission order: `c9c0c69f`, `18d0b04c`, `2d9e0e3e`, `5c12ab8a`, `7d4a1962`,
