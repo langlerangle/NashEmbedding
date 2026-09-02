@@ -174,7 +174,7 @@ automation:
         port preserves source-level theorem/definition types (verified by
         parsed-signature comparison across the port diff) except for the
         disclosed `SmoothBumpCovering.exists_extension` API adaptation (see
-        README provenance record and
+        PROVENANCE.md and
         `NashEmbedding/Compact/WhitneyExtension.lean`); no pre-existing
         NashEmbedding instance was renamed. Other changes are
         proof- and elaboration-compatibility edits (including four declaration-
@@ -204,9 +204,9 @@ automation:
     division of labor and credits Aristotle-Harmonic. The human author
     proposed the project, selected Wassermann's notes as the source, and
     took part in the early design decisions; the Lean development was
-    produced by the AI systems above, with the author reviewing design
-    decisions and statements rather than proofs. No Lean proof in this
-    repository has been read in full by a human. Essentially all Lean text
+    produced by the AI systems above. The human author reviewed the design
+    and the principal statements, but did not review the Lean proofs in
+    detail. Essentially all Lean text
     was produced by AI systems: the architecture, the assembly and (from
     August 2026) the principal statements by Claude (Anthropic) sessions;
     the proofs, some auxiliary lemma statements, and in the first stages

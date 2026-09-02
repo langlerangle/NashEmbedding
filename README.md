@@ -138,30 +138,6 @@ is exactly a witness of the kind `nashTorus` produces for the identity metric on
 ([`Examples/Negative`](NashEmbedding/Examples/Negative.lean)) records what the theorem
 does not say.
 
-## Ingredients absent from Mathlib (historical v4.28 survey)
-
-Checked against Mathlib `v4.28.0` (the original pin, February 2026) and against Mathlib
-master as of 2026-04-27; "absent" below means absent from both. This survey was not
-rerun against the current `v4.31.0` pin and is retained here as historical context for
-what the formalization added when it was assembled.
-
-* The Sobolev scale on the torus — weighted ℓ² spaces on ℤⁿ with Rellich
-  compactness, the sup bound and the three multiplication theorems (§1 above), transported
-  to position space. Mathlib master has since gained Sobolev (Bessel-potential) spaces on
-  ℝⁿ via tempered distributions (`TemperedDistribution.memSobolev`, April 2026,
-  after the pin); that is a different setting, and the compactness and algebra results used
-  here are not among its statements.
-* Extension of smooth functions along Mathlib's bump-covering embedding
-  (`SmoothBumpCovering.exists_extension`); smoothness of the Moore–Penrose pseudo-inverse
-  of an injective linear map (`contDiffAt_pinv`).
-* Induced, pullback and product Riemannian metrics as `ContMDiffRiemannianMetric`s.
-
-Not absent, and used: Mathlib's L² Fourier theory on the d-torus
-(`UnitAddTorus.hasSum_sq_mFourierCoeff`), which `parseval_stdFourierCoeff` transports to
-continuous 2π-periodic functions on ℝⁿ in this development's conventions;
-the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the definition
-`ContMDiffRiemannianMetric` itself.
-
 ## Trust
 
 * No `sorry` and no project-defined `axiom`, with one deliberate exception:
@@ -182,16 +158,14 @@ the bump-covering embedding `SmoothBumpCovering.embeddingPiTangent`; and the def
   `Quot.sound`. It runs in CI on every push, followed by the Comparator check of
   `Challenge.lean` against `Solution.lean`.
 
-No human has read the Lean proofs in this repository (see *How this was produced*). A
-prior GPT-5.6 Sol (OpenAI) audit of the earlier public `v4.28.0` submission — statement
-fidelity of `Challenge.lean` and `Solution.lean` to this README and to
-`formalization.yaml`, honesty of the provenance and authorship metadata, Palomar
-suitability, and source-comment hygiene; not a proof review — identified no
+The human author reviewed the design and the principal statements, but did not review
+the Lean proofs in detail (see *How this was produced*). A prior GPT-5.6 Sol (OpenAI)
+audit (not a proof review) of the earlier public `v4.28.0` submission identified no
 statement-level defect in the versions it examined and led to a series of
 provenance/editorial corrections in that pre-port tree. This `v4.31.0` candidate was
-separately reviewed by a fresh GPT-5.6 Sol instance and the findings from that round
-were addressed in commits atop the audited port commit. The yaml's `review` section and
-the commit history record the specifics.
+separately reviewed by a fresh GPT-5.6 Sol instance (not a proof review) and the
+findings from that round were addressed in commits atop the audited port commit. The
+yaml's `review` section and the commit history record the specifics.
 
 ## Building
 
@@ -203,8 +177,9 @@ bash scripts/audit.sh
 
 Lean `v4.31.0`, Mathlib `v4.31.0` (commit `fabf563a7c95a166b8d7b6efca11c8b4dc9d911f`),
 pinned in `lean-toolchain` and `lake-manifest.json`. `NashEmbeddingTest/` holds a few
-regression checks that are built by `lake build` but not imported by the library. The
-provenance record below preserves the original `v4.28.0` pin for reference.
+regression checks that are built by `lake build` but not imported by the library. See
+[PROVENANCE.md](PROVENANCE.md) for the toolchain history including the original
+`v4.28.0` pin.
 
 ## Provenance and novelty
 
@@ -215,6 +190,9 @@ not a claim of priority. A web search (Lean Zulip, the Isabelle AFP, general sea
 formalizations of Nash's or Günther's theorem) found no earlier formalization of the
 isometric embedding theorem in any proof assistant; that is the result of that search,
 not a claim that none exists.
+
+For the v4.28-era Mathlib coverage survey supporting this no-novelty claim, see
+[PROVENANCE.md](PROVENANCE.md).
 
 ## How this was produced
 
@@ -248,39 +226,18 @@ The Lean development was produced by AI systems, in two roles:
   before integration: statements byte-identical, only the target file touched, no
   `sorry`/`admit`/`exact?`/`native_decide`, full build, standard axioms.
 
-No independent human review has been performed, and no human has read the Lean source in
-full; the only external review is the AI audit described under *Trust*.
+The human author reviewed the design and the principal statements, but did not review
+the Lean source in detail; no other human review has been performed. The only external
+scrutiny is the AI audit (not a proof review) described under *Trust*.
 
-### Provenance record
-
-The per-file provenance table, toolchain history, and Aristotle job
-identifiers are in [PROVENANCE.md](PROVENANCE.md). A summary of the v4.31
-port's compatibility changes follows.
-
-In the September 2026 v4.31 port, `NashEmbedding/Compact/WhitneyExtension.lean`
-was converted to a module and uses `import all` to reach Mathlib's
-`SmoothBumpCovering.embeddingPiTangent` API (non-public at v4.31.0 per Mathlib
-PR #39886). The module adds three public wrappers (`embPiTan`,
-`embPiTan_injective`, `embPiTan_injective_mfderiv`); the `exists_extension`
-theorem (now `public`) has its conclusion adjusted to reference the wrapper
-(`F (f.embPiTan x)` in place of `F (f.embeddingPiTangent x)`). The two are
-definitionally equal within the defining module (as witnessed by the opening
-`change` in the proof); the wrapper is intentionally unexposed to downstream
-importers. Two further compatibility declarations were added: `contDiff_matrix`
-(a `@[fun_prop]` helper in `NashEmbedding/Torus/RealizableMetrics.lean`) and one
-global `ChartedSpace` bridge instance in `NashEmbedding/Compact/Main.lean`.
-Four declarations in `NashEmbedding/Examples/FlatTorus.lean` carry
-`set_option backward.isDefEq.respectTransparency false` (Mathlib's own lever at
-this boundary); their elaborated statements are not byte-identical across the
-pins, but the drift consists entirely of instance-level, definitionally-equal
-re-routes (Fintype instance choice, instance renames, derived TangentSpace
-instance constants, coercion and class-hierarchy re-routes), classified
-hunk-by-hunk with none outside these classes. Among pre-existing declarations,
-the `exists_extension` API adaptation is the only source-level
-theorem/definition type change (verified by parsed-signature comparison across
-the port diff); no pre-existing NashEmbedding instance was renamed. All other
-edits are proof- and elaboration-compatibility work, deprecation and API-name
-migrations, and documentation/header cleanup.
+The per-file provenance table, toolchain history, Aristotle job identifiers,
+and the detailed record of the September 2026 v4.31 port's compatibility
+changes are in [PROVENANCE.md](PROVENANCE.md). The port made exactly one
+source-level statement change: the `exists_extension` theorem in
+`Compact/WhitneyExtension.lean` now states its conclusion through a wrapper
+of a Mathlib constant that became non-public at v4.31.0 — the two forms are
+definitionally equal; all other edits are proof- and elaboration-compatibility
+work.
 
 ## License
 

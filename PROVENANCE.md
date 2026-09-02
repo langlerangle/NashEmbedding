@@ -61,8 +61,62 @@ inherited from Aristotle remain Aristotle proof bodies, and the compatibility
 declarations added by the port (`SmoothBumpCovering.embPiTan` and two lemma
 wrappers in `Compact/WhitneyExtension`, `contDiff_matrix` in
 `Torus/RealizableMetrics`, one `ChartedSpace` bridge instance in
-`Compact/Main`) are Claude-authored. See the README's v4.31 port compatibility
-disclosure for the full account.
+`Compact/Main`) are Claude-authored. See the v4.31 port compatibility
+disclosure below for the full account.
+
+## v4.31 port compatibility disclosure
+
+In the September 2026 v4.31 port, `NashEmbedding/Compact/WhitneyExtension.lean`
+was converted to a module and uses `import all` to reach Mathlib's
+`SmoothBumpCovering.embeddingPiTangent` API (non-public at v4.31.0 per Mathlib
+PR #39886). The module adds three public wrappers (`embPiTan`,
+`embPiTan_injective`, `embPiTan_injective_mfderiv`); the `exists_extension`
+theorem (now `public`) has its conclusion adjusted to reference the wrapper
+(`F (f.embPiTan x)` in place of `F (f.embeddingPiTangent x)`). The two are
+definitionally equal within the defining module (as witnessed by the opening
+`change` in the proof); the wrapper is intentionally unexposed to downstream
+importers. Two further compatibility declarations were added: `contDiff_matrix`
+(a `@[fun_prop]` helper in `NashEmbedding/Torus/RealizableMetrics.lean`) and one
+global `ChartedSpace` bridge instance in `NashEmbedding/Compact/Main.lean`.
+Four declarations in `NashEmbedding/Examples/FlatTorus.lean` carry
+`set_option backward.isDefEq.respectTransparency false` (Mathlib's own lever at
+this boundary); their elaborated statements are not byte-identical across the
+pins, but the drift consists entirely of instance-level, definitionally-equal
+re-routes (Fintype instance choice, instance renames, derived TangentSpace
+instance constants, coercion and class-hierarchy re-routes), classified
+hunk-by-hunk with none outside these classes. Among pre-existing declarations,
+the `exists_extension` API adaptation is the only source-level
+theorem/definition type change (verified by parsed-signature comparison across
+the port diff); no pre-existing NashEmbedding instance was renamed. All other
+edits are proof- and elaboration-compatibility work, deprecation and API-name
+migrations, and documentation/header cleanup.
+
+## Ingredients absent from Mathlib (historical v4.28 survey)
+
+Checked against Mathlib `v4.28.0` (the original pin, February 2026) and against
+Mathlib master as of 2026-04-27; "absent" below means absent from both. This
+survey was not rerun against the current `v4.31.0` pin and is retained here as
+historical context for what the formalization added when it was assembled.
+
+* The Sobolev scale on the torus — weighted ℓ² spaces on ℤⁿ with Rellich
+  compactness, the sup bound and the three multiplication theorems, transported
+  to position space. Mathlib master has since gained Sobolev (Bessel-potential)
+  spaces on ℝⁿ via tempered distributions
+  (`TemperedDistribution.memSobolev`, April 2026, after the pin); that is a
+  different setting, and the compactness and algebra results used here are not
+  among its statements.
+* Extension of smooth functions along Mathlib's bump-covering embedding
+  (`SmoothBumpCovering.exists_extension`); smoothness of the Moore–Penrose
+  pseudo-inverse of an injective linear map (`contDiffAt_pinv`).
+* Induced, pullback and product Riemannian metrics as
+  `ContMDiffRiemannianMetric`s.
+
+Not absent, and used: Mathlib's L² Fourier theory on the d-torus
+(`UnitAddTorus.hasSum_sq_mFourierCoeff`), which `parseval_stdFourierCoeff`
+transports to continuous 2π-periodic functions on ℝⁿ in this development's
+conventions; the bump-covering embedding
+`SmoothBumpCovering.embeddingPiTangent`; and the definition
+`ContMDiffRiemannianMetric` itself.
 
 ## Aristotle job identifiers (May 2026 stage jobs)
 
